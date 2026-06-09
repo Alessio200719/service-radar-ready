@@ -201,10 +201,10 @@ nav.scrolled{box-shadow:var(--sh2)}
 .fc{padding:5px 14px;border-radius:100px;border:1px solid var(--c-bd);font-size:13px;font-weight:500;background:var(--c-bg);cursor:pointer;transition:all .15s;color:var(--c-ink2)}
 .fc:hover{border-color:var(--c-blue);color:var(--c-blue)}
 .fc.on{background:var(--c-blue);color:#fff;border-color:var(--c-blue)}
-.map-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;height:520px;max-width:100%;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:24px;padding:16px;box-shadow:var(--sh2)}
-.map-frame{position:relative;height:100%;min-height:480px}
-#jobMap{height:100%;min-height:480px;border-radius:16px;overflow:hidden;border:1px solid var(--c-bds);background:var(--c-bg1);z-index:0}
-.leaflet-container{border-radius:16px}
+.map-grid{display:grid;grid-template-columns:1fr 320px;gap:16px;max-width:100%;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:24px;padding:16px;box-shadow:var(--sh2)}
+.map-frame{position:relative;width:100%;height:520px;min-height:480px;overflow:hidden}
+#jobMap{width:100%;height:100%;min-height:480px;display:block;border-radius:16px;overflow:hidden;border:1px solid var(--c-bds);background:var(--c-bg1);z-index:0}
+.leaflet-container{width:100%!important;height:100%!important;border-radius:16px}
 .map-empty-note{position:absolute;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;text-align:center;padding:16px;pointer-events:none}
 .map-empty-note>div{background:rgba(255,255,255,.94);border:1px solid var(--c-bd);border-radius:var(--r2);padding:16px 22px;box-shadow:var(--sh2);max-width:82%;color:var(--c-ink3);font-weight:600;font-size:14px;line-height:1.5}
 .map-empty-note .men-ico{font-size:30px;margin-bottom:6px}
@@ -726,10 +726,10 @@ html[lang="en"] #legal-de-note{display:block}
   .for-grid{grid-template-columns:1fr;max-width:560px;margin-left:auto;margin-right:auto}
   .for-card{padding:32px 28px}
   .pay-grid{grid-template-columns:1fr}
-  .map-grid{grid-template-columns:1fr;height:auto;padding:12px;gap:12px}
-  .jlist{height:260px}
-  .map-frame{min-height:360px}
+  .map-grid{grid-template-columns:1fr;padding:12px;gap:12px}
+  .map-frame{height:420px;min-height:360px}
   #jobMap{min-height:360px}
+  .jlist{height:260px}
   .nav-links{display:none}
   .hamburger{display:flex}
   .lang-pill{display:none}
@@ -766,7 +766,7 @@ html[lang="en"] #legal-de-note{display:block}
   .wrap{padding:0 14px}
   .for-card{padding:22px 18px}
   .map-grid{padding:10px;border-radius:20px}
-  .map-frame{min-height:330px}
+  .map-frame{height:360px;min-height:330px}
   #jobMap{min-height:330px}
   .sec-title{font-size:26px}
   .pay-amount-hero .pa-price{font-size:44px}
@@ -4981,8 +4981,15 @@ function initMap(){
   if(typeof L === 'undefined') return;            // Leaflet noch nicht da → Loader ruft initMap erneut
   const el = document.getElementById('jobMap');
   if(!el) return;
-  if(leafMap){ leafMap.invalidateSize(); addMarkers(); return; }   // idempotent
-  if(el.querySelector('iframe')) el.innerHTML = '';               // evtl. Fallback-iframe entfernen
+  // (8) Debug-Ausgabe + (9) NICHT initialisieren, solange der Container 0×0 ist
+  console.log('[SR MAP] container size', el.offsetWidth, el.offsetHeight);
+  if(!el.offsetWidth || !el.offsetHeight){
+    clearTimeout(window._srMapRetry);
+    window._srMapRetry = setTimeout(initMap, 300);   // 300 ms später erneut versuchen
+    return;
+  }
+  if(leafMap){ leafMap.invalidateSize(true); addMarkers(); return; }   // idempotent
+  if(el.querySelector('iframe')) el.innerHTML = '';                    // evtl. Fallback-iframe entfernen
   leafMap=L.map('jobMap',{zoomControl:true,scrollWheelZoom:false}).setView([mapCenter.lat,mapCenter.lng],13);
   // OpenStreetMap-Standard-Tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
@@ -4993,10 +5000,24 @@ function initMap(){
   const r0=parseInt(document.getElementById('rSlider')?.value||5);
   radiusCircle=L.circle([mapCenter.lat,mapCenter.lng],{radius:r0*1000,color:'#0969da',fillColor:'#0969da',fillOpacity:.04,weight:1.5,dashArray:'6 4'}).addTo(leafMap);
   addMarkers();
-  // Mehrfaches invalidateSize → Karte bleibt nach Layout/Lazy-Render nicht grau/leer
-  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(); }, 60);
-  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(); }, 300);
-  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(); }, 800);
+  // Karte neu berechnen, sobald der Container seine echte Größe erreicht (echtes Leaflet UND Mini-Lib)
+  try {
+    if (window.ResizeObserver && !window._jobMapRO) {
+      window._jobMapRO = new ResizeObserver(function(){ if (leafMap && leafMap.invalidateSize) leafMap.invalidateSize(true); });
+      window._jobMapRO.observe(el);
+    }
+  } catch(e){}
+  // (5) Nach Map-Erstellung: rAF + setTimeout(500) → invalidateSize(true)
+  requestAnimationFrame(function(){
+    setTimeout(function(){
+      if(leafMap) leafMap.invalidateSize(true);
+      console.log('[SR MAP] after init size', el.offsetWidth, el.offsetHeight);
+    }, 500);
+  });
+  // Mehrfach gegen Lazy-Render / verzögertes Layout
+  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(true); }, 60);
+  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(true); }, 300);
+  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(true); }, 1200);
 }
 
 /* ── Standortfreigabe (Geolocation) ── */
@@ -5125,6 +5146,7 @@ function updateRadius(v){
   renderJobCards();
   addMarkers();
   if(radiusCircle) radiusCircle.setRadius(v*1000);
+  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(); }, 60);
   showToast(v + ' ' + T('unit.radius'), '');
 }
 
@@ -5147,6 +5169,7 @@ function filterJobs(){
   } else {
     showToast('⚠️ '+T('map.notfound'),'err');
   }
+  setTimeout(()=>{ if(leafMap) leafMap.invalidateSize(true); }, 60);
 }
 
 /* ══════════════════════════════════════════════════════
@@ -5273,6 +5296,12 @@ function bindAuthForms() {
 }
 function bindEventListeners() {
   bindAuthForms();
+  // Window resize → Karte neu berechnen (debounced)
+  var _rsz;
+  window.addEventListener('resize', function(){
+    clearTimeout(_rsz);
+    _rsz = setTimeout(function(){ if (leafMap && leafMap.invalidateSize) leafMap.invalidateSize(); }, 150);
+  });
   // Karte neu zeichnen wenn Jobs-Sektion sichtbar wird (z.B. beim Scrollen)
   const jobsSection = document.getElementById('jobs');
   if (jobsSection) {
@@ -5340,6 +5369,7 @@ function bindEventListeners() {
 
 document.addEventListener('DOMContentLoaded', initApp);
 document.addEventListener('DOMContentLoaded', bindAuthForms);
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ if (typeof leafMap!=='undefined' && leafMap) leafMap.invalidateSize(true); }, 400); });
 try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind right away
 // Extra safety: re-render map after all resources loaded
 window.addEventListener('load', () => {

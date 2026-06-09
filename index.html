@@ -5008,6 +5008,10 @@ function initMap(){
   // (5) Nach Map-Erstellung: rAF + Diagnose + mehrfaches invalidateSize(true)
   function _srBox(sel){var n=sel[0]==='#'?document.getElementById(sel.slice(1)):document.querySelector(sel);if(!n)return sel+':—';var r=n.getBoundingClientRect();return sel+' off='+n.offsetWidth+'x'+n.offsetHeight+' rect='+Math.round(r.width)+'x'+Math.round(r.height);}
   function _srFit(){ if(leafMap) leafMap.invalidateSize(true); }
+  // Real-Leaflet: nach Resize einmal neu zentrieren → entfernt evtl. Pane-Versatz
+  function _srRecenter(){ if(!leafMap) return; leafMap.invalidateSize(true);
+    try{ var z=leafMap.getZoom?leafMap.getZoom():(leafMap.zoom||13); leafMap.setView([mapCenter.lat,mapCenter.lng],z); }catch(e){} }
+  console.log('[SR MAP] leaflet lib:', (typeof L!=='undefined' && L.version) || '?');
   requestAnimationFrame(function(){
     setTimeout(function(){
       _srFit();
@@ -5016,7 +5020,9 @@ function initMap(){
     }, 500);
   });
   // Mehrfach gegen Lazy-Render / verzögertes Layout / langsame Fonts+Bilder
-  [60,300,1000,1200,2500].forEach(function(ms){ setTimeout(_srFit, ms); });
+  [60,300,1000,1200].forEach(function(ms){ setTimeout(_srFit, ms); });
+  setTimeout(_srRecenter, 1500);
+  setTimeout(_srRecenter, 2600);
 }
 
 /* ── Standortfreigabe (Geolocation) ── */

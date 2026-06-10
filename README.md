@@ -29,10 +29,21 @@ python3 -m http.server 8000
 laden PDFs aus `file://` aber nur im neuen Tab.
 
 ## Karte
-`assets/vendor/leaflet.js` ist **enthalten** – eine eigenständige, lokale Mini-Karten-
-Bibliothek (Pan/Zoom/Marker/Radius) mit OpenStreetMap-Tiles. Es wird **kein CDN** für die
-Karten-Lib geladen. Nur falls die lokale Datei fehlt, greift als Notfall ein CDN bzw. eine
-statische OSM-Karte. (Die Karten-*Tiles* kommen wie üblich von OpenStreetMap.)
+Die Karte nutzt **echtes Leaflet 1.9.4**, primär vom CDN (jsDelivr) geladen –
+**Skript UND Stylesheet** (`leaflet.css` ist zwingend nötig, sonst werden die Kacheln
+falsch positioniert). Als **Offline-Fallback** liegen `assets/vendor/leaflet.js`
+(eigenständige Mini-Karte) und `assets/vendor/leaflet.css` lokal bei; sie greifen nur,
+wenn das CDN nicht erreichbar ist. Die Karten-*Tiles* kommen von OpenStreetMap.
+
+In der Konsole zeigt `[SR MAP] leaflet lib:` an, welche Bibliothek aktiv ist
+(`1.9.4` = echtes Leaflet vom CDN, `service-radar-mini-1.0` = lokaler Fallback).
+
+## Rechtstexte
+Impressum, AGB, Datenschutzerklärung, Nutzungsbedingungen und Cookie-Richtlinie sind
+**vollständig als HTML in `index.html` eingebettet** – keine externen PDF-Dateien nötig.
+Über „🖨️ Drucken / als PDF speichern" erzeugt der Browser bei Bedarf ein PDF.
+Der `assets/`-Ordner ist damit **optional**; die Seite läuft aus `index.html`,
+`config.js` und `supabase.js` allein.
 
 ## Sprache
 DE/EN-Umschalter oben rechts (und im Mobile-Menü). Die Auswahl wird in

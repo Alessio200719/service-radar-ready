@@ -10,7 +10,7 @@
   <meta http-equiv="Content-Security-Policy"
         content="default-src 'self';
                  script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net;
-                 style-src 'self' 'unsafe-inline';
+                 style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
                  img-src 'self' data: https://*.tile.openstreetmap.org;
                  connect-src 'self' https://api.stripe.com https://*.tile.openstreetmap.org;
                  frame-src https://js.stripe.com https://www.openstreetmap.org;
@@ -23,8 +23,8 @@
 <!-- Google Fonts removed: use local fonts for DSGVO compliance -->
 
 <!-- Inter font loaded locally or via system-ui fallback (DSGVO compliance) -->
-<!-- Leaflet stylesheet is hosted locally (assets/vendor/leaflet.css). No external CDN. -->
-  <link rel="stylesheet" href="assets/vendor/leaflet.css">
+<!-- Leaflet stylesheet from CDN (zwingend nötig, sonst positioniert echtes Leaflet die Kacheln falsch). Offline-Fallback ist die lokale Mini-Karte in assets/vendor/leaflet.js – die braucht KEIN separates Stylesheet. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
   <!-- Supabase config (window.__ENV, no build needed) + SDK (UMD) + data layer, as CLASSIC scripts (also work from file://). Public anon key only. -->
   <script src="config.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -1523,7 +1523,7 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="imp-box" id="impressum-box">
       <h2>Impressum</h2>
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <p class="imp-sub" style="margin:0">Nachfolgend die HTML-Version · <a onclick="openLegalDocument('impressum')" style="color:var(--c-blue);cursor:pointer;font-weight:600">📄 Impressum als PDF öffnen →</a></p>
+        <p class="imp-sub" style="margin:0">Vollständige, rechtsverbindliche Fassung · <a onclick="printLegal('impressum')" style="color:var(--c-blue);cursor:pointer;font-weight:600">🖨️ Drucken / als PDF speichern</a></p>
       </div>
       <p class="imp-sub">Pflichtangaben gemäß § 5 DDG (Digitale-Dienste-Gesetz) i.V.m. § 25 MStV</p>
 
@@ -1590,7 +1590,7 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="imp-box" id="agb-box" style="display:none">
       <h2>Allgemeine Geschäftsbedingungen (AGB)</h2>
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <p class="imp-sub" style="margin:0">Nachfolgend die HTML-Version · <a onclick="openLegalDocument('agb')" style="color:var(--c-blue);cursor:pointer;font-weight:600">📄 AGB als PDF öffnen →</a></p>
+        <p class="imp-sub" style="margin:0">Vollständige, rechtsverbindliche Fassung · <a onclick="printLegal('agb')" style="color:var(--c-blue);cursor:pointer;font-weight:600">🖨️ Drucken / als PDF speichern</a></p>
       </div>
       <p class="imp-sub">Stand: Juni 2026 · Version 2026-01 · Service Radar<br>Betreiber: Alessio Cicatello · Am Schäferplatz 3 · 73734 Esslingen am Neckar</p>
 
@@ -1763,7 +1763,7 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="imp-box" id="datenschutz-box" style="display:none">
       <h2>Datenschutzerklärung</h2>
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <p class="imp-sub" style="margin:0">Nachfolgend die HTML-Version · <a onclick="openLegalDocument('datenschutz')" style="color:var(--c-blue);cursor:pointer;font-weight:600">📄 Datenschutz als PDF öffnen →</a></p>
+        <p class="imp-sub" style="margin:0">Vollständige, rechtsverbindliche Fassung · <a onclick="printLegal('datenschutz')" style="color:var(--c-blue);cursor:pointer;font-weight:600">🖨️ Drucken / als PDF speichern</a></p>
       </div>
       <p class="imp-sub">Gemäß DSGVO (EU) 2016/679, BDSG 2018 und TTDSG · Stand: Juni 2026</p>
 
@@ -1886,7 +1886,7 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="imp-box" id="nutzung-box" style="display:none">
       <h2>Nutzungsbedingungen &amp; Community-Richtlinien</h2>
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <p class="imp-sub" style="margin:0">Nachfolgend die HTML-Version · <a onclick="openLegalDocument('nutzung')" style="color:var(--c-blue);cursor:pointer;font-weight:600">📄 Nutzungsbedingungen als PDF öffnen →</a></p>
+        <p class="imp-sub" style="margin:0">Vollständige, rechtsverbindliche Fassung · <a onclick="printLegal('nutzung')" style="color:var(--c-blue);cursor:pointer;font-weight:600">🖨️ Drucken / als PDF speichern</a></p>
       </div>
       <p class="imp-sub">Ergänzende Verhaltensregeln · Stand: Juni 2026 · Version 2026-01</p>
 
@@ -1986,7 +1986,7 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="imp-box" id="cookie-box" style="display:none">
       <h2>Cookie-Richtlinie</h2>
       <div style="margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-        <p class="imp-sub" style="margin:0">Nachfolgend die HTML-Version · <a onclick="openLegalDocument('cookie')" style="color:var(--c-blue);cursor:pointer;font-weight:600">📄 Cookie-Richtlinie als PDF öffnen →</a></p>
+        <p class="imp-sub" style="margin:0">Vollständige, rechtsverbindliche Fassung · <a onclick="printLegal('cookie')" style="color:var(--c-blue);cursor:pointer;font-weight:600">🖨️ Drucken / als PDF speichern</a></p>
       </div>
       <p class="imp-sub">Gemäß § 25 TTDSG und Art. 6 DSGVO · Stand: Juni 2026</p>
 
@@ -2034,7 +2034,7 @@ html[lang="en"] #legal-de-note{display:block}
         <h3>4. Drittanbieter-Datenübertragungen</h3>
         <p>– <strong>OpenStreetMap:</strong> Beim Laden der Kartenkacheln (Map-Tiles) wird die IP-Adresse an die OpenStreetMap-Server (openstreetmap.org) übertragen. Dies erfolgt nur, wenn die interaktive Karte geladen wird.<br><br>
         – <strong>Schriftarten:</strong> Es werden keine externen Schriftdienste (z. B. Google Fonts) verwendet; es kommen ausschließlich lokale bzw. System-Schriftarten zum Einsatz.<br>
-        – <strong>Leaflet.js:</strong> Die Kartenbibliothek wird vorrangig lokal vom eigenen Server ausgeliefert. Ist die lokale Datei nicht vorhanden, wird sie ersatzweise von einem CDN (jsDelivr, cdn.jsdelivr.net) geladen – dabei wird die IP-Adresse an das CDN übertragen.<br><br>
+        – <strong>Leaflet.js:</strong> Die Kartenbibliothek (Leaflet) und ihr Stylesheet werden von einem CDN (jsDelivr, cdn.jsdelivr.net) geladen – dabei wird die IP-Adresse an das CDN übertragen. Fällt das CDN aus, wird ersatzweise eine lokal gehostete Kopie genutzt.<br><br>
         – <strong>Supabase</strong> (Authentifizierung &amp; Datenbank, Betreiber: Supabase Inc.): Profil-, Auftrags-, Bewerbungs- und Chat-Daten werden zur Vertragserfüllung bei Supabase verarbeitet (Art. 6 Abs. 1 lit. b DSGVO). Beim Laden des Supabase-SDK (CDN) sowie bei API-Aufrufen wird die IP-Adresse an Supabase übertragen. Es wird ausschließlich der öffentliche Anon-Key verwendet; der Zugriff ist über Row-Level-Security abgesichert.<br><br>
         Die Kartenkachel-Übertragung erfolgt auf Basis von Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an technisch einwandfreiem Betrieb). Nutzer können sie durch Nutzung des Dienstes ohne interaktive Karte einschränken.</p>
       </div>
@@ -2669,8 +2669,8 @@ html[lang="en"] #legal-de-note{display:block}
   // 1) lokal  2) CDN (jsDelivr)  3) statische OSM-Karte
   // Lokale Karten-Lib zuerst (KEIN CDN, da Datei vorhanden). Nur falls sie fehlt:
   // CDN als Notfall, dann statische OSM-Karte.
-  loadScript('assets/vendor/leaflet.js', boot, function(){
-    loadScript('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js', boot, staticFallback);
+  loadScript('https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js', boot, function(){
+    loadScript('assets/vendor/leaflet.js', boot, staticFallback);   // lokaler Fallback, falls CDN nicht erreichbar
   });
 })();
 </script>
@@ -4733,7 +4733,7 @@ function openLegalDocument(type) {
   const doc = { title: (cfg.title && (cfg.title[LANG]||cfg.title.de)) || '', pdf: cfg.pdf, htmlBox: cfg.htmlBox };
 
   // Kein PDF vorhanden → direkt HTML-Version zeigen
-  if (!doc.pdf) { showLegalHtml(type); return; }
+  showLegalHtml(type); return;   // Rechtstexte sind vollständig inline (HTML) eingebettet – keine externe PDF nötig (funktioniert offline / ohne assets-Ordner)
 
   // PDF-Modal
   const titleEl  = document.getElementById('pdf-modal-title');
@@ -4781,6 +4781,30 @@ function openLegalDocument(type) {
     const mobileHref = document.getElementById('pdf-mobile-href');
     if (mobileHref) mobileHref.href = doc.pdf;
   }
+}
+
+/* Druckbare Fassung im Browser erzeugen (Cmd/Ctrl+P -> "Als PDF sichern"),
+   ganz ohne gehostete PDF-Datei – funktioniert auch offline. */
+function printLegal(type) {
+  const cfg = (typeof LEGAL_DOCS!=='undefined') && LEGAL_DOCS[type]; if (!cfg) return;
+  const box = document.getElementById(cfg.htmlBox || (type + '-box'));
+  if (!box) return;
+  const clone = box.cloneNode(true);
+  clone.querySelectorAll('a[onclick]').forEach(a => { const p=a.closest('.imp-sub'); if (p) p.remove(); else a.remove(); });
+  const title = (cfg.title && (cfg.title[LANG] || cfg.title.de)) || 'Service Radar';
+  const w = window.open('', '_blank');
+  if (!w) { showToast(LANG==='de' ? 'Bitte Pop-ups erlauben, um zu drucken.' : 'Please allow pop-ups to print.','err'); return; }
+  w.document.write(
+    '<!doctype html><html lang="'+LANG+'"><head><meta charset="utf-8"><title>'+title+' \u2013 Service Radar</title>'+
+    '<style>body{font:15px/1.6 -apple-system,Segoe UI,Roboto,system-ui,sans-serif;color:#1a1d23;max-width:780px;margin:32px auto;padding:0 20px}'+
+    'h2{font-size:22px;margin:0 0 16px}h3{font-size:16px;margin:22px 0 6px}p{margin:0 0 10px}a{color:#0969da}'+
+    'strong{font-weight:700}.imp-sub{color:#666;font-size:13px}.imp-blk{margin-bottom:14px}</style></head><body>'+
+    clone.innerHTML+
+    '<hr style="margin:28px 0;border:none;border-top:1px solid #ddd"><p class="imp-sub">service-radar.com \u00b7 info@service-radar.com</p>'+
+    '</body></html>'
+  );
+  w.document.close(); w.focus();
+  setTimeout(function(){ try { w.print(); } catch(e){} }, 350);
 }
 
 function showPdfFallback(doc) {

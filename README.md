@@ -109,6 +109,19 @@ Nach Klick im Bestätigungs-Mail landet der Nutzer wieder auf Service Radar und 
 > Sicherheit: Im Frontend wird **ausschließlich der Anon-Key** verwendet (öffentlich,
 > dafür vorgesehen). Der `service_role`-Key gehört **niemals** ins Frontend/Repo.
 
+## Zahlung (Stripe Checkout)
+Die Inseratsgebühr (2,00 €, Produkt „Service Radar Inseratsgebühr") läuft über
+**echtes Stripe Checkout**. Der Auftrag wird **erst nach bestätigter Zahlung** in
+Supabase als `active` gespeichert – kein Direkt-Veröffentlichen, kein Fake-Payment.
+
+Serverseitige Vercel-Functions (im Ordner `api/`):
+- `POST /api/create-checkout-session` – erstellt die Stripe-Session (Preis fix serverseitig).
+- `GET  /api/verify-checkout-session` – prüft, ob wirklich bezahlt wurde.
+- `POST /api/stripe-webhook` – optional (`checkout.session.completed`).
+
+Pflicht-ENV in Vercel: **`STRIPE_SECRET_KEY`** (nur serverseitig, nie im Frontend!).
+Details und Schritt-für-Schritt: siehe `DEPLOY-CHECKLIST.md`.
+
 ## Deployment auf Vercel
 Die Seite ist eine **statische** Site (kein Build nötig).
 - **New Project → Framework Preset: „Other“**, Root = dieser Ordner, kein Build-Command, Output = `.`.

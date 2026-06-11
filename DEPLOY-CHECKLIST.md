@@ -1,45 +1,71 @@
-# Service Radar – Deploy (jetzt super einfach)
+# Service Radar – Deploy & Stripe-Setup
 
-## TL;DR
-**Du musst nur die neue `index.html` deployen.** Sonst nichts. Karte und Rechtstexte
-funktionieren jetzt ohne den `assets/`-Ordner.
+## Was jetzt deployt werden muss
+Seit der echten Stripe-Integration gehören **zusätzlich** zum Repo:
 
----
+```
+service-radar/
+├─ index.html
+├─ config.js
+├─ supabase.js
+├─ package.json          ← NEU (lässt Vercel "stripe" installieren)
+└─ api/                  ← NEU (Vercel Serverless Functions)
+   ├─ create-checkout-session.js
+   ├─ verify-checkout-session.js
+   └─ stripe-webhook.js  (optional)
+```
 
-## Warum es jetzt einfach ist
-Deine Konsole zeigte: `index.html`, `config.js`, `supabase.js` laden bereits korrekt
-(„[SR] Supabase client initialised"). Nur der `assets/`-Unterordner war 404. Deshalb ist
-die Seite jetzt so umgebaut, dass sie **nichts mehr aus `assets/` braucht**:
+> Wichtig: `package.json` und der ganze `api/`-Ordner **müssen** mit ins Repo /
+> Deployment. (Der `assets/`-Ordner bleibt optional – Karte & Rechtstexte brauchen ihn nicht.)
 
-- **Karte:** Leaflet (Skript + Stylesheet) kommt vom CDN (jsDelivr). Kein lokaler Ordner nötig.
-- **Rechtstexte (Impressum, AGB, Datenschutz, Nutzungsbedingungen, Cookie-Richtlinie):**
-  sind jetzt **vollständig als HTML in der `index.html` eingebettet**. Kein PDF, keine
-  externe Datei. Über „🖨️ Drucken / als PDF speichern" kann sich jeder die Dokumente
-  direkt im Browser als PDF sichern.
-
-Damit sind die einzigen nötigen Dateien: **`index.html`, `config.js`, `supabase.js`** –
-und die werden bei dir ja schon ausgeliefert.
-
----
-
-## Schritte
-1. Die neue **`index.html`** in dein Repo übernehmen (die anderen beiden Dateien sind schon online).
-2. Push → Vercel deployt automatisch.
-3. Seite mit **Cmd+Shift+R** (Hard-Reload) öffnen.
-
-## Kurz prüfen
-In der Browser-Konsole sollte stehen:
-- `[SR MAP] leaflet lib: 1.9.4` → Karte aktiv
-- `[SR MAP] boxes: … #jobMap off=…x…` → Container > 0
-- **keine** `404`-Zeilen mehr (auch nicht für `assets/vendor/leaflet.js`)
-
-Karte füllt die linke Fläche, Footer-Links (Impressum/AGB/…) öffnen die Texte direkt
-auf der Seite. ✅
+Vercel-Einstellungen: **Framework Preset „Other"**, **kein Build Command**,
+Output `.`. Vercel erkennt `/api/*.js` automatisch als Functions und installiert
+die Abhängigkeiten aus `package.json`.
 
 ---
 
-## Optional (nur falls du später willst)
-Den `assets/`-Ordner brauchst du **nicht** mehr. Wenn du ihn trotzdem online haben willst
-(z. B. eigene Offline-Kopie von Leaflet oder die ursprünglichen PDFs), lade den kompletten
-`assets/`-Ordner per GitHub-Upload oder `git add assets` mit hoch. Für den Betrieb ist das
-aber nicht erforderlich.
+## Stripe einrichten (einmalig)
+1. **Stripe-Konto** → Dashboard.
+2. **API-Keys** holen: Developers → API keys.
+   - Secret Key (`sk_live_…` bzw. zum Testen `sk_test_…`).
+3. In **Vercel → Project → Settings → Environment Variables** eintragen:
+   - `STRIPE_SECRET_KEY` = dein Secret Key  ← **nur hier, niemals im Frontend!**
+   - (optional) `SITE_URL` = `https://service-radar.com`
+4. **Redeploy** (Vercel → Deployments → Redeploy), damit die Variablen aktiv werden.
+
+Das war's für die Zahlung. Der Publishable Key wird in diesem Ablauf (gehosteter
+Stripe-Checkout per Weiterleitung) **nicht** im Frontend benötigt.
+
+### Optional: Webhook (zusätzliche Absicherung)
+Nur falls gewünscht (der Auftrag wird auch ohne Webhook nach bestätigter Zahlung
+veröffentlicht):
+1. Stripe → Developers → **Webhooks** → Endpoint `https://service-radar.com/api/stripe-webhook`,
+   Event **`checkout.session.completed`**.
+2. ENV setzen: `STRIPE_WEBHOOK_SECRET=whsec_…` (und für serverseitiges Veröffentlichen
+   zusätzlich `PUBLISH_VIA_WEBHOOK=true`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`).
+
+---
+
+## Ablauf (so funktioniert es jetzt)
+1. Auftraggeber füllt den Auftrag aus.
+2. Letzter Schritt **veröffentlicht NICHT** – Klick auf „🔒 Jetzt 2,00 € bezahlen"
+   leitet zur **gehosteten Stripe-Bezahlseite** weiter (Produkt „Service Radar
+   Inseratsgebühr", 2,00 €).
+3. **Zahlung erfolgreich** → Rückkehr auf `…/?sr_pay=success` → der Server bestätigt
+   per `/api/verify-checkout-session`, dass wirklich bezahlt wurde → **erst dann**
+   wird der Auftrag in Supabase als `active` gespeichert und erscheint live.
+4. **Zahlung abgebrochen** → Rückkehr auf `…/?sr_pay=cancel` → Meldung
+   „Zahlung abgebrochen", **kein** Auftrag wird veröffentlicht.
+
+Kein Demo-Modus, kein Fake-Payment, kein Auftrag ohne Zahlung.
+
+---
+
+## Test
+- **Stripe-Testmodus:** `sk_test_…` als `STRIPE_SECRET_KEY`. Testkarte **4242 4242
+  4242 4242**, beliebiges zukünftiges Datum, beliebige CVC/PLZ.
+- Auftrag ausfüllen → bezahlen → nach „erfolgreich" erscheint der Auftrag auf Karte/Liste.
+- Test „Abbrechen" in Stripe → zurück auf die Seite, Meldung „Zahlung abgebrochen", kein Auftrag.
+- Konsole: keine `404`, `[SR MAP] leaflet lib: 1.9.4`.
+
+> Erst wenn alles im Testmodus klappt, auf `sk_live_…` umstellen (echtes Geld!).

@@ -1779,8 +1779,8 @@ html[lang="en"] #legal-de-note{display:block}
 
       <div class="imp-blk">
         <h3>2. Verarbeitungsübersicht nach Funktion</h3>
-        <p><strong>Registrierung:</strong> E-Mail-Adresse, Vorname, Nachname, Geburtsdatum, Passwort (im Produktivbetrieb gehasht; Demo-Phase: clientseitig im Browser-LocalStorage, keine Serverübertragung), Nutzerrolle, Zeitstempel der AGB-Zustimmung (mit Versionsnummer), Zeitstempel der Datenschutzeinwilligung, IP-Adresse bei Registrierung.<br><br>
-        <strong>Login:</strong> E-Mail-Adresse, Passwort (Demo: Klartext-Abgleich im Browser; Produktion: Hashed), IP-Adresse, Login-Zeitstempel, Anzahl fehlgeschlagener Login-Versuche (Brute-Force-Schutz).<br><br>
+        <p><strong>Registrierung:</strong> E-Mail-Adresse, Vorname, Nachname, Geburtsdatum, Passwort (serverseitig über Supabase Auth gehasht gespeichert, niemals im Klartext), Nutzerrolle, Zeitstempel der AGB-Zustimmung (mit Versionsnummer), Zeitstempel der Datenschutzeinwilligung, IP-Adresse bei Registrierung.<br><br>
+        <strong>Login:</strong> E-Mail-Adresse, Passwort (serverseitig über Supabase Auth geprüft, niemals im Klartext gespeichert), IP-Adresse, Login-Zeitstempel, Anzahl fehlgeschlagener Login-Versuche (Brute-Force-Schutz).<br><br>
         <strong>Inserate:</strong> Titel, Beschreibung, Einsatzort (Adresse/Koordinaten), Vergütung, Datum, Kategorie, Poster-ID, Zeitstempel, Statusangaben (pending/active/flagged).<br><br>
         <strong>Bewerbungen:</strong> Helfer-ID, Auftraggeber-ID, Job-ID, Bewerbungsnachricht, Zeitstempel.<br><br>
         <strong>Chat:</strong> Nachrichten-Inhalte, Sender-ID, Empfänger-ID, Chat-ID, Job-Bezug, Zeitstempel, Lesestatus.<br><br>
@@ -1807,7 +1807,7 @@ html[lang="en"] #legal-de-note{display:block}
         (4) <strong>Technische Protokolldaten (Server-Logs, IP-Adressen):</strong> Maximal 7 Tage, danach automatische Löschung.<br><br>
         (5) <strong>Chat-Nachrichten:</strong> 90 Tage nach Abschluss des zugrundeliegenden Auftrags, danach automatische Löschung. Bei laufendem Auftrag bleibt der Chat erhalten.<br><br>
         (6) <strong>Inserate:</strong> Aktive Inserate bleiben bis zur Löschung durch den Auftraggeber oder bis zur automatischen Archivierung nach 90 Tagen Inaktivität gespeichert. Archivierte Inserate werden nach weiteren 30 Tagen gelöscht.<br><br>
-        (7) <strong>Browser-LocalStorage (Demo-Phase):</strong> In der aktuellen Betriebsphase werden Daten clientseitig im Browser des Nutzers gespeichert. Diese Daten verbleiben auf dem Endgerät des Nutzers und werden nicht an Server des Betreibers übermittelt. Die serverseitige Persistenz erfolgt erst nach Einführung des Backend-Systems.</p>
+        (7) <strong>Serverseitige Speicherung (Supabase):</strong> Nutzerkonten, Aufträge, Bewerbungen und Chat-Nachrichten werden bei unserem Auftragsverarbeiter Supabase gespeichert. Im Browser werden nur technisch notwendige Einstellungen (z. B. gewählte Sprache und Login-Session) abgelegt.</p>
       </div>
 
       <div class="imp-blk">
@@ -2017,7 +2017,7 @@ html[lang="en"] #legal-de-note{display:block}
             <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_bans / sr_warns_*</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Sperr- und Verwarndaten (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
             <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">__stripe_*</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Betrugsschutz bei Stripe-Zahlungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Session</td></tr>
             <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">applications (Supabase)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bewerbungen – serverseitig in Supabase gespeichert</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
-            <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_ratings</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Nutzerbewertungen (Demo-Phase)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">90 Tage nach Auftragsende</td></tr>
+            <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_ratings</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Nutzerbewertungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">90 Tage nach Auftragsende</td></tr>
             <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_reports</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Gemeldete Inhalte/Nutzer (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
             <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">rl_* (Rate-Limit-Keys)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Missbrauchsprävention (Rate Limiting)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">1–24 Stunden</td></tr>
           </tbody>
@@ -2338,8 +2338,8 @@ html[lang="en"] #legal-de-note{display:block}
           </div>
           <button class="pay-btn-main" id="pay-main-btn" onclick="initPayment()" data-i18n="pay.btn">🔒 Jetzt 2,00 € bezahlen</button>
           <p style="text-align:center;font-size:11.5px;color:var(--c-ink4);margin-top:10px;line-height:1.6"><span data-i18n="pay.legal.pre">Mit der Zahlung akzeptierst du unsere</span> <a href="#impressum" onclick="showLegal('agb-box')" style="color:var(--c-blue)" data-i18n="auth.agb.link">AGB</a> <span data-i18n="auth.reg.legal.and">und</span> <a href="#impressum" onclick="showLegal('datenschutz-box')" style="color:var(--c-blue)" data-i18n="foot.privacy">Datenschutzerklärung</a>.</p>
-          <div style="background:#fff8c5;border:1.5px solid #e3b341;border-radius:var(--r1);padding:12px 14px;margin-top:10px;font-size:12.5px;color:#9a6700;line-height:1.6;text-align:center">
-            🛠️ <strong data-i18n="pay.demo.t">Demo-Modus:</strong> <span data-i18n="pay.demo.p">Es wird keine echte Zahlung verarbeitet. Im Produktivbetrieb erfolgt die Zahlung über Stripe Payments Europe, Ltd.</span>
+          <div style="background:var(--c-bg1);border:1px solid var(--c-bd);border-radius:var(--r1);padding:12px 14px;margin-top:10px;font-size:12.5px;color:var(--c-ink3);line-height:1.6;text-align:center">
+            <strong data-i18n="pay.secure.t">🔒 Sichere Zahlung über Stripe</strong><br><span data-i18n="pay.secure.p">Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet. Dein Auftrag wird erst nach erfolgreicher Zahlung veröffentlicht.</span>
           </div>
           <div style="display:flex;gap:10px;margin-top:16px">
             <button class="btn btn-outline" style="flex:1" onclick="goPostStep(3)" data-i18n="post.back">← Zurück</button>
@@ -2435,7 +2435,7 @@ html[lang="en"] #legal-de-note{display:block}
           <div class="pay-trust-item" data-i18n="pay.trust.once">✅ Einmalig, kein Abo</div>
         </div>
         <button class="pay-btn-main" id="rp-pay-btn" onclick="initResumePayment()" data-i18n="pay.btn">🔒 Jetzt 2,00 € bezahlen</button>
-        <p class="pay-demo-note" data-i18n="rp.demo">🛠️ Demo-Modus – keine echte Zahlung</p>
+        <p class="pay-demo-note" data-i18n="rp.demo">🔒 Sichere Zahlung über Stripe</p>
       </div>
 
       <div id="rp-processing" style="display:none" class="success-screen">
@@ -2740,6 +2740,14 @@ const I18N = {
   'toast.loggedout':   {de:'Abgemeldet.', en:'Signed out.'},
   'toast.rating.saved':{de:'⭐ Bewertung gespeichert. Danke!', en:'⭐ Rating saved. Thank you!'},
   'toast.pay.success': {de:'✅ Zahlung erfolgreich – Auftrag ist jetzt live!', en:'✅ Payment successful – your job is now live!'},
+  'toast.pay.redirect': {de:'Weiterleitung zu Stripe …', en:'Redirecting to Stripe …'},
+  'toast.pay.verify':   {de:'Zahlung wird geprüft …', en:'Verifying payment …'},
+  'toast.pay.cancelled':{de:'Zahlung abgebrochen – es wurde kein Auftrag veröffentlicht.', en:'Payment cancelled – no job was published.'},
+  'toast.pay.notpaid':  {de:'❌ Zahlung nicht bestätigt – Auftrag wurde nicht veröffentlicht.', en:'❌ Payment not confirmed – job was not published.'},
+  'toast.pay.error':    {de:'❌ Zahlung konnte nicht gestartet werden. Bitte erneut versuchen.', en:'❌ Could not start payment. Please try again.'},
+  'toast.pay.loginfirst':{de:'Bitte melde dich an, um den bezahlten Auftrag zu veröffentlichen.', en:'Please log in to publish the paid job.'},
+  'pay.secure.t': {de:'🔒 Sichere Zahlung über Stripe', en:'🔒 Secure payment via Stripe'},
+  'pay.secure.p': {de:'Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet. Dein Auftrag wird erst nach erfolgreicher Zahlung veröffentlicht.', en:'You will be redirected to Stripe’s secure checkout. Your job is published only after a successful payment.'},
   'toast.post.succ':   {de:'✅ Auftrag erfolgreich veröffentlicht!', en:'✅ Job published successfully!'},
   'toast.acc.deleted': {de:'✅ Konto gelöscht.', en:'✅ Account deleted.'},
   'toast.email.mismatch':{de:'❌ E-Mail stimmt nicht überein.', en:'❌ Email does not match.'},
@@ -3039,8 +3047,8 @@ const I18N = {
   'pay.consent.stripe.post':{de:'zu.', en:'.'},
   'pay.btn':    {de:'🔒 Jetzt 2,00 € bezahlen', en:'🔒 Pay €2.00 now'},
   'pay.legal.pre':{de:'Mit der Zahlung akzeptierst du unsere', en:'By paying you accept our'},
-  'pay.demo.t': {de:'🛠️ Demo-Modus:', en:'🛠️ Demo mode:'},
-  'pay.demo.p': {de:'Es wird keine echte Zahlung verarbeitet. Im Produktivbetrieb erfolgt die Zahlung über Stripe Payments Europe, Ltd.', en:'No real payment is processed. In production, payment is handled via Stripe Payments Europe, Ltd.'},
+  'pay.demo.t': {de:'🔒 Sichere Zahlung über Stripe', en:'🔒 Secure payment via Stripe'},
+  'pay.demo.p': {de:'Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet.', en:'You will be redirected to Stripe’s secure checkout.'},
   'pay.proc.t': {de:'Zahlung wird verarbeitet…', en:'Processing payment…'},
   'pay.proc.p': {de:'Bitte warte einen Moment.', en:'Please wait a moment.'},
   'pay.connect':{de:'Verbinde mit Zahlungsanbieter…', en:'Connecting to payment provider…'},
@@ -3056,7 +3064,7 @@ const I18N = {
   'rp.fee.desc':{de:'Einmalig · Sofort aktiv nach Zahlung', en:'One-time · Active immediately after payment'},
   'rp.warn.t':  {de:'Ausstehende Zahlung:', en:'Pending payment:'},
   'rp.warn.p':  {de:'Dein Auftrag ist noch nicht öffentlich sichtbar. Schließe die Zahlung ab, um ihn zu veröffentlichen.', en:'Your job is not publicly visible yet. Complete payment to publish it.'},
-  'rp.demo':    {de:'🛠️ Demo-Modus – keine echte Zahlung', en:'🛠️ Demo mode – no real payment'},
+  'rp.demo':    {de:'🔒 Sichere Zahlung über Stripe', en:'🔒 Secure payment via Stripe'},
 
   /* — Chat — */
   'chat.empty.h':{de:'Noch keine Chats', en:'No chats yet'},
@@ -4382,19 +4390,9 @@ function initResumePayment() {
   const pp  = document.getElementById('rp-processing');
   if (btn) { btn.disabled=true; btn.innerHTML=`<span class="spin"></span> ${T('pay.connect2')}`; }
 
-  // ── STRIPE INTEGRATIONSPUNKT (Resume) ─────────────
-  // Gleiche Logik wie initPayment() – Backend erstellt
-  // neue Checkout Session für den pending job.id
-  // ──────────────────────────────────────────────────
-
-  setTimeout(() => {
-    if (ps) ps.style.display = 'none';
-    if (pp) pp.style.display = 'block';
-    setTimeout(() => {
-      demoPaymentSuccess();
-      closeModal('modal-resume-pay');
-    }, 1800);
-  }, 1000);
+  showToast(T('toast.pay.redirect'));
+  const _job = (typeof getJobById === 'function') ? getJobById(APP.pendingPayJobId) : null;
+  startStripeCheckout({ kind:'resume', jobId: APP.pendingPayJobId, jobTitle: _job ? jobTitle(_job) : '', btn });
 }
 function openJobDetail(id){
   // Normalize ID (handle string/number mismatch)
@@ -4576,7 +4574,7 @@ function goPostStep(n){
     const jlat=mapCenter.lat+(Math.random()-.5)*.018;
     const jlng=mapCenter.lng+(Math.random()-.5)*.018;
     const ploc=sanitize(document.getElementById('p-loc').value.trim(),150);
-    // The job is created in Supabase AFTER the (demo) payment succeeds.
+    // Der Auftrag wird NICHT hier gespeichert – erst nach erfolgreicher Stripe-Zahlung (siehe handlePaymentReturn).
     APP._pendingJobPayload={
       user_id: APP.user.id,
       title: t, description: d, category: APP.postCat,
@@ -4873,42 +4871,14 @@ function selectPayMethod(method) {
   });
 }
 
-/* ─── Payment-Initiierung (Demo / Stripe-Hook) ──── */
-/*
- * ╔══════════════════════════════════════════════════════╗
- * ║  STRIPE CHECKOUT – INTEGRATIONSPUNKT               ║
- * ║                                                      ║
- * ║  Aktuell: Demo-Simulation mit setTimeout()           ║
- * ║                                                      ║
- * ║  Produktiv mit Stripe (Schritt für Schritt):         ║
- * ║                                                      ║
- * ║  1. Job wird als pending gespeichert (bereits so)    ║
- * ║  2. Frontend ruft euren Backend-Endpoint auf:        ║
- * ║     POST /api/create-checkout-session                ║
- * ║     Body: { jobId, amount: 200, currency: 'eur' }    ║
- * ║  3. Backend erstellt Stripe Checkout Session:        ║
- * ║     stripe.checkout.sessions.create({                ║
- * ║       payment_method_types: ['card','paypal','sepa'],║
- * ║       line_items: [{ price_data: {                   ║
- * ║         currency: 'eur',                             ║
- * ║         product_data: { name: 'Inseratsgebühr' },   ║
- * ║         unit_amount: 200 }, quantity: 1 }],          ║
- * ║       mode: 'payment',                               ║
- * ║       success_url: '/success?jobId={jobId}',         ║
- * ║       cancel_url:  '/cancel',                        ║
- * ║       metadata: { jobId, userEmail }                 ║
- * ║     })                                               ║
- * ║  4. Frontend leitet weiter: window.location.href     ║
- * ║     = session.url  (Stripe hosted page)              ║
- * ║  5. Stripe Webhook (checkout.session.completed)      ║
- * ║     → Backend setzt job.status = 'active',           ║
- * ║       job.paymentStatus = 'paid'                     ║
- * ║  6. /success-Seite ruft GET /api/jobs/:id auf        ║
- * ║     → Job ist jetzt active und sichtbar              ║
- * ╚══════════════════════════════════════════════════════╝
+/* ─── Zahlung starten (echter Stripe Checkout) ────
+ * Server: POST /api/create-checkout-session  → Stripe Hosted Checkout (2,00 €)
+ * Rückkehr: ?sr_pay=success → /api/verify-checkout-session → erst dann
+ *           wird der Auftrag in Supabase als 'active' gespeichert.
+ *           ?sr_pay=cancel  → nichts wird veröffentlicht.
  */
 function initPayment() {
-  // Check legal consent checkboxes
+  // Pflicht-Einwilligungen
   const c1 = document.getElementById('pay-consent-widerruf');
   const c2 = document.getElementById('pay-consent-stripe');
   if (c1 && !c1.checked) { showToast(T('toast.pay.consent'), 'err'); c1.closest('.check-row')?.scrollIntoView({behavior:'smooth',block:'center'}); return; }
@@ -4919,59 +4889,102 @@ function initPayment() {
   const pp  = document.getElementById('pay-processing');
   if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spin"></span> ${T('pay.connect')}`; }
 
-  // ── STRIPE INTEGRATIONSPUNKT ──────────────────────
-  // Im Produktivbetrieb hier ersetzen mit:
-  //
-  // const job = getJobById(APP.pendingPayJobId);
-  // const res = await fetch('/api/create-checkout-session', {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({
-  //     jobId:     job.id,
-  //     jobTitle:  jobTitle(job),
-  //     amount:    200,          // 2,00 € in Cent
-  //     currency:  'eur',
-  //     userEmail: APP.user.email,
-  //     method:    selectedPayMethod,  // 'card' | 'paypal' | 'sepa'
-  //   })
-  // });
-  // const { sessionUrl } = await res.json();
-  // window.location.href = sessionUrl;   // → Stripe Hosted Checkout
-  // ─────────────────────────────────────────────────
+  if (!APP.user) { showToast(T('toast.pay.loginfirst'), 'err'); if (btn) { btn.disabled=false; btn.innerHTML=T('pay.btn'); } return; }
+  if (!APP._pendingJobPayload) { showToast(T('toast.postfields'), 'err'); if (btn) { btn.disabled=false; btn.innerHTML=T('pay.btn'); } return; }
 
-  // DEMO: Simulate network + payment processing delay
-  setTimeout(() => {
-    if (ps) ps.style.display = 'none';
-    if (pp) pp.style.display = 'block';
-
-    // Simulate Stripe Webhook confirmation (1.8s after redirect simulation)
-    setTimeout(() => {
-      demoPaymentSuccess();
-    }, 1800);
-  }, 1000);
+  // Auftrag wird NICHT direkt veröffentlicht – wir leiten zur echten Stripe-Bezahlseite.
+  showToast(T('toast.pay.redirect'));
+  startStripeCheckout({ kind:'new', payload: APP._pendingJobPayload, jobTitle: (APP._pendingJobPayload.title || ''), btn });
 }
 
-/* ─── Demo: Job aktivieren nach Zahlung ─────────── */
-/*
- * Im Produktivbetrieb wird diese Funktion NICHT vom Frontend aufgerufen.
- * Stattdessen: Stripe Webhook → Backend → job.status = 'active'.
- * Das Frontend pollt dann GET /api/jobs/:id oder nutzt einen
- * Redirect von der Stripe success_url.
- */
-async function demoPaymentSuccess(){
-  const payload = APP._pendingJobPayload;
-  ['ps1','ps2','ps3','ps4'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-  if(payload && window.SR){
-    try { await SR.createJob(payload); }
-    catch(e){ console.error('[SR] createJob', e); showToast(T('toast.job.savefail'),'err'); }
-    APP._pendingJobPayload = null;
-    await loadJobs();
-    await loadOwnerJobs();
+/* ═══════════ Stripe Checkout – ECHTE Zahlung ═══════════
+   Der Auftrag wird NICHT direkt veröffentlicht. Es wird eine Stripe-Checkout-
+   Session (Server: /api/create-checkout-session) erstellt und der Nutzer dorthin
+   weitergeleitet. Erst nach serverseitig bestätigter Zahlung
+   (/api/verify-checkout-session) wird der Auftrag in Supabase als 'active'
+   gespeichert. Bei Abbruch wird nichts veröffentlicht. */
+async function startStripeCheckout(opts){
+  opts = opts || {};
+  try {
+    const res = await fetch('/api/create-checkout-session', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ jobTitle: opts.jobTitle || '', userEmail: (APP.user && APP.user.email) || '' })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) throw new Error(data.error || ('HTTP ' + res.status));
+    // Rückkehr-Daten sichern (überlebt den Redirect im selben Tab)
+    if (opts.kind === 'resume' && opts.jobId != null) {
+      sessionStorage.setItem('sr_resume_job', String(opts.jobId));
+      sessionStorage.removeItem('sr_pending_job');
+    } else if (opts.payload) {
+      sessionStorage.setItem('sr_pending_job', JSON.stringify(opts.payload));
+      sessionStorage.removeItem('sr_resume_job');
+    }
+    window.location.href = data.url;   // → gehostete Stripe-Bezahlseite
+  } catch (err) {
+    console.error('[SR] checkout start', err);
+    showToast(T('toast.pay.error'), 'err');
+    if (opts.btn) { opts.btn.disabled = false; opts.btn.innerHTML = T('pay.btn'); }
   }
-  const psok=document.getElementById('ps-ok'); if(psok) psok.style.display='block';
-  stepBar(5);
-  updateBadge();
-  showToast(T('toast.pay.success'),'ok');
+}
+
+/* Rückkehr von Stripe auswerten – wird in initApp aufgerufen. */
+async function handlePaymentReturn(){
+  const q = new URLSearchParams(location.search);
+  const pay = q.get('sr_pay');
+  if (!pay) return;
+  const clean = () => { try { history.replaceState({}, document.title, location.pathname); } catch(e){} };
+
+  if (pay === 'cancel') {
+    sessionStorage.removeItem('sr_pending_job');
+    sessionStorage.removeItem('sr_resume_job');
+    clean();
+    showToast(T('toast.pay.cancelled'), 'err');
+    return;
+  }
+  if (pay !== 'success') return;
+
+  const sid = q.get('session_id');
+  if (!sid) { clean(); return; }
+
+  showToast(T('toast.pay.verify'));
+  let paid = false;
+  try {
+    const r = await fetch('/api/verify-checkout-session?session_id=' + encodeURIComponent(sid));
+    const d = await r.json().catch(() => ({}));
+    paid = !!d.paid;
+  } catch (e) { console.error('[SR] verify', e); }
+
+  if (!paid) { clean(); showToast(T('toast.pay.notpaid'), 'err'); return; }
+  if (!APP.user || !window.SR) { showToast(T('toast.pay.loginfirst'), 'err'); return; }
+
+  try {
+    const resumeId   = sessionStorage.getItem('sr_resume_job');
+    const pendingRaw = sessionStorage.getItem('sr_pending_job');
+    if (resumeId) {
+      await SR.updateJob(resumeId, { status: 'active' });
+    } else if (pendingRaw) {
+      const payload = JSON.parse(pendingRaw);
+      payload.user_id = APP.user.id;   // immer der aktuell angemeldete Nutzer
+      payload.status  = 'active';
+      await SR.createJob(payload);
+    } else { clean(); return; }   // nichts zu veröffentlichen
+    sessionStorage.removeItem('sr_pending_job');
+    sessionStorage.removeItem('sr_resume_job');
+    APP._pendingJobPayload = null;
+    clean();
+    await loadJobs(); try { await loadOwnerJobs(); } catch(e){}
+    updateBadge(); renderJobCards(); addMarkers();
+    showToast(T('toast.pay.success'), 'ok');
+    try {
+      openModal('modal-post');
+      ['ps1','ps2','ps3','ps4','pay-screen','pay-processing'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+      const ok = document.getElementById('ps-ok'); if (ok) ok.style.display='block';
+    } catch(e){}
+  } catch (e) {
+    console.error('[SR] publish after pay', e);
+    showToast(T('toast.job.savefail'), 'err');
+  }
 }
 
 function submitPayment(){
@@ -5310,6 +5323,7 @@ async function initApp() {
     updateNav();
     await loadJobs();
     if (APP.user) { await loadThreads(); updateBadge(); }
+    try { await handlePaymentReturn(); } catch (e) { console.error('[SR] payment return', e); }
   } else {
     console.warn('[SR] Supabase not available – open the site via http(s) (a web server or Vercel), not file://, and ensure the @supabase/supabase-js script loads.');
     updateNav();

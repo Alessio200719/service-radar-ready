@@ -1,0 +1,10 @@
+{
+  "name": "service-radar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Service Radar – lokale Mikrojobs. Statische Seite + Vercel Serverless Functions (Stripe Checkout).",
+  "dependencies": {
+    "stripe": "^16.9.0",
+    "@supabase/supabase-js": "^2.45.0"
+  }
+}

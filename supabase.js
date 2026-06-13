@@ -113,7 +113,7 @@
     async getProfilesByIds(ids) {
       var list = Array.from(new Set((ids || []).filter(Boolean)));
       if (!list.length) return [];
-      return unwrap(await sb.from('profiles').select('id,full_name,city,role,avatar_url,rating,review_count,email_verified,stripe_verified,phone_verified').in('id', list));
+      return unwrap(await sb.from('profiles').select('*').in('id', list));
     },
 
     /* ───────── PUBLIC PROFILE + LIVE-STATISTIKEN ───────── */
@@ -174,26 +174,26 @@
     /* ───────── JOBS ───────── */
     async listActiveJobs() {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(id,full_name,city,avatar_url,rating)')
+        .select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)')
         .eq('status', 'active')
         .order('created_at', { ascending: false }));
     },
     async jobsByOwner(userId) {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(id,full_name,city,avatar_url,rating)')
+        .select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)')
         .eq('user_id', userId)
         .order('created_at', { ascending: false }));
     },
     async getJobsByIds(ids) {
       var list = Array.from(new Set((ids || []).filter(Boolean)));
       if (!list.length) return [];
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').in('id', list));
+      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').in('id', list));
     },
     async getJob(id) {
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').eq('id', id).maybeSingle());
+      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').eq('id', id).maybeSingle());
     },
     async createJob(payload) {
-      return unwrap(await sb.from('jobs').insert(payload).select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').single());
+      return unwrap(await sb.from('jobs').insert(payload).select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').single());
     },
     async updateJob(id, patch) {
       return unwrap(await sb.from('jobs').update(patch).eq('id', id).select().single());
@@ -220,7 +220,7 @@
     },
     async listApplicationsForJob(jobId) {
       return unwrap(await sb.from('applications')
-        .select('*, profiles:helper_id(id,full_name,avatar_url,rating)')
+        .select('*, profiles:helper_id(id,full_name,email,avatar_url,rating)')
         .eq('job_id', jobId)
         .order('created_at', { ascending: false }));
     },
@@ -229,7 +229,7 @@
       var list = Array.from(new Set((jobIds || []).filter(Boolean)));
       if (!list.length) return [];
       return unwrap(await sb.from('applications')
-        .select('*, profiles:helper_id(id,full_name,avatar_url,rating), jobs:job_id(title)')
+        .select('*, profiles:helper_id(id,full_name,email,avatar_url,rating), jobs:job_id(title)')
         .in('job_id', list)
         .order('created_at', { ascending: false }));
     },

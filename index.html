@@ -3345,7 +3345,7 @@ function jobFromRow(r){
     posterId: r.user_id,
     posterAvatar: (r.profiles && r.profiles.avatar_url) || '',
     posterRating: (r.profiles && r.profiles.rating) || 0,
-    posterName: (r.profiles && r.profiles.full_name) || r.city || 'Auftraggeber',
+    posterName: (r.profiles && (r.profiles.full_name || r.profiles.email)) || r.city || 'Auftraggeber',
     status: r.status || 'active',
     ts: r.created_at ? Date.parse(r.created_at) : Date.now(),
   };
@@ -3414,23 +3414,32 @@ async function loadThreads(){
     if(ts >= t.lastTs){ t.lastTs = ts; t.lastMsg = m.message; }
   }
   const threads = Object.values(map);
+  // Profile der Gesprächspartner separat & robust nachladen (select * -> kein Bruch
+  // bei fehlenden Spalten; liefert full_name + email + avatar_url + rating).
+  let pmap = {};
   try {
     const others = await SR.getProfilesByIds(threads.map(t=>t.otherId));
-    const jobs   = await SR.getJobsByIds(threads.map(t=>t.jobId));
-    const pmap = Object.fromEntries(others.map(p=>[p.id,p]));
-    const jmap = Object.fromEntries(jobs.map(j=>[j.id,j]));
-    for(const t of threads){
-      t.otherName = (pmap[t.otherId] && pmap[t.otherId].full_name) || 'Nutzer';
-      t.otherAvatar = (pmap[t.otherId] && pmap[t.otherId].avatar_url) || '';
-      t.otherRating = (pmap[t.otherId] && pmap[t.otherId].rating) || 0;
-      t.otherReviews = (pmap[t.otherId] && pmap[t.otherId].review_count) || 0;
-      const j = jmap[t.jobId];
-      t.jobTitle = j ? j.title : '—';
-      t.jobPrice = j ? j.price : '';
-      const seen = Number(localStorage.getItem('sr_seen_'+t.key) || 0);
-      t.unread = t.msgs.filter(m => m.receiver_id===me && Date.parse(m.created_at) > seen).length;
-    }
-  } catch(e){ console.error('[SR] thread meta', e); }
+    pmap = Object.fromEntries((others||[]).map(p=>[String(p.id), p]));
+  } catch(e){ console.error('[SR] thread profiles', e); }
+  let jmap = {};
+  try {
+    const jobs = await SR.getJobsByIds(threads.map(t=>t.jobId));
+    jmap = Object.fromEntries((jobs||[]).map(j=>[String(j.id), j]));
+  } catch(e){ console.error('[SR] thread jobs', e); }
+  for(const t of threads){
+    const p = pmap[String(t.otherId)];
+    t.otherName     = (p && (p.full_name || p.email)) || 'Nutzer';   // echter Name, sonst E-Mail, sonst Fallback
+    t.otherEmail    = (p && p.email) || '';
+    t.otherAvatar   = (p && p.avatar_url) || '';
+    t.otherRating   = (p && p.rating) || 0;
+    t.otherReviews  = (p && p.review_count) || 0;
+    t.otherCreatedAt= (p && p.created_at) || null;
+    const j = jmap[String(t.jobId)];
+    t.jobTitle = j ? j.title : '—';
+    t.jobPrice = j ? j.price : '';
+    const seen = Number(localStorage.getItem('sr_seen_'+t.key) || 0);
+    t.unread = t.msgs.filter(m => m.receiver_id===me && Date.parse(m.created_at) > seen).length;
+  }
   threads.sort((a,b)=> b.lastTs - a.lastTs);
   STATE.threads = threads;
   STATE.threadMap = Object.fromEntries(threads.map(t=>[t.key,t]));
@@ -4222,8 +4231,7 @@ function renderMsgs(key){
         const isMe=m.sender_id===me;
         const ts=new Date(m.created_at).toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'});
         const who=isMe?(APP.user.name||''):(t.otherName||'');
-        const avIni=who.split(' ').map(w=>w[0]).join('').slice(0,2);
-        return `${sep}<div class="msg ${isMe?'me':'other'}">${!isMe?`<div class="msg-av">${esc(avIni)}</div>`:''}<div><div class="msg-ts">${ts}</div><div class="msg-bub">${esc(m.message)}</div></div></div>`;
+        return `${sep}<div class="msg ${isMe?'me':'other'}">${!isMe?avatarHtml(who, t.otherAvatar, 28, t.otherId):''}<div><div class="msg-ts">${ts}</div><div class="msg-bub">${esc(m.message)}</div></div></div>`;
       }).join('');
   area.scrollTop=area.scrollHeight;
 }
@@ -4272,7 +4280,7 @@ async function loadReceivedApplications(){
   try {
     STATE.received = (await SR.listApplicationsForJobs(jobIds)).map(a=>({
       id:a.id, jobId:a.job_id, helperId:a.helper_id,
-      helperName:(a.profiles&&a.profiles.full_name)||'Nutzer',
+      helperName:(a.profiles&&(a.profiles.full_name||a.profiles.email))||'Nutzer',
       helperAvatar:(a.profiles&&a.profiles.avatar_url)||'',
       helperRating:(a.profiles&&a.profiles.rating)||0,
       jobTitle:(a.jobs&&a.jobs.title)||'',

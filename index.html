@@ -11,8 +11,8 @@
         content="default-src 'self';
                  script-src 'self' 'unsafe-inline' https://js.stripe.com https://cdn.jsdelivr.net;
                  style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
-                 img-src 'self' data: https://*.tile.openstreetmap.org;
-                 connect-src 'self' https://api.stripe.com https://*.tile.openstreetmap.org;
+                 img-src 'self' data: https://*.tile.openstreetmap.org https://*.supabase.co;
+                 connect-src 'self' https://api.stripe.com https://*.tile.openstreetmap.org https://*.supabase.co;
                  frame-src https://js.stripe.com https://www.openstreetmap.org;
                  object-src 'none';">
   -->
@@ -219,7 +219,7 @@ nav.scrolled{box-shadow:var(--sh2)}
 .jcard:hover,.jcard.on{border-color:var(--c-blue);box-shadow:0 0 0 3px rgba(9,105,218,.08),var(--sh1)}
 .jcard-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px}
 .jcard-t{font-size:13.5px;font-weight:700;color:var(--c-ink);line-height:1.35;padding-right:8px}
-.jcard-p{font-size:15px;font-weight:800;color:var(--c-green);white-space:nowrap;flex-shrink:0}
+.jcard-p{font-size:16px;font-weight:800;color:var(--c-green);white-space:nowrap;flex-shrink:0}
 .jcard-d{font-size:12px;color:var(--c-ink3);margin-bottom:8px;line-height:1.5}
 .jcard-meta{display:flex;gap:6px;flex-wrap:wrap}
 .chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:100px;font-size:11px;font-weight:600}
@@ -804,7 +804,7 @@ html[lang="en"] #legal-de-note{display:block}
           <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>
         </div>
         <div class="udrop" id="udrop">
-          <div class="udrop-head"><div class="udrop-name" id="dropName"></div><div class="udrop-role" id="dropRole"></div></div>
+          <div class="udrop-head" style="display:flex;align-items:center;gap:10px"><div class="u-av" id="dropAv" style="width:38px;height:38px;font-size:14px">A</div><div style="min-width:0"><div class="udrop-name" id="dropName"></div><div class="udrop-role" id="dropRole"></div></div></div>
           <a onclick="openProfile();closeDrop()" data-i18n="drop.profile">👤 Mein Profil</a>
           <a onclick="openChats();closeDrop()">
             💬 <span data-i18n="nav.messages">Nachrichten</span>
@@ -856,9 +856,9 @@ html[lang="en"] #legal-de-note{display:block}
           <span data-i18n="hero.badge">Jetzt verfügbar in deiner Region</span>
         </div>
         <h1 class="hero-title" style="animation:fadeUp .55s ease-out .08s both">
-          <span data-i18n="hero.t1">Verdiene Geld.</span><br>
-          <span class="t-blue" data-i18n="hero.t2">Lokal.</span>
-          <span class="t-green" data-i18n="hero.t3">Jetzt.</span>
+          <span data-i18n="hero.t1">Hilfe finden.</span><br>
+          <span class="t-blue" data-i18n="hero.t2">Geld verdienen.</span>
+          <span class="t-green" data-i18n="hero.t3">Lokal.</span>
         </h1>
         <p class="hero-sub" style="animation:fadeUp .55s ease-out .16s both">
           <span data-i18n="hero.sub">Finde lokale Aufgaben in deiner Umgebung oder stelle selbst einen Auftrag ein – schnell, einfach und sicher.</span>
@@ -887,8 +887,8 @@ html[lang="en"] #legal-de-note{display:block}
           </div>
           <div style="width:1px;background:#eaeef2;align-self:stretch"></div>
           <div style="text-align:left">
-            <div style="font-size:22px;font-weight:800;color:#1a7f37;letter-spacing:-.03em" data-i18n="hero.stat3.v">8 Jobs</div>
-            <div style="font-size:12px;color:#8b949e;margin-top:1px" data-i18n="hero.stat3.l">Verfügbar in deiner Nähe</div>
+            <div style="font-size:22px;font-weight:800;color:#1a7f37;letter-spacing:-.03em" data-i18n="hero.stat3.v">DSGVO</div>
+            <div style="font-size:12px;color:#8b949e;margin-top:1px" data-i18n="hero.stat3.l">Datenschutz-konform</div>
           </div>
         </div>
       </div>
@@ -1305,48 +1305,27 @@ html[lang="en"] #legal-de-note{display:block}
 <section class="sec" style="background:var(--c-bg1)">
   <div class="wrap">
     <div class="sec-head">
-      <div class="pill pill-b" style="margin-bottom:16px"><span data-i18n="testi.pill">💬 Frühe Nutzer</span></div>
-      <h2 class="sec-title" data-i18n="testi.title">Das sagen erste Tester</h2>
+      <div class="pill pill-b" style="margin-bottom:16px"><span data-i18n="safe.pill">🔒 Sicherheit & Datenschutz</span></div>
+      <h2 class="sec-title" data-i18n="safe.title">Sicher von der Zahlung bis zum Kontakt</h2>
     </div>
     <div class="testi-grid">
       <div class="tcard">
-        <div class="stars">★★★★★</div>
-        <p class="quote" data-i18n="testi.q1">„Ich habe schnell eine Aufgabe gefunden und 25 € verdient. So einfach hatte ich mir das nicht vorgestellt!"</p>
-        <div class="tauthor">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <circle cx="20" cy="20" r="20" fill="#0969da"/>
-            <circle cx="20" cy="16" r="7" fill="rgba(255,255,255,.9)"/>
-            <ellipse cx="20" cy="34" rx="12" ry="8" fill="rgba(255,255,255,.9)"/>
-          </svg>
-          <div><div class="tname">Luca, 17</div><div class="trole" data-i18n="testi.r1">Helfer · Esslingen</div></div>
-        </div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🔒</div>
+        <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c1.t">Sichere Zahlung über Stripe</h3>
+        <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c1.p">Die Inseratsgebühr läuft geschützt über Stripe – 2 € pro Auftrag, keine versteckten Kosten und kein Abo.</p>
       </div>
       <div class="tcard">
-        <div class="stars">★★★★★</div>
-        <p class="quote" data-i18n="testi.q2">„Als Rentnerin kann ich den Garten nicht mehr alleine pflegen. Mit Service Radar habe ich unkompliziert jemanden gefunden."</p>
-        <div class="tauthor">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <circle cx="20" cy="20" r="20" fill="#e36d14"/>
-            <circle cx="20" cy="16" r="7" fill="rgba(255,255,255,.9)"/>
-            <ellipse cx="20" cy="34" rx="12" ry="8" fill="rgba(255,255,255,.9)"/>
-          </svg>
-          <div><div class="tname">Maria, 72</div><div class="trole" data-i18n="testi.r2">Auftraggeberin · Stuttgart</div></div>
-        </div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🛡️</div>
+        <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c2.t">Schutz & Meldefunktion</h3>
+        <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c2.p">Sicherheitshinweise, eine Meldefunktion und ein Sperrsystem schützen alle Nutzer auf der Plattform.</p>
       </div>
       <div class="tcard">
-        <div class="stars">★★★★★</div>
-        <p class="quote" data-i18n="testi.q3">„Das Konzept ist genial – Jugendliche verdienen lokal Geld und Ältere bekommen Hilfe, die sie wirklich brauchen."</p>
-        <div class="tauthor">
-          <svg width="40" height="40" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-            <circle cx="20" cy="20" r="20" fill="#6639ba"/>
-            <circle cx="20" cy="16" r="7" fill="rgba(255,255,255,.9)"/>
-            <ellipse cx="20" cy="34" rx="12" ry="8" fill="rgba(255,255,255,.9)"/>
-          </svg>
-          <div><div class="tname">Thomas, 44</div><div class="trole" data-i18n="testi.r3">Beta-Tester · Esslingen</div></div>
-        </div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🇪🇺</div>
+        <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c3.t">DSGVO-konform</h3>
+        <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c3.p">Deine Daten werden DSGVO-konform und ausschließlich auf Servern innerhalb der EU verarbeitet.</p>
       </div>
     </div>
-    <p style="text-align:center;margin-top:24px;font-size:12px;color:var(--c-ink5)"><span data-i18n="testi.foot">* Feedback von Beta-Testern aus der Entwicklungsphase.</span></p>
+    <p style="text-align:center;margin-top:24px;font-size:12.5px;color:var(--c-ink4)"><span data-i18n="safe.foot">Sichere Zahlung über Stripe · DSGVO-konform · Verifizierte Konten</span></p>
   </div>
 </section>
 
@@ -1851,7 +1830,7 @@ html[lang="en"] #legal-de-note{display:block}
         – <strong>Standortdaten in Inseraten:</strong> Einsatzorte können Wohn- oder Arbeitsadressen enthalten;<br>
         – <strong>Chat-Nachrichten:</strong> private Kommunikation zwischen Privatpersonen;<br>
         – <strong>Nutzerprofile mit Bewertungen:</strong> systematische Erfassung und Bewertung natürlicher Personen.<br><br>
-        <strong>Empfehlung:</strong> Vor dem offiziellen Launch sollte geprüft werden, ob eine DSFA nach Art. 35 DSGVO verpflichtend ist. Kontakt für Datenschutzanfragen: <a href="mailto:info@service-radar.com">info@service-radar.com</a></p>
+        <strong>Empfehlung:</strong> Es wird laufend geprüft, ob eine Datenschutz-Folgenabschätzung (DSFA) nach Art. 35 DSGVO erforderlich ist. Kontakt für Datenschutzanfragen: <a href="mailto:info@service-radar.com">info@service-radar.com</a></p>
       </div>
 
       <div class="imp-blk">
@@ -2378,6 +2357,14 @@ html[lang="en"] #legal-de-note{display:block}
   </div>
 </div>
 
+<!-- MODAL: ÖFFENTLICHES PROFIL -->
+<div class="moverlay" id="modal-pubprofile" onclick="overlayClose(event,'modal-pubprofile')">
+  <div class="mcard prof-modal">
+    <button class="mclose" onclick="closePublicProfile()" aria-label="Schließen">✕</button>
+    <div class="mcard-inner" id="pubprofile-content"></div>
+  </div>
+</div>
+
 <!-- MODAL: CHAT WINDOW -->
 <div class="moverlay chat-win" id="modal-chat-win" onclick="overlayClose(event,'modal-chat-win')">
   <div class="mcard">
@@ -2388,6 +2375,7 @@ html[lang="en"] #legal-de-note{display:block}
         <div class="ch-name" id="ch-name">Partner</div>
         <div class="ch-job" id="ch-job">Aufgabe · Preis</div>
       </div>
+      <button class="ch-back" onclick="rateChatPartner()" title="Bewerten" style="font-size:15px;color:#bf8700">★</button>
       <div class="ch-status"><span class="live-dot" style="width:6px;height:6px"></span> <span data-i18n="chat.online">Online</span></div>
     </div>
     <div class="msg-area" id="msg-area"></div>
@@ -2540,6 +2528,46 @@ html[lang="en"] #legal-de-note{display:block}
 </div>
 
 <!-- MODAL: DELETE ACCOUNT -->
+<!-- MODAL: AUFTRAG LÖSCHEN (Bestätigung) -->
+<div class="moverlay" id="modal-delete-job" onclick="overlayClose(event,'modal-delete-job')">
+  <div class="mcard">
+    <button class="mclose" onclick="closeModal('modal-delete-job')" aria-label="Schließen">✕</button>
+    <div class="mcard-inner">
+      <div style="text-align:center;font-size:40px;margin-bottom:6px">🗑️</div>
+      <h3 style="font-size:18px;font-weight:800;text-align:center;margin-bottom:8px" data-i18n="job.del.t">Auftrag löschen?</h3>
+      <p style="text-align:center;color:var(--c-ink3);font-size:14px;margin-bottom:4px" data-i18n="job.del.p">Möchtest du diesen Auftrag wirklich dauerhaft löschen?</p>
+      <p id="del-job-title" style="text-align:center;font-weight:700;margin:4px 0 12px"></p>
+      <p style="text-align:center;color:var(--c-ink4);font-size:12px;line-height:1.6;margin-bottom:18px" data-i18n="job.del.note">Bewerbungen und Chat-Nachrichten zu diesem Auftrag werden ebenfalls entfernt. Das kann nicht rückgängig gemacht werden.</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-outline btn-full" onclick="closeModal('modal-delete-job')" data-i18n="del.cancel">Abbrechen</button>
+        <button class="btn btn-danger btn-full" id="del-job-btn" data-i18n="job.del.btn">Endgültig löschen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: AUFTRAG BEARBEITEN -->
+<div class="moverlay" id="modal-edit-job" onclick="overlayClose(event,'modal-edit-job')">
+  <div class="mcard">
+    <button class="mclose" onclick="closeModal('modal-edit-job')" aria-label="Schließen">✕</button>
+    <div class="mcard-inner">
+      <h3 style="font-size:18px;font-weight:800;margin-bottom:14px" data-i18n="job.edit.t">Auftrag bearbeiten</h3>
+      <input type="hidden" id="edit-job-id">
+      <div class="field"><label data-i18n="post.title">Titel *</label><input type="text" id="edit-job-title" maxlength="100"></div>
+      <div class="field"><label data-i18n="post.desc">Beschreibung *</label><textarea id="edit-job-desc" maxlength="1000"></textarea></div>
+      <div style="display:flex;gap:12px">
+        <div class="field" style="flex:1"><label data-i18n="post.cat">Kategorie</label><select id="edit-job-cat"></select></div>
+        <div class="field" style="flex:1"><label data-i18n="post.payeur">Vergütung in € *</label><input type="number" id="edit-job-price" min="1"></div>
+      </div>
+      <div class="field"><label data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="edit-job-city" maxlength="150"></div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn btn-outline btn-full" onclick="closeModal('modal-edit-job')" data-i18n="del.cancel">Abbrechen</button>
+        <button class="btn btn-dark btn-full" onclick="submitEditJob()" data-i18n="job.edit.save">Speichern</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="moverlay" id="modal-delete-account" onclick="overlayClose(event,'modal-delete-account')">
   <div class="mcard"><button class="mclose" onclick="closeModal('modal-delete-account')" data-i18n-aria="del.cancel" aria-label="Abbrechen">✕</button>
     <div class="mcard-inner">
@@ -2709,6 +2737,16 @@ const I18N = {
   'prof.status.pending':{de:'⏳ Ausstehend', en:'⏳ Pending'},
   'prof.status.flagged':{de:'🚨 Gemeldet', en:'🚨 Reported'},
   'prof.status.active': {de:'✅ Aktiv', en:'✅ Active'},
+  'prof.status.closed': {de:'✓ Abgeschlossen', en:'✓ Completed'},
+  'job.edit':     {de:'Bearbeiten', en:'Edit'},
+  'job.complete': {de:'Abschließen', en:'Complete'},
+  'job.delete':   {de:'Löschen', en:'Delete'},
+  'job.del.t':    {de:'Auftrag löschen?', en:'Delete job?'},
+  'job.del.p':    {de:'Möchtest du diesen Auftrag wirklich dauerhaft löschen?', en:'Do you really want to permanently delete this job?'},
+  'job.del.note': {de:'Bewerbungen und Chat-Nachrichten zu diesem Auftrag werden ebenfalls entfernt. Das kann nicht rückgängig gemacht werden.', en:'Applications and chat messages for this job are removed too. This cannot be undone.'},
+  'job.del.btn':  {de:'Endgültig löschen', en:'Delete permanently'},
+  'job.edit.t':   {de:'Auftrag bearbeiten', en:'Edit job'},
+  'job.edit.save':{de:'Speichern', en:'Save'},
   'prof.paynow':        {de:'Jetzt bezahlen', en:'Pay now'},
   'ts.verified':{de:'✅ Verifiziert', en:'✅ Verified'},
   'ts.active':  {de:'⭐ Aktives Mitglied', en:'⭐ Active member'},
@@ -2768,9 +2806,9 @@ const I18N = {
 
   /* — Hero — */
   'hero.badge':  {de:'Jetzt verfügbar in deiner Region', en:'Now available in your region'},
-  'hero.t1':     {de:'Verdiene Geld.', en:'Earn money.'},
-  'hero.t2':     {de:'Lokal.', en:'Local.'},
-  'hero.t3':     {de:'Jetzt.', en:'Now.'},
+  'hero.t1':     {de:'Hilfe finden.', en:'Find help.'},
+  'hero.t2':     {de:'Geld verdienen.', en:'Earn money.'},
+  'hero.t3':     {de:'Lokal.', en:'Local.'},
   'hero.sub':    {de:'Finde lokale Aufgaben in deiner Umgebung oder stelle selbst einen Auftrag ein – schnell, einfach und sicher.', en:'Find local tasks nearby or post a job yourself – fast, simple and secure.'},
   'hero.cta1':   {de:'💪 Als Helfer starten', en:'💪 Start as a helper'},
   'hero.cta2':   {de:'📋 Aufgabe einstellen', en:'📋 Post a task'},
@@ -2779,8 +2817,8 @@ const I18N = {
   'hero.proof3': {de:'Verifizierte Nutzer', en:'Verified users'},
   'hero.stat1.l':{de:'Aktiver Standort', en:'Active location'},
   'hero.stat2.l':{de:'Inseratsgebühr', en:'Listing fee'},
-  'hero.stat3.v':{de:'8 Jobs', en:'8 jobs'},
-  'hero.stat3.l':{de:'Verfügbar in deiner Nähe', en:'Available near you'},
+  'hero.stat3.v':{de:'DSGVO', en:'GDPR'},
+  'hero.stat3.l':{de:'Datenschutz-konform', en:'Privacy-compliant'},
   'hero.notif.t':{de:'Neue Bewerbung', en:'New application'},
   'hero.notif.s':{de:'Luca möchte deinen Auftrag übernehmen', en:'Luca wants to take on your job'},
 
@@ -2887,15 +2925,15 @@ const I18N = {
   'pay.foot':  {de:'* Richtwerte basieren auf regionalen Durchschnittswerten. Endpreis wird frei vereinbart.', en:'* Guidelines are based on regional averages. The final price is agreed freely.'},
 
   /* — Testimonials — */
-  'testi.pill': {de:'💬 Frühe Nutzer', en:'💬 Early users'},
-  'testi.title':{de:'Das sagen erste Tester', en:'What early testers say'},
-  'testi.q1':   {de:'„Ich habe schnell eine Aufgabe gefunden und 25 € verdient. So einfach hatte ich mir das nicht vorgestellt!“', en:'“I quickly found a task and earned €25. I hadn’t imagined it would be this easy!”'},
-  'testi.r1':   {de:'Helfer · Esslingen', en:'Helper · Esslingen'},
-  'testi.q2':   {de:'„Als Rentnerin kann ich den Garten nicht mehr alleine pflegen. Mit Service Radar habe ich unkompliziert jemanden gefunden.“', en:'“As a pensioner I can no longer tend the garden alone. With Service Radar I easily found someone.”'},
-  'testi.r2':   {de:'Auftraggeberin · Stuttgart', en:'Client · Stuttgart'},
-  'testi.q3':   {de:'„Das Konzept ist genial – Jugendliche verdienen lokal Geld und Ältere bekommen Hilfe, die sie wirklich brauchen.“', en:'“The concept is brilliant – young people earn money locally and older people get the help they really need.”'},
-  'testi.r3':   {de:'Beta-Tester · Esslingen', en:'Beta tester · Esslingen'},
-  'testi.foot': {de:'* Feedback von Beta-Testern aus der Entwicklungsphase.', en:'* Feedback from beta testers during development.'},
+  'safe.pill': {de:'🔒 Sicherheit & Datenschutz', en:'🔒 Security & privacy'},
+  'safe.title':{de:'Sicher von der Zahlung bis zum Kontakt', en:'Secure from payment to contact'},
+  'safe.c1.t': {de:'Sichere Zahlung über Stripe', en:'Secure payment via Stripe'},
+  'safe.c1.p': {de:'Die Inseratsgebühr läuft geschützt über Stripe – 2 € pro Auftrag, keine versteckten Kosten und kein Abo.', en:'The listing fee is handled securely via Stripe – €2 per job, no hidden costs and no subscription.'},
+  'safe.c2.t': {de:'Schutz & Meldefunktion', en:'Protection & reporting'},
+  'safe.c2.p': {de:'Sicherheitshinweise, eine Meldefunktion und ein Sperrsystem schützen alle Nutzer auf der Plattform.', en:'Safety guidance, a report function and a blocking system protect everyone on the platform.'},
+  'safe.c3.t': {de:'DSGVO-konform', en:'GDPR-compliant'},
+  'safe.c3.p': {de:'Deine Daten werden DSGVO-konform und ausschließlich auf Servern innerhalb der EU verarbeitet.', en:'Your data is processed GDPR-compliant and exclusively on servers within the EU.'},
+  'safe.foot': {de:'Sichere Zahlung über Stripe · DSGVO-konform · Verifizierte Konten', en:'Secure payment via Stripe · GDPR-compliant · Verified accounts'},
 
   /* — App showcase — */
   'show.pill': {de:'📱 Plattform-Ansicht', en:'📱 Platform preview'},
@@ -3304,6 +3342,9 @@ function jobFromRow(r){
     lng: (r.longitude==null ? null : Number(r.longitude)),
     city: r.city || '',
     poster: r.user_id,                                   // owner UUID
+    posterId: r.user_id,
+    posterAvatar: (r.profiles && r.profiles.avatar_url) || '',
+    posterRating: (r.profiles && r.profiles.rating) || 0,
     posterName: (r.profiles && r.profiles.full_name) || r.city || 'Auftraggeber',
     status: r.status || 'active',
     ts: r.created_at ? Date.parse(r.created_at) : Date.now(),
@@ -3380,6 +3421,9 @@ async function loadThreads(){
     const jmap = Object.fromEntries(jobs.map(j=>[j.id,j]));
     for(const t of threads){
       t.otherName = (pmap[t.otherId] && pmap[t.otherId].full_name) || 'Nutzer';
+      t.otherAvatar = (pmap[t.otherId] && pmap[t.otherId].avatar_url) || '';
+      t.otherRating = (pmap[t.otherId] && pmap[t.otherId].rating) || 0;
+      t.otherReviews = (pmap[t.otherId] && pmap[t.otherId].review_count) || 0;
       const j = jmap[t.jobId];
       t.jobTitle = j ? j.title : '—';
       t.jobPrice = j ? j.price : '';
@@ -3623,16 +3667,26 @@ function openRatingModal(partnerName, chatId) {
   openModal('modal-rating');
 }
 
-function submitRating() {
+async function submitRating() {
   const text = document.getElementById('rating-text')?.value || '';
+  // Echte Supabase-Bewertung, wenn der Bewertete bekannt ist (aus dem Chat)
+  if (APP._pendingRatingRevieweeId && window.SR && APP.user) {
+    try {
+      await SR.createReview({ job_id: APP._pendingRatingJobId || null, reviewer_id: APP.user.id, reviewee_id: APP._pendingRatingRevieweeId, rating: _currentRating, comment: text.slice(0,300) });
+      APP._pendingRatingRevieweeId = null; APP._pendingRatingJobId = null;
+      closeModal('modal-rating');
+      showToast(T('toast.rating.saved'), 'ok');
+      return;
+    } catch (e) {
+      console.error('[SR] createReview', e);
+      showToast(LANG==='de'?'Bewertung konnte nicht gespeichert werden.':'Could not save review.','err');
+      return;
+    }
+  }
+  // Fallback (lokal)
   const rating = {
-    id: 'rat_' + Date.now(),
-    chatId: APP._pendingRatingChatId,
-    partner: APP._pendingRatingPartner,
-    rater: APP.user?.email,
-    score: _currentRating,
-    text: text.slice(0, 300),
-    ts: Date.now(),
+    id: 'rat_' + Date.now(), chatId: APP._pendingRatingChatId, partner: APP._pendingRatingPartner,
+    rater: APP.user?.email, score: _currentRating, text: text.slice(0, 300), ts: Date.now(),
   };
   const ratings = JSON.parse(localStorage.getItem('sr_ratings') || '[]');
   ratings.unshift(rating);
@@ -3724,6 +3778,21 @@ function timeAgo(ts) {
   return Math.floor(d/86400000)+(LANG==='de'?' Tagen':' days');
 }
 function colorFor(s){const c=['#0969da,#54aeff','#1a7f37,#3dd68c','#6639ba,#a371f7','#9a3412,#fb923c','#0e7490,#22d3ee'];let h=0;for(const ch of s)h=(h*31+ch.charCodeAt(0))%c.length;return c[h]}
+/* ── Avatar/Bewertungs-Helfer (überall genutzt) ── */
+function srInitials(n){return (n||'?').toString().trim().split(/\s+/).map(w=>w[0]||'').join('').slice(0,2).toUpperCase()||'?';}
+function avatarHtml(name,url,size,clickId){
+  size=size||40;
+  var click=clickId?('onclick="event.stopPropagation();openPublicProfile(\''+esc(String(clickId))+'\')" '):'';
+  var base='width:'+size+'px;height:'+size+'px;border-radius:50%;flex-shrink:0;'+(clickId?'cursor:pointer;':'');
+  if(url) return '<img '+click+'src="'+esc(url)+'" alt="'+esc(name||'')+'" loading="lazy" referrerpolicy="no-referrer" style="'+base+'object-fit:cover;display:block">';
+  return '<div '+click+'style="'+base+'display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:'+Math.round(size*0.42)+'px;background:linear-gradient(135deg,'+colorFor(name||'?')+')">'+esc(srInitials(name))+'</div>';
+}
+function starStr(r){r=Math.max(0,Math.min(5,Math.round(r||0)));return '★★★★★'.slice(0,r)+'☆☆☆☆☆'.slice(0,5-r);}
+function ratingHtml(rating,count){
+  var r=Number(rating||0);
+  if(!r) return '<span style="font-size:12px;color:var(--c-ink4)">'+(LANG==='de'?'Neu':'New')+'</span>';
+  return '<span style="font-size:12px;color:#bf8700;font-weight:700">★ '+r.toFixed(1)+(count?(' <span style="color:var(--c-ink4);font-weight:400">('+count+')</span>'):'')+'</span>';
+}
 function catChipClass(cat) { return {g:'chip-g',h:'chip-h',s:'chip-s',m:'chip-m'}[cat]||'chip-m'; }
 function catColor(cat){return {g:'#1a7f37',h:'#0969da',s:'#9a6700',m:'#6639ba'}[cat]||'#0969da'}
 function catEmoji(cat){return {g:'🌿',h:'🏠',s:'🛒',m:'📦'}[cat]||'📋'}
@@ -3956,6 +4025,11 @@ function buildAppUser(p){
     consentAGB: true, consentDSE: true,
     acceptedLegalVersion: (typeof LEGAL_VERSION !== 'undefined' ? LEGAL_VERSION : ''),
     registeredAt: p.created_at ? Date.parse(p.created_at) : Date.now(),
+    avatar_url: p.avatar_url || '',
+    rating: p.rating || 0,
+    review_count: p.review_count || 0,
+    bio: p.bio || '',
+    email_verified: !!p.email_verified, phone_verified: !!p.phone_verified, stripe_verified: !!p.stripe_verified,
   };
 }
 
@@ -3969,6 +4043,19 @@ async function loginOk(user) {
   updateBadge();
 }
 
+function _setNavAv(el, name, url){
+  if(!el) return;
+  var ini=(name||'?').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase()||'?';
+  function showIni(){ el.innerHTML=''; el.textContent=ini; el.style.background='linear-gradient(135deg,'+colorFor(name||'?')+')'; }
+  if(url){
+    el.innerHTML=''; el.style.background='none';
+    var img=document.createElement('img');
+    img.src=url; img.referrerPolicy='no-referrer'; img.alt='';
+    img.style.cssText='width:100%;height:100%;border-radius:50%;object-fit:cover;display:block';
+    img.onerror=showIni;   // kaputter Link -> Initialen
+    el.appendChild(img);
+  } else { showIni(); }     // kein Bild -> Initialen
+}
 function updateNav(){ try {
   const u=APP.user;
   const ae=document.getElementById('nav-auth');
@@ -3986,8 +4073,8 @@ function updateNav(){ try {
   if(ue) ue.style.display='flex';
   if(mmAuth) mmAuth.style.display='none';
   if(mmUser) mmUser.style.display='flex';
-  const ini=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  document.getElementById('uAv').textContent=ini;
+  _setNavAv(document.getElementById('uAv'), u.name, u.avatar_url);
+  _setNavAv(document.getElementById('dropAv'), u.name, u.avatar_url);
   document.getElementById('uName').textContent=u.name.split(' ')[0];
   document.getElementById('dropName').textContent=u.name;
   document.getElementById('dropRole').textContent=u.role==='jobber'?T('role.jobber'):T('role.auftr');
@@ -4069,9 +4156,10 @@ function renderChatList(filter=''){
     const preview=t.lastMsg?esc(t.lastMsg.slice(0,55))+(t.lastMsg.length>55?'…':''):T('chat.empty.p').slice(0,40);
     const priceTxt=(t.jobPrice!==''&&t.jobPrice!=null)?(' · '+t.jobPrice+' €'):'';
     return `<div class="ct${t.unread>0?' unread':''}" onclick="openChatWin('${t.key}')">
-      <div class="ct-av" style="background:linear-gradient(135deg,${colorFor(partner)})">${ini}</div>
+      ${avatarHtml(partner, t.otherAvatar, 44, t.otherId)}
       <div class="ct-body">
-        <div class="ct-top"><span class="ct-name">${esc(partner)}</span><span class="ct-time">${timeAgo(t.lastTs||Date.now())}</span></div>
+        <div class="ct-top"><span class="ct-name" style="cursor:pointer" onclick="event.stopPropagation();openPublicProfile('${esc(String(t.otherId))}')">${esc(partner)}</span><span class="ct-time">${timeAgo(t.lastTs||Date.now())}</span></div>
+        ${t.otherRating?`<div style="margin:0 0 1px">${ratingHtml(t.otherRating,t.otherReviews)}</div>`:''}
         <div class="ct-prev">${preview}</div>
         <div class="ct-job">📋 ${esc(t.jobTitle||'')}${priceTxt}</div>
       </div>
@@ -4089,8 +4177,12 @@ async function openChatWin(key){
   const partner=t.otherName||'Nutzer';
   const ini=partner.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
   const avEl=document.getElementById('ch-av');
-  if(avEl){ avEl.textContent=ini; avEl.style.background=`linear-gradient(135deg,${colorFor(partner)})`; }
-  const nameEl=document.getElementById('ch-name'); if(nameEl) nameEl.textContent=partner;
+  if(avEl){
+    if(t.otherAvatar){ avEl.style.background='none'; avEl.innerHTML='<img src="'+esc(t.otherAvatar)+'" referrerpolicy="no-referrer" style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block">'; }
+    else { avEl.innerHTML=esc(ini); avEl.style.background='linear-gradient(135deg,'+colorFor(partner)+')'; }
+    avEl.style.cursor='pointer'; avEl.onclick=function(){ openPublicProfile(t.otherId); };
+  }
+  const nameEl=document.getElementById('ch-name'); if(nameEl){ nameEl.textContent=partner; nameEl.style.cursor='pointer'; nameEl.onclick=function(){ openPublicProfile(t.otherId); }; }
   const priceTxt=(t.jobPrice!==''&&t.jobPrice!=null)?(' · '+t.jobPrice+' €'):'';
   const jobEl=document.getElementById('ch-job'); if(jobEl) jobEl.textContent=(t.jobTitle||'')+priceTxt;
   closeModal('modal-chats');
@@ -4181,6 +4273,8 @@ async function loadReceivedApplications(){
     STATE.received = (await SR.listApplicationsForJobs(jobIds)).map(a=>({
       id:a.id, jobId:a.job_id, helperId:a.helper_id,
       helperName:(a.profiles&&a.profiles.full_name)||'Nutzer',
+      helperAvatar:(a.profiles&&a.profiles.avatar_url)||'',
+      helperRating:(a.profiles&&a.profiles.rating)||0,
       jobTitle:(a.jobs&&a.jobs.title)||'',
       message:a.message||'', status:a.status,
       ts:a.created_at?Date.parse(a.created_at):Date.now()
@@ -4200,6 +4294,99 @@ function setViewMode(mode){
 function openThreadOrList(key){
   closeModal('modal-profile');
   if(STATE.threadMap && STATE.threadMap[key]) openChatWin(key); else openChats();
+}
+
+/* ════════ ÖFFENTLICHES PROFIL · AVATAR-UPLOAD · BEWERTUNGEN ════════ */
+async function handleAvatarFile(file){
+  if(!file) return;
+  if(!APP.user || !window.SR){ showToast(T('toast.needlogin'),'err'); return; }
+  var ok=['image/jpeg','image/jpg','image/png','image/webp'];
+  if(ok.indexOf(file.type)<0){ showToast(LANG==='de'?'Nur JPG, PNG oder WEBP erlaubt.':'Only JPG, PNG or WEBP allowed.','err'); return; }
+  if(file.size>5*1024*1024){ showToast(LANG==='de'?'Bild zu groß (max. 5 MB).':'Image too large (max 5 MB).','err'); return; }
+  showToast(LANG==='de'?'Bild wird hochgeladen…':'Uploading image…');
+  try{
+    var blob=await compressImage(file, 512, 0.85);
+    var url=await SR.uploadAvatar(APP.user.id, blob, 'jpg');
+    APP.user.avatar_url=url;
+    try{ _renderProfile(); }catch(e){}
+    try{ updateNav(); }catch(e){}
+    showToast(LANG==='de'?'Profilbild aktualisiert.':'Profile photo updated.','ok');
+  }catch(e){ console.error('[SR] avatar upload', e); showToast(LANG==='de'?'Upload fehlgeschlagen. Ist der Storage-Bucket „avatars" angelegt?':'Upload failed. Is the "avatars" storage bucket created?','err'); }
+}
+function compressImage(file, maxPx, quality){
+  return new Promise(function(resolve,reject){
+    var img=new Image(); var url=URL.createObjectURL(file);
+    img.onload=function(){
+      URL.revokeObjectURL(url);
+      var scale=Math.min(1, maxPx/Math.max(img.width,img.height));
+      var cw=Math.round(img.width*scale), ch=Math.round(img.height*scale);
+      var cv=document.createElement('canvas'); cv.width=cw; cv.height=ch;
+      cv.getContext('2d').drawImage(img,0,0,cw,ch);
+      cv.toBlob(function(b){ b?resolve(b):reject(new Error('toBlob failed')); }, 'image/jpeg', quality||0.85);
+    };
+    img.onerror=function(){ URL.revokeObjectURL(url); reject(new Error('image load failed')); };
+    img.src=url;
+  });
+}
+async function openPublicProfile(userId){
+  if(!userId) return;
+  try{ history.replaceState(null,'', '#/profile/'+userId); }catch(e){}
+  openModal('modal-pubprofile');
+  var box=document.getElementById('pubprofile-content');
+  if(box) box.innerHTML='<div style="text-align:center;padding:50px 20px;color:var(--c-ink4);font-size:26px">⏳</div>';
+  if(!window.SR){ if(box) box.innerHTML='<div style="padding:24px;text-align:center;color:var(--c-ink3)">'+(LANG==='de'?'Profil derzeit nicht verfügbar.':'Profile unavailable.')+'</div>'; return; }
+  var p=null, reviews=[];
+  try{ p=await SR.getPublicProfile(userId); }catch(e){ console.error('[SR] getPublicProfile', e); }
+  try{ reviews=await SR.listReviews(userId); }catch(e){ console.error('[SR] listReviews', e); }
+  if(!p){ if(box) box.innerHTML='<div style="padding:50px 20px;text-align:center;color:var(--c-ink3)">'+(LANG==='de'?'Profil nicht gefunden.':'Profile not found.')+'</div>'; return; }
+  renderPublicProfile(p, reviews||[]);
+}
+function closePublicProfile(){
+  closeModal('modal-pubprofile');
+  try{ if((location.hash||'').indexOf('#/profile/')===0) history.replaceState(null,'', location.pathname+location.search); }catch(e){}
+}
+function renderPublicProfile(p, reviews){
+  var box=document.getElementById('pubprofile-content'); if(!box) return;
+  var name=p.full_name||'Nutzer';
+  var since=p.created_at?new Date(p.created_at).toLocaleDateString(LANG==='de'?'de-DE':'en-GB',{month:'long',year:'numeric'}):'';
+  var badges=[];
+  if(p.email_verified) badges.push('<span class="vbadge">'+(LANG==='de'?'E-Mail bestätigt':'Email verified')+'</span>');
+  if(p.phone_verified) badges.push('<span class="vbadge">'+(LANG==='de'?'Telefon bestätigt':'Phone verified')+'</span>');
+  if(p.stripe_verified) badges.push('<span class="vbadge">'+(LANG==='de'?'Zahlung verifiziert':'Payment verified')+'</span>');
+  var stat=function(v,l){return '<div class="sbox"><div class="sv">'+v+'</div><div class="sl">'+l+'</div></div>';};
+  var rv=(reviews||[]).map(function(r){
+    var rn=(r.reviewer&&r.reviewer.full_name)||'Nutzer';
+    return '<div style="display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--c-bd)">'+
+      avatarHtml(rn,(r.reviewer&&r.reviewer.avatar_url),34)+
+      '<div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><span style="font-weight:700;font-size:13px">'+esc(rn)+'</span><span style="font-size:12px;color:#bf8700;white-space:nowrap">'+starStr(r.rating)+'</span></div>'+
+      (r.comment?'<div style="font-size:13px;color:var(--c-ink2);margin-top:3px;line-height:1.5">'+esc(r.comment)+'</div>':'')+
+      '<div style="font-size:11px;color:var(--c-ink4);margin-top:3px">'+(r.created_at?new Date(r.created_at).toLocaleDateString(LANG==='de'?'de-DE':'en-GB'):'')+'</div></div></div>';
+  }).join('');
+  box.innerHTML=
+    '<div class="prof-header">'+avatarHtml(name,p.avatar_url,64)+
+      '<div class="prof-av-info"><div class="pn">'+esc(name)+'</div>'+
+      '<div class="pr">'+(p.city?('📍 '+esc(p.city)):'')+(since?((p.city?' · ':'')+(LANG==='de'?'Mitglied seit ':'Member since ')+since):'')+'</div>'+
+      '<div class="pm" style="margin-top:6px">'+ratingHtml(p.rating,p.review_count)+'</div></div></div>'+
+    (badges.length?('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">'+badges.join('')+'</div>'):'')+
+    (p.bio?('<p style="font-size:14px;color:var(--c-ink2);line-height:1.6;margin-bottom:18px">'+esc(p.bio)+'</p>'):'')+
+    '<div class="stat-row" style="margin-bottom:20px">'+
+      stat(p.created_jobs||0, LANG==='de'?'Aufträge erstellt':'Jobs posted')+
+      stat(p.completed_jobs||0, LANG==='de'?'Abgeschlossen':'Completed')+
+      stat(p.review_count||0, LANG==='de'?'Bewertungen':'Reviews')+
+    '</div>'+
+    '<div class="prof-sec-title">'+(LANG==='de'?'Bewertungen':'Reviews')+'</div>'+
+    '<div class="pj-list">'+(rv||('<div class="pj-empty">'+(LANG==='de'?'Noch keine Bewertungen.':'No reviews yet.')+'</div>'))+'</div>';
+}
+function rateChatPartner(){
+  var t=APP.activeThread; if(!t || !APP.user) return;
+  if(t.otherId===APP.user.id) return;
+  APP._pendingRatingRevieweeId=t.otherId;
+  APP._pendingRatingJobId=t.jobId;
+  openRatingModal(t.otherName||'Nutzer', t.key);
+}
+function handleProfileHash(){
+  var m=/^#\/profile\/([^/?#]+)/.exec(location.hash||'');
+  if(m && m[1]){ try{ openPublicProfile(decodeURIComponent(m[1])); }catch(e){} }
 }
 
 function _renderProfile(){
@@ -4245,19 +4432,29 @@ function _renderProfile(){
     <div class="prof-sec-title">${T('prof.tasks')}</div>
     <div class="pj-list">
       ${ownedJobs.length?ownedJobs.map(j=>{
-        const status=j.status||'active', isPending=status==='pending', isFlagged=status==='flagged';
+        const status=j.status||'active', isPending=status==='pending', isFlagged=status==='flagged', isClosed=status==='closed';
         const badge=isPending?`<span class="pj-status pending">${T('prof.status.pending')}</span>`
           :isFlagged?`<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">${T('prof.status.flagged')}</span>`
+          :isClosed?`<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">${T('prof.status.closed')}</span>`
           :`<span class="pj-status active">${T('prof.status.active')}</span>`;
-        const payBtn=isPending?`<button class="pj-pay-now" onclick="closeModal('modal-profile');resumePayment('${j.id}')">${T('prof.paynow')}</button>`:'';
-        return `<div class="pj-row${isPending?' pj-row-pending':''}"><div class="pj-t">${esc(jobTitle(j))}</div>${badge}${payBtn}<div class="pj-p" style="margin-left:4px">${j.price} €</div></div>`;
+        const id=esc(String(j.id));
+        const bs='font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;white-space:nowrap';
+        const acts=[];
+        if(isPending) acts.push(`<button style="${bs}" onclick="closeModal('modal-profile');resumePayment('${id}')">${T('prof.paynow')}</button>`);
+        if(status==='active'){ acts.push(`<button style="${bs}" onclick="openEditJob('${id}')">✏️ ${T('job.edit')}</button>`); acts.push(`<button style="${bs}" onclick="closeJobConfirm('${id}')">✅ ${T('job.complete')}</button>`); }
+        acts.push(`<button style="${bs};border-color:#cf222e;color:#cf222e" onclick="deleteJobConfirm('${id}')">🗑️ ${T('job.delete')}</button>`);
+        return `<div class="pj-row${isPending?' pj-row-pending':''}" style="flex-wrap:wrap">
+          <div class="pj-t" style="cursor:pointer" onclick="openJobDetail('${id}')">${esc(jobTitle(j))}</div>${badge}<div class="pj-p" style="margin-left:auto">${j.price} €</div>
+          <div style="flex-basis:100%;display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${acts.join('')}</div>
+        </div>`;
       }).join(''):`<div class="pj-empty">${T('prof.nojobs')}</div>`}
     </div>
     <div class="prof-sec-title" style="margin-top:16px">${T('prof.received')}</div>
     <div class="pj-list">
       ${received.length?received.map(r=>`
         <div class="pj-row">
-          <div class="pj-t">${esc(r.helperName)} <span style="color:var(--c-ink4);font-weight:400">· ${esc(r.jobTitle)}</span><div style="font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:2px">${esc((r.message||'').slice(0,60))}${(r.message||'').length>60?'…':''}</div></div>
+          ${avatarHtml(r.helperName, r.helperAvatar, 34, r.helperId)}
+          <div class="pj-t" style="flex:1">${esc(r.helperName)}${r.helperRating?' '+ratingHtml(r.helperRating):''} <span style="color:var(--c-ink4);font-weight:400">· ${esc(r.jobTitle)}</span><div style="font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:2px">${esc((r.message||'').slice(0,60))}${(r.message||'').length>60?'…':''}</div></div>
           <button class="pj-pay-now" style="background:var(--c-ink3)" onclick="openThreadOrList('${r.jobId}::${r.helperId}')">💬</button>
         </div>`).join(''):`<div class="pj-empty">${T('prof.noreceived')}</div>`}
     </div>`;
@@ -4274,10 +4471,12 @@ function _renderProfile(){
     ${warnings.length>0 && !banned ? `<div class="warn-box" style="margin-bottom:16px">⚠️ <strong>${warnings.length} ${LANG==='de'?'Verwarnung'+(warnings.length>1?'en':''):'Warning'+(warnings.length>1?'s':'')}</strong> – ${T('prof.warn.text')}</div>` : ''}
 
     <div class="prof-header">
-      <div class="prof-av" style="background:linear-gradient(135deg,${colorFor(u.name)})">${ini}</div>
+      <div style="position:relative;flex-shrink:0">${avatarHtml(u.name, u.avatar_url, 64)}<button onclick="document.getElementById('avatar-file').click()" title="${LANG==='de'?'Profilbild ändern':'Change photo'}" style="position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;border:2px solid var(--c-bg);background:var(--c-blue);color:#fff;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0">✎</button></div>
+      <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarFile(this.files&&this.files[0])">
       <div class="prof-av-info">
         <div class="pn">${esc(u.name)}</div>
         <div class="pr">${esc(u.email)}</div>
+        <div style="margin-top:3px"><a onclick="openPublicProfile('${esc(String(u.id))}')" style="font-size:12px;color:var(--c-blue);cursor:pointer;font-weight:600">${LANG==='de'?'Mein öffentliches Profil ansehen →':'View my public profile →'}</a></div>
         <div class="pm" style="display:flex;align-items:center;gap:6px;margin-top:6px">
           <span class="trust-badge ${trustInfo.cls}">${trustInfo.label}</span>
           ${avgRating ? `<span style="font-size:12px;color:#bf8700;font-weight:700">★ ${avgRating}</span>` : ''}
@@ -4394,6 +4593,84 @@ function initResumePayment() {
   const _job = (typeof getJobById === 'function') ? getJobById(APP.pendingPayJobId) : null;
   startStripeCheckout({ kind:'resume', jobId: APP.pendingPayJobId, jobTitle: _job ? jobTitle(_job) : '', btn });
 }
+/* ════════ AUFTRAGS-LEBENSZYKLUS: abschließen · bearbeiten · löschen ════════ */
+function _afterJobChange(){ try{ _renderProfile(); }catch(e){} try{ renderJobCards(); }catch(e){} try{ addMarkers(); }catch(e){} try{ updateBadge(); }catch(e){} }
+
+function deleteJobConfirm(id){
+  var job=getJobById(id);
+  var tEl=document.getElementById('del-job-title'); if(tEl) tEl.textContent=job?jobTitle(job):'';
+  var btn=document.getElementById('del-job-btn');
+  if(btn){ btn.disabled=false; btn.onclick=function(){ doDeleteJob(id); }; }
+  openModal('modal-delete-job');
+}
+async function doDeleteJob(id){
+  if(!APP.user || !window.SR){ showToast(T('toast.needlogin'),'err'); return; }
+  var btn=document.getElementById('del-job-btn'); if(btn) btn.disabled=true;
+  try{ await SR.deleteJob(id); }
+  catch(e){ console.error('[SR] deleteJob', e); if(btn) btn.disabled=false; showToast(LANG==='de'?'Löschen fehlgeschlagen.':'Delete failed.','err'); return; }
+  // Lokalen Zustand bereinigen – DB-Cascade entfernt Bewerbungen + Nachrichten serverseitig.
+  var sid=String(id);
+  STATE.jobs=(STATE.jobs||[]).filter(function(j){return String(j.id)!==sid;});
+  STATE.ownerJobs=(STATE.ownerJobs||[]).filter(function(j){return String(j.id)!==sid;});
+  if(STATE.jobMap) delete STATE.jobMap[sid];
+  STATE.threads=(STATE.threads||[]).filter(function(t){return String(t.jobId)!==sid;});
+  STATE.threadMap=Object.fromEntries((STATE.threads||[]).map(function(t){return [t.key,t];}));
+  if(STATE.received) STATE.received=STATE.received.filter(function(r){return String(r.jobId)!==sid;});
+  if(STATE.apps) STATE.apps=STATE.apps.filter(function(a){return String(a.jobId)!==sid;});
+  if(btn) btn.disabled=false;
+  closeModal('modal-delete-job');
+  _afterJobChange();
+  showToast(LANG==='de'?'Auftrag dauerhaft gelöscht.':'Job permanently deleted.','ok');
+}
+
+function closeJobConfirm(id){ doCloseJob(id); }
+async function doCloseJob(id){
+  if(!APP.user || !window.SR){ showToast(T('toast.needlogin'),'err'); return; }
+  try{ await SR.updateJob(id,{status:'closed'}); }
+  catch(e){ console.error('[SR] closeJob', e); showToast(LANG==='de'?'Aktion fehlgeschlagen.':'Action failed.','err'); return; }
+  var sid=String(id);
+  STATE.jobs=(STATE.jobs||[]).filter(function(j){return String(j.id)!==sid;});   // raus aus aktiver Liste/Karte
+  if(STATE.jobMap && STATE.jobMap[sid]) STATE.jobMap[sid].status='closed';
+  STATE.ownerJobs=(STATE.ownerJobs||[]).map(function(j){ return String(j.id)===sid?Object.assign({},j,{status:'closed'}):j; });
+  _afterJobChange();
+  showToast(LANG==='de'?'Auftrag abgeschlossen. Du kannst deinen Helfer jetzt im Chat bewerten.':'Job completed. You can now rate your helper in the chat.','ok');
+}
+
+function openEditJob(id){
+  var job=getJobById(id); if(!job){ showToast(T('toast.job.notfound'),'err'); return; }
+  document.getElementById('edit-job-id').value=String(id);
+  document.getElementById('edit-job-title').value=jobTitle(job);
+  document.getElementById('edit-job-desc').value=(typeof job.desc==='string'?job.desc:'');
+  document.getElementById('edit-job-price').value=job.price||'';
+  document.getElementById('edit-job-city').value=job.city||'';
+  var sel=document.getElementById('edit-job-cat');
+  if(sel) sel.innerHTML=['g','h','s','m'].map(function(c){ return '<option value="'+c+'"'+(job.cat===c?' selected':'')+'>'+catEmoji(c)+' '+catName(c)+'</option>'; }).join('');
+  closeModal('modal-profile');
+  openModal('modal-edit-job');
+}
+async function submitEditJob(){
+  var id=document.getElementById('edit-job-id').value;
+  if(!id || !window.SR){ return; }
+  var title=sanitize((document.getElementById('edit-job-title').value||'').trim(),100);
+  var desc=sanitize((document.getElementById('edit-job-desc').value||'').trim(),1000);
+  var price=parseFloat(document.getElementById('edit-job-price').value)||0;
+  var city=sanitize((document.getElementById('edit-job-city').value||'').trim(),150);
+  var cat=document.getElementById('edit-job-cat').value||'g';
+  if(!title || !desc || !city || price<=0){ showToast(T('toast.postfields'),'err'); return; }
+  if(typeof validateJobContent==='function' && !validateJobContent(title,desc)) return;
+  try{ await SR.updateJob(id,{ title:title, description:desc, price:price, city:city, category:cat }); }
+  catch(e){ console.error('[SR] updateJob', e); showToast(LANG==='de'?'Speichern fehlgeschlagen.':'Save failed.','err'); return; }
+  var sid=String(id);
+  var apply=function(j){ return String(j.id)===sid?Object.assign({},j,{title:title, desc:desc, price:price, city:city, cat:cat}):j; };
+  STATE.jobs=(STATE.jobs||[]).map(apply);
+  STATE.ownerJobs=(STATE.ownerJobs||[]).map(apply);
+  if(STATE.jobMap && STATE.jobMap[sid]) STATE.jobMap[sid]=apply(STATE.jobMap[sid]);
+  closeModal('modal-edit-job');
+  openModal('modal-profile'); _renderProfile();
+  renderJobCards(); addMarkers();
+  showToast(LANG==='de'?'Auftrag aktualisiert.':'Job updated.','ok');
+}
+
 function openJobDetail(id){
   // Normalize ID (handle string/number mismatch)
   const numId = Number(id); id = isNaN(numId) ? id : numId;
@@ -4417,11 +4694,11 @@ function openJobDetail(id){
       <div class="jd-price">${job.price} €</div>
     </div>
     <p class="jd-desc">${esc(desc)}</p>
-    <div class="auftr-box">
-      <div class="auftr-av">${esc((job.posterName||'?').split(' ').map(w=>w[0]).join('').slice(0,2))}</div>
+    <div class="auftr-box" style="cursor:pointer" onclick="openPublicProfile('${esc(String(job.poster||''))}')">
+      ${avatarHtml(job.posterName, job.posterAvatar, 42)}
       <div>
-        <div class="auftr-name">${esc(job.posterName||T('jd.client'))}</div>
-        <div class="auftr-meta"><span class="vbadge">${T('jd.verified')}</span><span>⭐ 4.8</span></div>
+        <div class="auftr-name">${esc(job.posterName||T('jd.client'))} <span style="font-size:11px;color:var(--c-blue);font-weight:600">${LANG==='de'?'· Profil ansehen':'· View profile'}</span></div>
+        <div class="auftr-meta">${ratingHtml(job.posterRating)}</div>
       </div>
     </div>
     <div class="info-box">${T('jd.fair')} ${fairTip}</div>
@@ -4973,6 +5250,7 @@ async function handlePaymentReturn(){
     sessionStorage.removeItem('sr_resume_job');
     APP._pendingJobPayload = null;
     clean();
+    try { if(APP.user && !APP.user.stripe_verified && window.SR){ await SR.updateProfile(APP.user.id,{stripe_verified:true}); APP.user.stripe_verified=true; } } catch(e){}
     await loadJobs(); try { await loadOwnerJobs(); } catch(e){}
     updateBadge(); renderJobCards(); addMarkers();
     showToast(T('toast.pay.success'), 'ok');
@@ -5154,6 +5432,11 @@ function renderJobCards(){
         </div>
         <button class="report-btn" onclick="event.stopPropagation();openReport('job','${esc(String(j.id))}','${esc(t.slice(0,40))}')" title="${LANG==='de'?'Melden':'Report'}" style="padding:3px 6px;font-size:11px">🚨</button>
       </div>
+      <div style="display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:9px;border-top:1px solid var(--c-bd)">
+        ${avatarHtml(j.posterName, j.posterAvatar, 22, j.poster)}
+        <span style="font-size:12px;color:var(--c-ink2);font-weight:600;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(j.posterName||'Auftraggeber')}</span>
+        ${j.posterRating?ratingHtml(j.posterRating):''}
+      </div>
     </div>`;
   }).join('');
 }
@@ -5294,6 +5577,7 @@ async function initApp() {
       if (session && session.user) {
         const prof = await SR.ensureProfile(session.user);
         APP.user = buildAppUser(prof);
+        try { if(session.user.email_confirmed_at && APP.user && !APP.user.email_verified && window.SR){ SR.updateProfile(APP.user.id,{email_verified:true}); APP.user.email_verified=true; } } catch(e){}
       }
     } catch (e) { console.error('[SR] session restore', e); }
     SR.onAuthChange(async (event, session) => {
@@ -5310,6 +5594,7 @@ async function initApp() {
           try {
             const prof = await SR.ensureProfile(session.user);
             APP.user = buildAppUser(prof);
+            try { if(session.user.email_confirmed_at && APP.user && !APP.user.email_verified && window.SR){ SR.updateProfile(APP.user.id,{email_verified:true}); APP.user.email_verified=true; } } catch(e){}
             updateNav();
             try { closeModal('modal-auth'); } catch (e) {}
             showToast(T('toast.welcome') + ', ' + (APP.user.name || '').split(' ')[0] + '!', 'ok');
@@ -5326,6 +5611,7 @@ async function initApp() {
     await loadJobs();
     if (APP.user) { await loadThreads(); updateBadge(); }
     try { await handlePaymentReturn(); } catch (e) { console.error('[SR] payment return', e); }
+    try { handleProfileHash(); } catch (e) {}
   } else {
     console.warn('[SR] Supabase not available – open the site via http(s) (a web server or Vercel), not file://, and ensure the @supabase/supabase-js script loads.');
     updateNav();
@@ -5413,6 +5699,7 @@ function bindEventListeners() {
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
+window.addEventListener('hashchange', handleProfileHash);
 document.addEventListener('DOMContentLoaded', bindAuthForms);
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ if (typeof leafMap!=='undefined' && leafMap) leafMap.invalidateSize(true); }, 400); });
 try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind right away

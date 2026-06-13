@@ -113,35 +113,97 @@
     async getProfilesByIds(ids) {
       var list = Array.from(new Set((ids || []).filter(Boolean)));
       if (!list.length) return [];
-      return unwrap(await sb.from('profiles').select('id,full_name,city,role').in('id', list));
+      return unwrap(await sb.from('profiles').select('id,full_name,city,role,avatar_url,rating,review_count,email_verified,stripe_verified,phone_verified').in('id', list));
+    },
+
+    /* ───────── PUBLIC PROFILE + LIVE-STATISTIKEN ───────── */
+    async getPublicProfile(id) {
+      if (!id) return null;
+      var prof = await this.getProfile(id);
+      if (!prof) return null;
+      var created = 0, completed = 0;
+      try {
+        // Genaue Zählung via SECURITY-DEFINER-Funktion (zählt auch abgeschlossene Jobs trotz RLS)
+        var st = await sb.rpc('public_profile_stats', { uid: id });
+        if (!st.error && st.data && st.data[0]) {
+          created = Number(st.data[0].created_jobs) || 0;
+          completed = Number(st.data[0].completed_jobs) || 0;
+        } else {
+          var c1 = await sb.from('jobs').select('id', { count: 'exact', head: true }).eq('user_id', id);
+          created = c1.count || 0;
+        }
+      } catch (e) { console.warn('[SR] profile stats', e && e.message); }
+      return Object.assign({}, prof, { created_jobs: created, completed_jobs: completed });
+    },
+    async updateProfile(userId, patch) {
+      var res = await sb.from('profiles').update(patch).eq('id', userId).select().maybeSingle();
+      if (res.error) throw res.error;
+      return res.data;
+    },
+
+    /* ───────── AVATAR (Supabase Storage, Bucket "avatars") ───────── */
+    async uploadAvatar(userId, blob, ext) {
+      ext = (ext || 'jpg').toLowerCase();
+      var path = userId + '/avatar_' + Date.now() + '.' + ext;
+      var up = await sb.storage.from('avatars').upload(path, blob, {
+        cacheControl: '3600', upsert: true,
+        contentType: (blob && blob.type) || ('image/' + (ext === 'jpg' ? 'jpeg' : ext))
+      });
+      if (up.error) throw up.error;
+      var pub = sb.storage.from('avatars').getPublicUrl(path);
+      var url = pub.data && pub.data.publicUrl;
+      await this.updateProfile(userId, { avatar_url: url });
+      return url;
+    },
+
+    /* ───────── REVIEWS (Bewertungen) ───────── */
+    async createReview(r) {
+      return unwrap(await sb.from('reviews')
+        .upsert({ job_id: r.job_id || null, reviewer_id: r.reviewer_id, reviewee_id: r.reviewee_id, rating: r.rating, comment: r.comment || null },
+                { onConflict: 'job_id,reviewer_id,reviewee_id' })
+        .select().single());
+    },
+    async listReviews(revieweeId) {
+      if (!revieweeId) return [];
+      return unwrap(await sb.from('reviews')
+        .select('*, reviewer:reviewer_id(full_name, avatar_url)')
+        .eq('reviewee_id', revieweeId)
+        .order('created_at', { ascending: false }));
     },
 
     /* ───────── JOBS ───────── */
     async listActiveJobs() {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(full_name, city)')
+        .select('*, profiles:user_id(id,full_name,city,avatar_url,rating)')
         .eq('status', 'active')
         .order('created_at', { ascending: false }));
     },
     async jobsByOwner(userId) {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(full_name, city)')
+        .select('*, profiles:user_id(id,full_name,city,avatar_url,rating)')
         .eq('user_id', userId)
         .order('created_at', { ascending: false }));
     },
     async getJobsByIds(ids) {
       var list = Array.from(new Set((ids || []).filter(Boolean)));
       if (!list.length) return [];
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(full_name, city)').in('id', list));
+      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').in('id', list));
     },
     async getJob(id) {
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(full_name, city)').eq('id', id).maybeSingle());
+      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').eq('id', id).maybeSingle());
     },
     async createJob(payload) {
-      return unwrap(await sb.from('jobs').insert(payload).select('*, profiles:user_id(full_name, city)').single());
+      return unwrap(await sb.from('jobs').insert(payload).select('*, profiles:user_id(id,full_name,city,avatar_url,rating)').single());
     },
     async updateJob(id, patch) {
       return unwrap(await sb.from('jobs').update(patch).eq('id', id).select().single());
+    },
+    // ECHTES Löschen: RLS (jobs_delete_own) erlaubt nur dem Eigentümer das Löschen.
+    // DB-Cascade entfernt zugehörige applications + messages; reviews.job_id wird NULL.
+    async deleteJob(id) {
+      var res = await sb.from('jobs').delete().eq('id', id);
+      if (res.error) throw res.error;
+      return true;
     },
 
     /* ───────── APPLICATIONS ───────── */
@@ -158,7 +220,7 @@
     },
     async listApplicationsForJob(jobId) {
       return unwrap(await sb.from('applications')
-        .select('*, profiles:helper_id(full_name)')
+        .select('*, profiles:helper_id(id,full_name,avatar_url,rating)')
         .eq('job_id', jobId)
         .order('created_at', { ascending: false }));
     },
@@ -167,7 +229,7 @@
       var list = Array.from(new Set((jobIds || []).filter(Boolean)));
       if (!list.length) return [];
       return unwrap(await sb.from('applications')
-        .select('*, profiles:helper_id(full_name), jobs:job_id(title)')
+        .select('*, profiles:helper_id(id,full_name,avatar_url,rating), jobs:job_id(title)')
         .in('job_id', list)
         .order('created_at', { ascending: false }));
     },

@@ -4425,7 +4425,7 @@ function openJobDetail(id){
       </div>
     </div>
     <div class="info-box">${T('jd.fair')} ${fairTip}</div>
-    ${(!APP.user || job.poster === APP.user?.id) ? '' : '<button class="btn btn-dark btn-full btn-lg" onclick="openApply('+JSON.stringify(job.id)+')" style="font-size:15px">'+T('jd.intbtn')+'</button>'}
+    ${(APP.user && job.poster === APP.user.id) ? '' : '<button class="btn btn-dark btn-full btn-lg" onclick="openApply(\''+esc(String(job.id))+'\')" style="font-size:15px">'+T('jd.intbtn')+'</button>'}
     ${APP.user && job.poster === APP.user.id ? '<div class="succ-box" style="margin-top:0;margin-bottom:12px">'+T('jd.own')+'</div>' : ''}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
       <div style="background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r1);padding:10px 14px;flex:1;font-size:11.5px;color:var(--c-ink4);line-height:1.6;margin-right:8px">
@@ -4440,7 +4440,7 @@ function openJobDetail(id){
    APPLY
 ══════════════════════════════════════════════════════ */
 function openApply(jobId){
-  if(!APP.user){closeModal('modal-job');openAuth('login');showToast(T('toast.needlogin'));return}
+  if(!APP.user){APP._resumeJobId=jobId;closeModal('modal-job');openAuth('login');showToast(T('toast.needlogin'));return}
   if(isBanned(APP.user.email)){showToast(T('toast.banned'),'err');return}
   // Rate limit: max 15 applications per day
   if(!checkRateLimit('apply')){
@@ -5142,7 +5142,7 @@ function renderJobCards(){
     const isNew=Date.now()-j.ts<3600000*2;
     const isActive = String(j.id) === String(activeJobId);
     const distKm = j.dist || (haversine(mapCenter.lat,mapCenter.lng,j.lat,j.lng).toFixed(1)+' km');
-    return `<div class="jcard${isActive?' on':''}" id="jc_${j.id}" style="position:relative" onclick="selectJob(${JSON.stringify(j.id)})">
+    return `<div class="jcard${isActive?' on':''}" id="jc_${j.id}" style="position:relative" onclick="selectJob('${esc(String(j.id))}')">
       ${isNew?'<div class="jcard-new" title="'+(LANG==='de'?'Neu':'New')+'"></div>':''}
       <div class="jcard-top"><span class="jcard-t">${esc(t)}</span><span class="jcard-p">${j.price} €</span></div>
       <p class="jcard-d">${esc(truncated)}</p>
@@ -5316,6 +5316,8 @@ async function initApp() {
             await loadJobs();
             await loadThreads();
             updateBadge();
+            // Nach Login zurück zum Auftrag, den der Helfer öffnen wollte
+            if (APP._resumeJobId) { const _rj = APP._resumeJobId; APP._resumeJobId = null; try { openJobDetail(_rj); } catch(e){} }
           } catch (e) { console.error('[SR] auth change', e); }
         }
       }

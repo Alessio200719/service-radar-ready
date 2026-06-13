@@ -3687,8 +3687,20 @@ async function submitRating() {
       showToast(T('toast.rating.saved'), 'ok');
       return;
     } catch (e) {
-      console.error('[SR] createReview', e);
-      showToast(LANG==='de'?'Bewertung konnte nicht gespeichert werden.':'Could not save review.','err');
+      console.error('[SR] createReview', e);   // echter Supabase-Fehler im Log
+      var code = (e && e.code) || '';
+      var msg  = (e && (e.message || e.details || e.hint)) || '';
+      var human;
+      if (code === '23505' || /duplicate key|unique/i.test(msg)) {
+        human = LANG==='de' ? 'Du hast diese Person für diesen Auftrag bereits bewertet.' : 'You have already reviewed this person for this job.';
+      } else if (code === '42P01' || /relation .*reviews.* does not exist|could not find the table|schema cache/i.test(msg)) {
+        human = LANG==='de' ? 'Bewertungs-Tabelle fehlt – bitte supabase_reviews_fix.sql in Supabase ausführen.' : 'Reviews table missing – run supabase_reviews_fix.sql in Supabase.';
+      } else if (code === '42501' || /row-level security|violates row-level|policy|can_review|check constraint/i.test(msg)) {
+        human = LANG==='de' ? 'Bewerten ist nur nach Abschluss des Auftrags und nur für Beteiligte möglich.' : 'Reviews are only possible after the job is completed and only for participants.';
+      } else {
+        human = (LANG==='de' ? 'Bewertung fehlgeschlagen: ' : 'Review failed: ') + (msg || ('Code ' + code));
+      }
+      showToast(human, 'err');
       return;
     }
   }

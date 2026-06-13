@@ -158,10 +158,17 @@
 
     /* ───────── REVIEWS (Bewertungen) ───────── */
     async createReview(r) {
-      return unwrap(await sb.from('reviews')
-        .upsert({ job_id: r.job_id || null, reviewer_id: r.reviewer_id, reviewee_id: r.reviewee_id, rating: r.rating, comment: r.comment || null },
-                { onConflict: 'job_id,reviewer_id,reviewee_id' })
-        .select().single());
+      // Plain INSERT (kein onConflict-Target nötig -> robuster). Doppel-Reviews
+      // verhindert die UNIQUE-Constraint reviews_unique_pair (Fehlercode 23505).
+      var res = await sb.from('reviews').insert({
+        job_id:      r.job_id || null,
+        reviewer_id: r.reviewer_id,
+        reviewee_id: r.reviewee_id || r.reviewed_user_id,
+        rating:      r.rating,
+        comment:     r.comment || null
+      }).select().single();
+      if (res.error) throw res.error;   // echten Supabase-Fehler an den Aufrufer durchreichen
+      return res.data;
     },
     async listReviews(revieweeId) {
       if (!revieweeId) return [];

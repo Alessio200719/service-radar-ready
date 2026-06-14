@@ -180,6 +180,30 @@
         .order('created_at', { ascending: false }));
     },
 
+    /* ───────── SAVED JOBS (Merkliste / Favoriten) ───────── */
+    async listSavedJobIds(userId) {
+      if (!userId) return [];
+      var data = unwrap(await sb.from('saved_jobs').select('job_id').eq('user_id', userId));
+      return (data || []).map(function (r) { return r.job_id; });
+    },
+    async listSavedJobs(userId) {
+      if (!userId) return [];
+      return unwrap(await sb.from('saved_jobs')
+        .select('job_id, created_at, jobs:job_id(*, profiles:user_id(id,full_name,email,city,avatar_url,rating))')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false }));
+    },
+    async saveJob(userId, jobId) {
+      var res = await sb.from('saved_jobs').insert({ user_id: userId, job_id: jobId }).select().single();
+      if (res.error) { console.error('SAVED_JOBS INSERT ERROR:', res.error); throw res.error; }
+      return res.data;
+    },
+    async unsaveJob(userId, jobId) {
+      var res = await sb.from('saved_jobs').delete().eq('user_id', userId).eq('job_id', jobId);
+      if (res.error) { console.error('SAVED_JOBS DELETE ERROR:', res.error); throw res.error; }
+      return true;
+    },
+
     /* ───────── JOBS ───────── */
     async listActiveJobs() {
       return unwrap(await sb.from('jobs')

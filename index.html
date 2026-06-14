@@ -3319,6 +3319,8 @@ const STATE = {
   threadMap: {},   // key -> thread
   jobMap: {},      // id -> app-shape job (cache for getJobById)
   received: [],    // applications received on the current user's jobs
+  savedIds: new Set(),  // job ids the current user saved (Merkliste)
+  savedJobs: [],        // saved jobs incl. details (für Profilbereich)
 };
 
 function whenSRReady(){
@@ -4280,6 +4282,7 @@ async function openProfile(){
   await loadOwnerJobs();
   await loadThreads();
   await loadReceivedApplications();
+  await loadSavedJobs();
   _renderProfile();
   openModal('modal-profile');
 }
@@ -4519,6 +4522,16 @@ function _renderProfile(){
 
     ${mode==='client' ? clientBlock : helperBlock}
 
+    <div class="prof-sec-title" style="margin-top:18px">❤️ ${LANG==='de'?'Gemerkte Aufträge':'Saved jobs'}</div>
+    <div class="pj-list">
+      ${(STATE.savedJobs && STATE.savedJobs.length) ? STATE.savedJobs.map(j=>`
+        <div class="pj-row" style="cursor:pointer" onclick="closeModal('modal-profile');openJobDetail('${esc(String(j.id))}')">
+          <div class="pj-t">${esc(jobTitle(j))} <span style="color:var(--c-ink4);font-weight:400">· ${esc(j.posterName||'')}</span></div>
+          <div class="pj-p" style="margin-left:auto">${j.price} €</div>
+          <button class="pj-pay-now" style="background:none;color:#cf222e;padding:4px 8px" title="${LANG==='de'?'Entfernen':'Remove'}" onclick="toggleSaveJob('${esc(String(j.id))}',event)">❤️</button>
+        </div>`).join('') : `<div class="pj-empty">${LANG==='de'?'Noch keine gemerkten Aufträge.':'No saved jobs yet.'}</div>`}
+    </div>
+
     <div style="display:flex;gap:10px;margin-top:16px">
       <button class="btn btn-outline btn-full" onclick="closeModal('modal-profile');openChats()">💬 ${T('nav.messages')}</button>
       <button class="btn btn-danger btn-sm" onclick="logout();closeModal('modal-profile')">${T('nav.logout')}</button>
@@ -4613,6 +4626,67 @@ function initResumePayment() {
   const _job = (typeof getJobById === 'function') ? getJobById(APP.pendingPayJobId) : null;
   startStripeCheckout({ kind:'resume', jobId: APP.pendingPayJobId, jobTitle: _job ? jobTitle(_job) : '', btn });
 }
+/* ════════ FAVORITEN / MERKLISTE (saved_jobs) ════════ */
+async function loadSavedJobs(){
+  if(!window.SR || !APP.user){ STATE.savedIds=new Set(); STATE.savedJobs=[]; return; }
+  try{
+    var rows=await SR.listSavedJobs(APP.user.id);
+    STATE.savedIds=new Set((rows||[]).map(function(r){return String(r.job_id);}));
+    STATE.savedJobs=(rows||[]).map(function(r){ return r.jobs?jobFromRow(r.jobs):null; }).filter(Boolean);
+  }catch(e){ console.error('[SR] loadSavedJobs', e); STATE.savedIds=new Set(); STATE.savedJobs=[]; }
+}
+function isJobSaved(id){ return !!(STATE.savedIds && STATE.savedIds.has(String(id))); }
+function saveBtnHtml(jobId, variant){
+  var sid=esc(String(jobId));
+  var saved=isJobSaved(jobId);
+  var label=saved?(LANG==='de'?'Gemerkt':'Saved'):(LANG==='de'?'Merken':'Save');
+  var st = (variant==='detail')
+    ? 'display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border:1px solid var(--c-bd);border-radius:10px;background:var(--c-bg);color:var(--c-ink);cursor:pointer;font-weight:700;font-size:14px'
+    : 'display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border:1px solid var(--c-bd);border-radius:6px;background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;font-size:11px';
+  return '<button type="button" data-savebtn="'+sid+'" onclick="toggleSaveJob(\''+sid+'\',event)" title="'+esc(label)+'" style="'+st+'">'+(saved?'❤️':'🤍')+' '+esc(label)+'</button>';
+}
+function _renderSaveButtons(jobId){
+  var sid=String(jobId), saved=isJobSaved(sid);
+  var label=saved?(LANG==='de'?'Gemerkt':'Saved'):(LANG==='de'?'Merken':'Save');
+  document.querySelectorAll('[data-savebtn="'+sid+'"]').forEach(function(b){ b.innerHTML=(saved?'❤️':'🤍')+' '+esc(label); b.title=label; });
+}
+async function toggleSaveJob(jobId, ev){
+  if(ev && ev.stopPropagation) ev.stopPropagation();
+  if(!APP.user){ showToast(T('toast.needlogin'),'err'); try{openAuth('login');}catch(e){} return; }
+  if(!window.SR){ showToast(T('toast.needlogin'),'err'); return; }
+  var sid=String(jobId);
+  var wasSaved=isJobSaved(sid);
+  if(wasSaved) STATE.savedIds.delete(sid); else STATE.savedIds.add(sid);   // optimistisches UI
+  _renderSaveButtons(sid);
+  try{
+    if(wasSaved){
+      console.info('[SR] saved_jobs DELETE', { user_id:APP.user.id, job_id:sid });
+      await SR.unsaveJob(APP.user.id, sid);
+      STATE.savedJobs=(STATE.savedJobs||[]).filter(function(j){return String(j.id)!==sid;});
+      showToast(LANG==='de'?'Aus Merkliste entfernt.':'Removed from saved.','ok');
+    } else {
+      console.info('[SR] saved_jobs INSERT', { user_id:APP.user.id, job_id:sid });
+      await SR.saveJob(APP.user.id, sid);
+      var job=getJobById(sid);
+      if(job && !(STATE.savedJobs||[]).some(function(j){return String(j.id)===sid;})) STATE.savedJobs=[job].concat(STATE.savedJobs||[]);
+      showToast(LANG==='de'?'❤️ Gemerkt.':'❤️ Saved.','ok');
+    }
+  }catch(e){
+    console.error('[SR] toggleSaveJob ERROR', e);
+    if(wasSaved) STATE.savedIds.add(sid); else STATE.savedIds.delete(sid);   // Rollback
+    _renderSaveButtons(sid);
+    var code=(e&&e.code)||'', msg=(e&&(e.message||e.details))||'';
+    var human = (code==='23505') ? (LANG==='de'?'Schon gemerkt.':'Already saved.')
+      : (code==='42P01'||/saved_jobs.*does not exist|could not find the table/i.test(msg)) ? (LANG==='de'?'Tabelle saved_jobs fehlt in Supabase.':'saved_jobs table missing.')
+      : (code==='42501'||/row-level security|violates row-level|policy/i.test(msg)) ? (LANG==='de'?'Keine Berechtigung (RLS).':'Not allowed (RLS).')
+      : (LANG==='de'?'Merken fehlgeschlagen: ':'Save failed: ')+(msg||('Code '+code));
+    showToast(human,'err');
+    if(code==='23505'){ STATE.savedIds.add(sid); _renderSaveButtons(sid); }
+  }
+  var pm=document.getElementById('modal-profile');
+  if(pm && pm.classList.contains('open')){ try{ _renderProfile(); }catch(e){} }
+}
+
 /* ════════ AUFTRAGS-LEBENSZYKLUS: abschließen · bearbeiten · löschen ════════ */
 function _afterJobChange(){ try{ _renderProfile(); }catch(e){} try{ renderJobCards(); }catch(e){} try{ addMarkers(); }catch(e){} try{ updateBadge(); }catch(e){} }
 
@@ -4723,6 +4797,7 @@ function openJobDetail(id){
     </div>
     <div class="info-box">${T('jd.fair')} ${fairTip}</div>
     ${(APP.user && job.poster === APP.user.id) ? '' : '<button class="btn btn-dark btn-full btn-lg" onclick="openApply(\''+esc(String(job.id))+'\')" style="font-size:15px">'+T('jd.intbtn')+'</button>'}
+    <div style="margin-top:10px;text-align:center">${saveBtnHtml(job.id,'detail')}</div>
     ${APP.user && job.poster === APP.user.id ? '<div class="succ-box" style="margin-top:0;margin-bottom:12px">'+T('jd.own')+'</div>' : ''}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
       <div style="background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r1);padding:10px 14px;flex:1;font-size:11.5px;color:var(--c-ink4);line-height:1.6;margin-right:8px">
@@ -5450,7 +5525,7 @@ function renderJobCards(){
           <span class="chip chip-loc">📍 ${esc(distKm)}</span>
           ${j.time?`<span class="chip chip-loc">🕐 ${esc(j.time)}</span>`:''}
         </div>
-        <button class="report-btn" onclick="event.stopPropagation();openReport('job','${esc(String(j.id))}','${esc(t.slice(0,40))}')" title="${LANG==='de'?'Melden':'Report'}" style="padding:3px 6px;font-size:11px">🚨</button>
+        <div style="display:flex;gap:6px;align-items:center">${saveBtnHtml(j.id,'card')}<button class="report-btn" onclick="event.stopPropagation();openReport('job','${esc(String(j.id))}','${esc(t.slice(0,40))}')" title="${LANG==='de'?'Melden':'Report'}" style="padding:3px 6px;font-size:11px">🚨</button></div>
       </div>
       <div style="display:flex;align-items:center;gap:7px;margin-top:10px;padding-top:9px;border-top:1px solid var(--c-bd)">
         ${avatarHtml(j.posterName, j.posterAvatar, 22, j.poster)}
@@ -5604,6 +5679,7 @@ async function initApp() {
       if (event === 'SIGNED_OUT') {
         APP.user = null;
         STATE.apps = []; STATE.ownerJobs = []; STATE.threads = []; STATE.threadMap = {};
+        STATE.savedIds = new Set(); STATE.savedJobs = [];
         updateNav(); updateBadge(); renderJobCards(); addMarkers();
         return;
       }
@@ -5621,6 +5697,7 @@ async function initApp() {
             await loadJobs();
             await loadThreads();
             updateBadge();
+            try{ await loadSavedJobs(); renderJobCards(); addMarkers(); }catch(e){}
             // Nach Login zurück zum Auftrag, den der Helfer öffnen wollte
             if (APP._resumeJobId) { const _rj = APP._resumeJobId; APP._resumeJobId = null; try { openJobDetail(_rj); } catch(e){} }
           } catch (e) { console.error('[SR] auth change', e); }
@@ -5629,7 +5706,7 @@ async function initApp() {
     });
     updateNav();
     await loadJobs();
-    if (APP.user) { await loadThreads(); updateBadge(); }
+    if (APP.user) { await loadThreads(); updateBadge(); try{ await loadSavedJobs(); renderJobCards(); addMarkers(); }catch(e){} }
     try { await handlePaymentReturn(); } catch (e) { console.error('[SR] payment return', e); }
     try { handleProfileHash(); } catch (e) {}
   } else {

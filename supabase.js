@@ -158,23 +158,25 @@
 
     /* ───────── REVIEWS (Bewertungen) ───────── */
     async createReview(r) {
-      // Plain INSERT (kein onConflict-Target nötig -> robuster). Doppel-Reviews
-      // verhindert die UNIQUE-Constraint reviews_unique_pair (Fehlercode 23505).
-      var res = await sb.from('reviews').insert({
-        job_id:      r.job_id || null,
-        reviewer_id: r.reviewer_id,
-        reviewee_id: r.reviewee_id || r.reviewed_user_id,
-        rating:      r.rating,
-        comment:     r.comment || null
-      }).select().single();
-      if (res.error) throw res.error;   // echten Supabase-Fehler an den Aufrufer durchreichen
+      // Spalte in public.reviews heißt reviewed_user_id (NICHT reviewee_id!).
+      var reviewPayload = {
+        job_id:           r.job_id || null,
+        reviewer_id:      r.reviewer_id,
+        reviewed_user_id: r.reviewed_user_id || r.reviewee_id,
+        rating:           Number(r.rating),
+        comment:          r.comment || null
+      };
+      console.error("REVIEW PAYLOAD:", reviewPayload);
+      var res = await sb.from('reviews').insert(reviewPayload).select().single();
+      if (res.error) { console.error("REVIEW INSERT ERROR:", res.error); throw res.error; }
+      console.info("REVIEW INSERT OK:", res.data);
       return res.data;
     },
-    async listReviews(revieweeId) {
-      if (!revieweeId) return [];
+    async listReviews(reviewedUserId) {
+      if (!reviewedUserId) return [];
       return unwrap(await sb.from('reviews')
         .select('*, reviewer:reviewer_id(full_name, avatar_url)')
-        .eq('reviewee_id', revieweeId)
+        .eq('reviewed_user_id', reviewedUserId)
         .order('created_at', { ascending: false }));
     },
 

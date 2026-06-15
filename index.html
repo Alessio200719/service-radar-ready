@@ -4652,31 +4652,85 @@ async function registerServiceWorker(){
   try { return await navigator.serviceWorker.register('/sw.js'); }
   catch(e){ console.error('Push subscription error:', e); return null; }
 }
+// "aktiv" NUR wenn ALLE 3 Bedingungen erfüllt sind:
+// (1) Notification.permission === 'granted'
+// (2) echte Browser-Push-Subscription vorhanden
+// (3) genau dieser endpoint ist in Supabase push_subscriptions für den Nutzer gespeichert
 async function refreshPushStatus(){
-  if(!pushSupported() || !APP.user){ APP.pushSubscribed=false; return; }
-  try { var reg=await navigator.serviceWorker.ready; var sub=await reg.pushManager.getSubscription(); APP.pushSubscribed=!!sub; }
-  catch(e){ APP.pushSubscribed=false; }
+  APP.pushSubscribed = false;
+  if(!pushSupported() || !APP.user) return;
+  if(Notification.permission !== 'granted') return;                 // (1)
+  try {
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.getSubscription();              // (2)
+    if(!sub) return;
+    var saved = [];
+    try { if(window.SR && SR.listMyPushEndpoints) saved = await SR.listMyPushEndpoints(APP.user.id); }  // (3)
+    catch(e){ console.error('Push status error:', e); }
+    APP.pushSubscribed = saved.indexOf(sub.endpoint) >= 0;
+  } catch(e){ console.error('Push status error:', e); APP.pushSubscribed = false; }
 }
 async function enablePushNotifications(){
-  if(!APP.user){ showToast(T('toast.needlogin'),'err'); return; }
+  console.log("1 push activate clicked");
+  // 4) currentUser.id muss vorhanden sein
+  if(!APP.user || !APP.user.id){ showToast(LANG==='de'?'Bitte neu einloggen.':'Please log in again.','err'); return; }
   if(!pushSupported()){ showToast(LANG==='de'?'Dein Browser unterstützt keine Push-Benachrichtigungen.':'Your browser does not support push notifications.','err'); return; }
   try{
-    var perm = await Notification.requestPermission();
-    if(perm!=='granted'){ APP.pushSubscribed=false; _profileRerenderIfOpen(); showToast(LANG==='de'?'Benachrichtigungen wurden nicht erlaubt.':'Notifications were not allowed.','err'); return; }
-    await registerServiceWorker();
-    var reg = await navigator.serviceWorker.ready;
-    var key = await getVapidKey();
-    if(!key){ showToast(LANG==='de'?'Push-Konfiguration fehlt (VAPID_PUBLIC_KEY).':'Push config missing (VAPID_PUBLIC_KEY).','err'); return; }
-    var sub = await reg.pushManager.getSubscription();
-    if(!sub){ sub = await reg.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: urlBase64ToUint8Array(key) }); }
-    var res = await fetch('/api/save-push-subscription', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ user_id: APP.user.id, subscription: sub }) });
-    if(!res.ok){ var d=await res.json().catch(function(){return{};}); throw new Error(d.error||('HTTP '+res.status)); }
+    var permission = await Notification.requestPermission();
+    console.log("2 permission result:", permission);
+    if(permission!=='granted'){ APP.pushSubscribed=false; _profileRerenderIfOpen(); showToast(LANG==='de'?'Benachrichtigungen wurden nicht erlaubt.':'Notifications were not allowed.','err'); return; }
+
+    // Service Worker DIREKT registrieren -> ein 404 auf /sw.js wirft hier sichtbar
+    // (statt später still an serviceWorker.ready zu hängen).
+    var registration = await navigator.serviceWorker.register('/sw.js');
+    console.log("3 service worker registered:", registration);
+    // Auf aktiven SW warten, aber MIT Timeout (kein endloses Hängen)
+    await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('Service Worker wurde nicht aktiv – ist /sw.js deployt und per HTTPS erreichbar?')); }, 10000); })
+    ]);
+    registration = (await navigator.serviceWorker.getRegistration()) || registration;
+    console.log("3b service worker ready:", registration);
+
+    var publicKey = await getVapidKey();
+    console.log("4 vapid key loaded:", publicKey);
+    if(!publicKey){ showToast(LANG==='de'?'VAPID Public Key fehlt (/api/vapid-public-key).':'VAPID public key missing.','err'); return; }
+    var applicationServerKey = urlBase64ToUint8Array(publicKey);
+    console.log("5 applicationServerKey converted:", applicationServerKey);
+
+    var subscription = await registration.pushManager.getSubscription();
+    if(!subscription){ subscription = await registration.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: applicationServerKey }); }
+    console.log("6 subscription created:", subscription);
+
+    var payload = { user_id: APP.user.id, subscription: subscription };
+    console.log("7 saving subscription payload:", payload);
+    var response = await fetch('/api/save-push-subscription', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    console.log("8 save response status:", response.status);
+    var result = await response.json().catch(function(){ return {}; });
+    console.log("9 save response body:", result);
+    if(!response.ok){ throw new Error(result.error || ('HTTP '+response.status)); }
+
     APP.pushSubscribed=true; _profileRerenderIfOpen();
     showToast(LANG==='de'?'🔔 Benachrichtigungen aktiviert.':'🔔 Notifications enabled.','ok');
-  }catch(e){
-    console.error('Push subscription error:', e);
-    showToast((LANG==='de'?'Aktivierung fehlgeschlagen: ':'Enable failed: ')+((e&&e.message)||''),'err');
+  }catch(error){
+    console.error("Push activation failed:", error);
+    showToast((LANG==='de'?'Aktivierung fehlgeschlagen: ':'Activation failed: ')+((error&&error.message)||error),'err');
   }
+}
+async function disablePushNotifications(){
+  try{
+    var endpoint=null;
+    if('serviceWorker' in navigator){
+      var reg=await navigator.serviceWorker.ready;
+      var sub=await reg.pushManager.getSubscription();
+      if(sub){ endpoint=sub.endpoint; try{ await sub.unsubscribe(); }catch(e){ console.error('Push unsubscribe error:', e); } }
+    }
+    if(endpoint && APP.user && window.SR && SR.deletePushSubscription){
+      try{ await SR.deletePushSubscription(APP.user.id, endpoint); }catch(e){ console.error('Push delete error:', e); }
+    }
+    APP.pushSubscribed=false; _profileRerenderIfOpen();
+    showToast(LANG==='de'?'Benachrichtigungen deaktiviert.':'Notifications disabled.','ok');
+  }catch(e){ console.error('Push disable error:', e); showToast(LANG==='de'?'Deaktivieren fehlgeschlagen.':'Disable failed.','err'); }
 }
 function _profileRerenderIfOpen(){ var m=document.getElementById('modal-profile'); if(m && m.classList.contains('open')){ try{ _renderProfile(); }catch(e){} } }
 function pushStatusHtml(){
@@ -4684,7 +4738,8 @@ function pushStatusHtml(){
   if(typeof Notification!=='undefined' && Notification.permission==='denied')
     return '<div class="warn-box" style="margin-top:16px">🔔 '+(LANG==='de'?'Benachrichtigungen wurden im Browser blockiert. Bitte in den Browser-Einstellungen erlauben.':'Notifications are blocked in your browser. Please allow them in your browser settings.')+'</div>';
   if(APP.pushSubscribed)
-    return '<div class="succ-box" style="margin-top:16px">✅ '+(LANG==='de'?'Benachrichtigungen aktiv':'Notifications active')+'</div>';
+    return '<div class="succ-box" style="margin-top:16px">✅ '+(LANG==='de'?'Benachrichtigungen aktiv':'Notifications active')+'</div>'+
+      '<button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="disablePushNotifications()">🔕 '+(LANG==='de'?'Benachrichtigungen deaktivieren':'Disable notifications')+'</button>';
   return '<div style="margin-top:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px">'+
     '<div style="font-weight:700;margin-bottom:4px">🔔 '+(LANG==='de'?'Benachrichtigungen aktivieren':'Enable notifications')+'</div>'+
     '<div style="font-size:12.5px;color:var(--c-ink3);margin-bottom:10px">'+(LANG==='de'?'Erhalte sofort Hinweise zu neuen Nachrichten, Bewerbungen und Bewertungen.':'Get instant alerts for new messages, applications and reviews.')+'</div>'+

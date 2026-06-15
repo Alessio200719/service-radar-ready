@@ -204,6 +204,20 @@
       return true;
     },
 
+    /* ───────── PUSH SUBSCRIPTIONS (Status-Check / Deaktivieren via RLS) ───────── */
+    // Liest die in Supabase gespeicherten Endpoints des eingeloggten Nutzers
+    // (RLS „SELECT eigene" erlaubt nur die eigenen Zeilen).
+    async listMyPushEndpoints(userId) {
+      if (!userId) return [];
+      var data = unwrap(await sb.from('push_subscriptions').select('endpoint').eq('user_id', userId));
+      return (data || []).map(function (r) { return r.endpoint; });
+    },
+    async deletePushSubscription(userId, endpoint) {
+      var res = await sb.from('push_subscriptions').delete().eq('user_id', userId).eq('endpoint', endpoint);
+      if (res.error) { console.error('Push delete error:', res.error); throw res.error; }
+      return true;
+    },
+
     /* ───────── JOBS ───────── */
     async listActiveJobs() {
       return unwrap(await sb.from('jobs')

@@ -388,7 +388,7 @@ footer{background:var(--c-bg);border-top:1px solid var(--c-bds)}
 .foot-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
 .foot-col ul li a{color:var(--c-ink3);font-size:13.5px;transition:color .15s}
 .foot-col ul li a:hover{color:var(--c-blue)}
-.foot-bot{padding:20px 0;border-top:1px solid var(--c-bds);display:flex;justify-content:space-between;align-items:center;font-size:12.5px;color:var(--c-ink4)}
+.foot-bot{padding:20px 0;border-top:1px solid var(--c-bds);display:flex;justify-content:center;align-items:center;text-align:center;font-size:12.5px;color:var(--c-ink4)}
 
 /* ══ IMPRESSUM ════════════════════════════════════ */
 /* ══ TRUST & SAFETY SYSTEM ═══════════════════════ */
@@ -914,8 +914,8 @@ html[lang="en"] #legal-de-note{display:block}
         <!-- Mini stats strip -->
         <div style="display:flex;gap:24px;margin-top:28px;flex-wrap:wrap;animation:fadeUp .55s ease-out .4s both">
           <div style="text-align:left">
-            <div style="font-size:22px;font-weight:800;color:#0f1117;letter-spacing:-.03em">Esslingen</div>
-            <div style="font-size:12px;color:#8b949e;margin-top:1px" data-i18n="hero.stat1.l">Aktiver Standort</div>
+            <div id="hero-loc-val" style="font-size:22px;font-weight:800;color:#0f1117;letter-spacing:-.03em">In deiner Nähe</div>
+            <div id="hero-loc-lbl" style="font-size:12px;color:#8b949e;margin-top:1px">Lokale Aufträge</div>
           </div>
           <div style="width:1px;background:#eaeef2;align-self:stretch"></div>
           <div style="text-align:left">
@@ -1115,7 +1115,7 @@ html[lang="en"] #legal-de-note{display:block}
       <button class="btn btn-outline" onclick="useMyLocation()" data-i18n="geo.btn">📍 Standort freigeben</button>
       <button class="btn btn-primary" onclick="filterJobs()" data-i18n="map.search">🔍 Suchen</button>
     </div>
-    <div id="geo-hint" class="geo-hint" data-i18n="geo.hint">Standort freigeben, um Aufgaben in deiner Nähe zu sehen.</div>
+    <div id="geo-hint" class="geo-hint">Standort freigeben und Aufträge in deiner Nähe sehen.</div>
     <div class="filter-bar">
       <span class="filter-lbl" data-i18n="map.filter">Filter:</span>
       <button class="fc on" data-cat="all" onclick="setFilter('all',this)" data-i18n="filter.all">Alle</button>
@@ -1435,7 +1435,7 @@ html[lang="en"] #legal-de-note{display:block}
             <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;padding-left:4px">14:32</div>
           </div>
           <div style="align-self:flex-end;max-width:82%">
-            <div style="background:#0969da;border-radius:12px 12px 3px 12px;padding:8px 12px;font-size:12px;color:#fff;line-height:1.45">Super! Morgen 10 Uhr passt mir gut. Musterstraße 10, Esslingen.</div>
+            <div style="background:#0969da;border-radius:12px 12px 3px 12px;padding:8px 12px;font-size:12px;color:#fff;line-height:1.45">Super! Morgen 10 Uhr passt mir gut. Musterstraße 10.</div>
             <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;padding-right:4px;text-align:right">14:35</div>
           </div>
           <div style="align-self:flex-start;max-width:82%">
@@ -1480,7 +1480,7 @@ html[lang="en"] #legal-de-note{display:block}
             <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0969da,#54aeff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">LM</div>
             <div>
               <div style="font-size:13px;font-weight:700;color:#fff">Luca Müller</div>
-              <div style="font-size:11px;color:rgba(255,255,255,.45)">⚡ Helfer · Esslingen</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.45)">⚡ Verifizierter Helfer</div>
             </div>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -1516,7 +1516,6 @@ html[lang="en"] #legal-de-note{display:block}
         <button class="btn btn-ghost btn-full btn-lg" onclick="openPostJob()" style="border-color:rgba(255,255,255,.3);font-size:15px" data-i18n="cta.c2.btn">📋 Jetzt inserieren – 2 €</button>
       </div>
     </div>
-    <div style="text-align:center;margin-top:40px;font-size:13px;color:rgba(255,255,255,.35);position:relative;z-index:1" data-i18n="cta.made">Made with ❤️ in Esslingen</div>
   </div>
 </section>
 
@@ -2094,7 +2093,6 @@ html[lang="en"] #legal-de-note{display:block}
     </div>
     <div class="foot-bot">
       <span data-i18n="foot.copy">© 2026 Service Radar – Alessio Cicatello. Alle Rechte vorbehalten.</span>
-      <span>Made with ❤️ in Esslingen</span>
     </div>
   </div>
 </footer>
@@ -2765,11 +2763,12 @@ const I18N = {
   'jlist.empty.h':{de:'Noch keine Aufgaben verfügbar.', en:'No tasks available yet.'},
   'jlist.empty.p':{de:'Erstelle den ersten Auftrag.', en:'Create the first job.'},
   'map.empty':{de:'Noch keine Aufgaben in deiner Nähe verfügbar.', en:'No tasks near you yet.'},
-  'geo.btn':{de:'📍 Standort freigeben', en:'📍 Share location'},
-  'geo.hint':{de:'Standort freigeben, um Aufgaben in deiner Nähe zu sehen.', en:'Share your location to see tasks near you.'},
+  'geo.btn':{de:'📍 Standort verwenden', en:'📍 Use my location'},
+  'geo.hint':{de:'Standort freigeben und Aufträge in deiner Nähe sehen.', en:'Share your location to see tasks near you.'},
+  'geo.hint.denied':{de:'Standort nicht freigegeben. Gib oben deine Stadt ein, um Aufträge in deiner Nähe zu sehen.', en:'Location not shared. Enter your city above to see tasks near you.'},
   'geo.locating':{de:'📍 Standort wird ermittelt…', en:'📍 Locating…'},
-  'geo.ok':{de:'📍 Standort gesetzt.', en:'📍 Location set.'},
-  'geo.denied':{de:'⚠️ Standort nicht freigegeben – Standard: Esslingen.', en:'⚠️ Location not shared – default: Esslingen.'},
+  'geo.ok':{de:'📍 Standort aktualisiert.', en:'📍 Location updated.'},
+  'geo.denied':{de:'Standort nicht freigegeben – gib oben deine Stadt ein.', en:'Location not shared – enter your city above.'},
   'geo.unsupported':{de:'⚠️ Standort wird vom Browser nicht unterstützt.', en:'⚠️ Geolocation is not supported by your browser.'},
   'prof.status.pending':{de:'⏳ Ausstehend', en:'⏳ Pending'},
   'prof.status.flagged':{de:'🚨 Gemeldet', en:'🚨 Reported'},
@@ -2861,6 +2860,10 @@ const I18N = {
   'hero.stat2.l':{de:'Inseratsgebühr', en:'Listing fee'},
   'hero.stat3.v':{de:'DSGVO', en:'GDPR'},
   'hero.stat3.l':{de:'Datenschutz-konform', en:'Privacy-compliant'},
+  'hero.loc.val':{de:'In deiner Nähe', en:'Near you'},
+  'hero.loc.lbl':{de:'Lokale Aufträge', en:'Local tasks'},
+  'hero.loc.val.active':{de:'Aktueller Standort', en:'Current location'},
+  'hero.loc.lbl.active':{de:'Dein Standort', en:'Your location'},
   'hero.notif.t':{de:'Neue Bewerbung', en:'New application'},
   'hero.notif.s':{de:'Luca möchte deinen Auftrag übernehmen', en:'Luca wants to take on your job'},
 
@@ -2996,7 +2999,6 @@ const I18N = {
   'cta.c2.h':  {de:'Aufgabe einstellen', en:'Post a task'},
   'cta.c2.p':  {de:'Stelle deine Aufgabe ein und finde schnell jemanden in deiner Nähe – für nur 2 € Inseratsgebühr.', en:'Post your task and quickly find someone nearby – for just €2 listing fee.'},
   'cta.c2.btn':{de:'📋 Jetzt inserieren – 2 €', en:'📋 Post now – €2'},
-  'cta.made':  {de:'Made with ❤️ in Esslingen', en:'Made with ❤️ in Esslingen'},
 
   /* — Footer — */
   'foot.tagline':{de:'Lokale Aufgaben finden & vergeben – einfach, fair und sicher.', en:'Find & assign local tasks – simple, fair and secure.'},
@@ -3302,6 +3304,7 @@ function setLang(lang){
     b.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
   applyTranslations();
+  try { updateLocationLabels(); } catch(e){}
 }
 
 function applyTranslations(){
@@ -5550,7 +5553,8 @@ function submitPayment(){
    MAP
 ══════════════════════════════════════════════════════ */
 let leafMap, markers=[], activeJobId=null, radiusCircle=null, userMarker=null;
-let mapCenter={lat:48.742,lng:9.308};
+let mapCenter={lat:48.742,lng:9.308};   // technischer Fallback (Esslingen) – NICHT als sichtbarer Standort angezeigt
+let userPlace=null, locGranted=false, locDenied=false;   // dynamische Standortanzeige
 const CITIES={
   'esslingen':{lat:48.742,lng:9.308},'stuttgart':{lat:48.775,lng:9.180},
   'münchen':{lat:48.137,lng:11.576},'munich':{lat:48.137,lng:11.576},
@@ -5615,22 +5619,72 @@ function initMap(){
   setTimeout(_srRecenter, 2600);
 }
 
+/* ── Dynamische Standortanzeige (Hero-Stat + Karten-Hinweis) ──
+   Ersetzt das früher fest verdrahtete "Esslingen". Esslingen bleibt nur
+   technischer Karten-Fallback (mapCenter), wird aber nicht mehr als sichtbarer
+   Nutzer-Standort angezeigt. Sprachsicher: wird aus setLang() aufgerufen. */
+function updateLocationLabels(){
+  var v=document.getElementById('hero-loc-val'), l=document.getElementById('hero-loc-lbl');
+  if(v&&l){
+    if(userPlace){ v.textContent=userPlace; l.textContent=T('hero.loc.lbl.active'); }
+    else if(locGranted){ v.textContent=T('hero.loc.val.active'); l.textContent=T('hero.loc.lbl.active'); }
+    else { v.textContent=T('hero.loc.val'); l.textContent=T('hero.loc.lbl'); }
+  }
+  var gh=document.getElementById('geo-hint');
+  if(gh){
+    if(locGranted){ gh.style.display='none'; }
+    else if(locDenied){ gh.textContent=T('geo.hint.denied'); gh.style.display=''; }
+    else { gh.textContent=T('geo.hint'); gh.style.display=''; }
+  }
+}
+function saveUserLocation(){
+  try{ localStorage.setItem('sr_loc', JSON.stringify({lat:mapCenter.lat,lng:mapCenter.lng,place:userPlace})); }catch(e){}
+}
+function loadSavedLocation(){
+  try{
+    var raw=localStorage.getItem('sr_loc'); if(!raw) return false;
+    var o=JSON.parse(raw);
+    if(!o||typeof o.lat!=='number'||typeof o.lng!=='number') return false;
+    mapCenter={lat:o.lat,lng:o.lng}; locGranted=true; locDenied=false; userPlace=o.place||null;
+    return true;
+  }catch(e){ return false; }
+}
+/* Optional: Stadtname per Reverse-Geocoding (OpenStreetMap/Nominatim). Best-effort –
+   Fehler werden still ignoriert; ohne Treffer bleibt es bei "Aktueller Standort". */
+function reverseGeocode(lat,lng){
+  try{
+    var url='https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=10&accept-language='+(LANG||'de')+'&lat='+encodeURIComponent(lat)+'&lon='+encodeURIComponent(lng);
+    fetch(url,{headers:{'Accept':'application/json'}})
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(d){
+        if(!d||!d.address) return;
+        var a=d.address;
+        var city=a.city||a.town||a.village||a.municipality||a.suburb||a.county||a.state||null;
+        if(city){ userPlace=city; saveUserLocation(); updateLocationLabels(); }
+      }).catch(function(){});
+  }catch(e){}
+}
+
 /* ── Standortfreigabe (Geolocation) ── */
 function useMyLocation(){
-  const hint=document.getElementById('geo-hint');
   if(!navigator.geolocation){ showToast(T('geo.unsupported'),'err'); return; }
   showToast(T('geo.locating'));
   navigator.geolocation.getCurrentPosition(function(pos){
     mapCenter={lat:pos.coords.latitude,lng:pos.coords.longitude};
-    if(hint) hint.style.display='none';
+    locGranted=true; locDenied=false; userPlace=null;
+    saveUserLocation();
     const r=parseInt(document.getElementById('rSlider')?.value||5);
     if(userMarker) userMarker.setLatLng([mapCenter.lat,mapCenter.lng]);
     if(radiusCircle){ radiusCircle.setLatLng([mapCenter.lat,mapCenter.lng]); radiusCircle.setRadius(r*1000); }
     if(leafMap){ leafMap.flyTo([mapCenter.lat,mapCenter.lng],13,{duration:.8}); setTimeout(()=>leafMap.invalidateSize(),200); }
     addMarkers(); renderJobCards();
+    updateLocationLabels();
+    reverseGeocode(mapCenter.lat,mapCenter.lng);
     showToast(T('geo.ok'),'ok');
   }, function(){
-    if(hint) hint.style.display='';
+    locGranted=false; locDenied=true; userPlace=null;
+    updateLocationLabels();
+    var inp=document.getElementById('locInput'); if(inp){ try{ inp.focus(); }catch(e){} }
     showToast(T('geo.denied'),'err');
   }, {enableHighAccuracy:false, timeout:8000, maximumAge:300000});
 }
@@ -5826,6 +5880,7 @@ function initRadar(){
    CENTRAL INIT — initApp() is the single entry point
 ══════════════════════════════════════════════════════ */
 async function initApp() {
+  try { loadSavedLocation(); } catch(e){}   // gespeicherten Standort wiederherstellen (kein erneutes Nachfragen)
   const savedLang = localStorage.getItem('sr_lang') || 'de';
   setLang(savedLang);
   initRadar();

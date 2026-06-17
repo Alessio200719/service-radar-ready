@@ -770,9 +770,43 @@ html[lang="en"] #legal-de-note{display:block}
   .pay-amount-hero .pa-price{font-size:44px}
   .mcard-inner{padding:24px 18px}
 }
+/* ===== Mobile-App-Feinschliff – NUR Smartphones (<=640px). Desktop/Tablet unverändert. ===== */
+.mobile-bottomnav{display:none}
+@media(max-width:640px){
+  body{padding-bottom:calc(66px + env(safe-area-inset-bottom))}
+  .mobile-bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:1200;background:var(--c-bg);border-top:1px solid var(--c-bd);padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -2px 12px rgba(0,0,0,.07)}
+  .mbn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;background:none;border:none;cursor:pointer;padding:4px 2px;color:var(--c-ink3);font-size:10.5px;font-weight:600;position:relative;min-height:50px;font-family:inherit}
+  .mbn-item .mbn-ic{font-size:21px;line-height:1}
+  .mbn-add .mbn-ic{background:var(--c-blue);color:#fff;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:-16px;box-shadow:0 4px 12px rgba(9,105,218,.4);font-size:26px;font-weight:300}
+  .mbn-badge{position:absolute;top:0;left:calc(50% + 6px);background:var(--c-red);color:#fff;font-size:10px;font-weight:700;min-width:16px;height:16px;border-radius:8px;padding:0 4px;display:none;align-items:center;justify-content:center;line-height:16px}
+  #scrolltop{bottom:calc(80px + env(safe-area-inset-bottom))}
+  .btn{min-height:46px}
+  .btn-sm{min-height:38px}
+  .pay-btn-main{min-height:54px;font-size:16px}
+  .jcard{padding:18px 16px;border-radius:16px}
+  .jcard-t{font-size:15px}
+  .jcard-d{font-size:13px}
+  .jcard-p{font-size:18px}
+  .ch-send-btn{width:46px;height:46px}
+  .ch-textarea{font-size:16px}
+  .msg-bub{font-size:15px}
+  .chat-win .ch-input-area{background:var(--c-bg);padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  input,textarea,select{font-size:16px}
+  .field input,.field textarea,.field select{padding:12px 14px}
+  .prof-header{flex-direction:column;align-items:center;text-align:center;gap:10px}
+}
 </style>
 </head>
 <body>
+
+<!-- MOBILE BOTTOM NAV (per CSS nur auf Smartphones <=640px sichtbar; Desktop/Tablet: display:none) -->
+<nav class="mobile-bottomnav" aria-label="Mobile Navigation">
+  <button class="mbn-item" onclick="mobileHome()"><span class="mbn-ic">🏠</span><span data-i18n="mnav.home">Start</span></button>
+  <button class="mbn-item" onclick="mobileMap()"><span class="mbn-ic">🗺️</span><span data-i18n="mnav.map">Karte</span></button>
+  <button class="mbn-item mbn-add" onclick="mobileAdd()" aria-label="Auftrag erstellen"><span class="mbn-ic">+</span><span data-i18n="mnav.add">Auftrag</span></button>
+  <button class="mbn-item" onclick="mobileChats()"><span class="mbn-ic">💬</span><span class="mbn-badge" id="mnav-chat-badge"></span><span data-i18n="mnav.msg">Chats</span></button>
+  <button class="mbn-item" onclick="mobileProfile()"><span class="mbn-ic">👤</span><span data-i18n="mnav.profile">Profil</span></button>
+</nav>
 
 <!-- NAV -->
 <nav id="nav">
@@ -2784,6 +2818,11 @@ const I18N = {
   'toast.pay.notpaid':  {de:'❌ Zahlung nicht bestätigt – Auftrag wurde nicht veröffentlicht.', en:'❌ Payment not confirmed – job was not published.'},
   'toast.pay.error':    {de:'❌ Zahlung konnte nicht gestartet werden. Bitte erneut versuchen.', en:'❌ Could not start payment. Please try again.'},
   'toast.pay.loginfirst':{de:'Bitte melde dich an, um den bezahlten Auftrag zu veröffentlichen.', en:'Please log in to publish the paid job.'},
+  'mnav.home':   {de:'Start', en:'Home'},
+  'mnav.map':    {de:'Karte', en:'Map'},
+  'mnav.add':    {de:'Auftrag', en:'Post'},
+  'mnav.msg':    {de:'Chats', en:'Chats'},
+  'mnav.profile':{de:'Profil', en:'Profile'},
   'pay.secure.t': {de:'🔒 Sichere Zahlung über Stripe', en:'🔒 Secure payment via Stripe'},
   'pay.secure.p': {de:'Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet. Dein Auftrag wird erst nach erfolgreicher Zahlung veröffentlicht.', en:'You will be redirected to Stripe’s secure checkout. Your job is published only after a successful payment.'},
   'toast.post.succ':   {de:'✅ Auftrag erfolgreich veröffentlicht!', en:'✅ Job published successfully!'},
@@ -3450,12 +3489,19 @@ async function loadThreads(){
 function totalUnread(){ return STATE.threads.reduce((n,t)=> n + (t.unread||0), 0); }
 
 function updateBadge(){
+  const n = APP.user ? totalUnread() : 0;
   const badge = document.getElementById('chat-nav-badge');
-  if(!badge || !APP.user) { if(badge) badge.style.display='none'; return; }
-  const n = totalUnread();
-  badge.textContent = n > 0 ? String(n) : '';
-  badge.style.display = n > 0 ? 'inline' : 'none';
+  if(badge){ badge.textContent = n>0?String(n):''; badge.style.display = (APP.user && n>0) ? 'inline' : 'none'; }
+  const mb = document.getElementById('mnav-chat-badge');
+  if(mb){ mb.textContent = n>0?String(n):''; mb.style.display = (APP.user && n>0) ? 'flex' : 'none'; }
 }
+/* ── Mobile Bottom-Nav Aktionen (greifen bestehende Funktionen ab) ── */
+function _closeAllModals(){ try{ document.querySelectorAll('.moverlay.open').forEach(function(m){ m.classList.remove('open'); }); }catch(e){} }
+function mobileHome(){ _closeAllModals(); try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }
+function mobileMap(){ _closeAllModals(); try{ scrollToJobs(); }catch(e){} }
+function mobileChats(){ _closeAllModals(); try{ openChats(); }catch(e){} }
+function mobileAdd(){ _closeAllModals(); try{ openPostJob(); }catch(e){} }
+function mobileProfile(){ _closeAllModals(); if(APP.user){ try{ openProfile(); }catch(e){} } else { try{ openAuth('login'); }catch(e){} } }
 
 
 /* ══════════════════════════════════════════════════════

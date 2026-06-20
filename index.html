@@ -17,8 +17,45 @@
                  object-src 'none';">
   -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Service Radar – Lokale Aufgaben finden und vergeben. Schnell, fair und sicher.">
-<title>Service Radar – Lokale Aufgaben finden &amp; vergeben</title>
+<meta name="description" content="Service Radar ist der lokale Marktplatz für Aufträge & Helfer: Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe & Handwerk – schnell, fair und sicher in deiner Nähe finden oder anbieten.">
+<title>Service Radar – Lokale Aufträge & Helfer in deiner Nähe finden</title>
+<link rel="canonical" href="https://service-radar.com/">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<meta name="author" content="Service Radar">
+<meta name="theme-color" content="#0f1117">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Service Radar">
+<meta property="og:locale" content="de_DE">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:title" content="Service Radar – Lokale Aufträge & Helfer in deiner Nähe">
+<meta property="og:description" content="Finde lokale Aufgaben in deiner Umgebung oder stelle selbst einen Auftrag ein – schnell, einfach und sicher.">
+<meta property="og:url" content="https://service-radar.com/">
+<meta property="og:image" content="https://service-radar.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Service Radar – Lokale Aufträge & Helfer in deiner Nähe">
+<meta name="twitter:description" content="Finde lokale Aufgaben in deiner Umgebung oder stelle selbst einen Auftrag ein – schnell, einfach und sicher.">
+<meta name="twitter:image" content="https://service-radar.com/og-image.png">
+<!-- PWA / Apple -->
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Service Radar">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<!-- Performance: frühe Verbindungen zu kritischen Origins -->
+<link rel="preconnect" href="https://myatdrjwcydowtlxcoyz.supabase.co" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="dns-prefetch" href="https://tile.openstreetmap.org">
+<!-- Structured Data: Organisation + WebSite (Sitelinks-Suche) -->
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Service Radar","url":"https://service-radar.com/","logo":"https://service-radar.com/icon-192.png","description":"Lokaler Marktplatz für Aufträge und Helfer in Deutschland.","areaServed":"DE","email":"info@service-radar.com","contactPoint":{"@type":"ContactPoint","email":"info@service-radar.com","contactType":"customer support","availableLanguage":["de","en"]}}
+</script>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Service Radar","url":"https://service-radar.com/","inLanguage":"de-DE","potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://service-radar.com/jobs/{search_term_string}"},"query-input":"required name=search_term_string"}}
+</script>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f1117'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%232da44e' stroke-width='2.5'/%3E%3Ccircle cx='16' cy='16' r='2' fill='%232da44e'/%3E%3C/svg%3E">
 <!-- Google Fonts removed: use local fonts for DSGVO compliance -->
 
@@ -48,8 +85,33 @@
   --sh4:0 16px 40px rgba(31,35,40,.15),0 1px 3px rgba(31,35,40,.1);
   --r0:6px;--r1:10px;--r2:14px;--r3:20px;--r4:28px;
 }
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
 body{font-family:var(--f);background:var(--c-bg);color:var(--c-ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+/* iOS-sicherer Scroll-Lock (Modale): body wird fixiert, Scrollposition via JS gemerkt/wiederhergestellt */
+body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
+/* Scroll-Chaining/Jank verhindern: innere Scrollbereiche kapseln ihren Scroll */
+.jlist,.msg-area,.thread-list,.mcard,.mobile-menu,.pj-list,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+/* App-Feeling auf Touch: kein graues Tap-Highlight, keine Textauswahl auf Bedienelementen */
+button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
+.btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
+/* FAQ (native details/summary – barrierearm, ohne JS) */
+.faq-list{display:flex;flex-direction:column;gap:10px}
+.faq-item{background:var(--c-bg);border:1px solid var(--c-bd);border-radius:var(--r2);padding:0 18px;transition:border-color .15s}
+.faq-item[open]{border-color:var(--c-ink5)}
+.faq-item summary{cursor:pointer;list-style:none;padding:18px 2px;font-weight:600;font-size:15.5px;color:var(--c-ink);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary::after{content:'+';font-size:20px;color:var(--c-ink4);font-weight:400;flex-shrink:0;line-height:1}
+.faq-item[open] summary::after{content:'\2013'}
+.faq-a{padding:0 2px 18px;color:var(--c-ink3);font-size:14.5px;line-height:1.7}
+/* Footer-Newsletter */
+.foot-nl{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:22px 0;border-top:1px solid var(--c-bds);margin-top:8px}
+.foot-nl-h{font-weight:700;font-size:15px;color:var(--c-ink)}
+.foot-nl-p{font-size:13px;color:var(--c-ink4);margin-top:3px;max-width:440px}
+.foot-nl-form{display:flex;gap:8px;flex-wrap:wrap;min-width:280px;flex:1;max-width:460px}
+.foot-nl-form input{flex:1;min-width:180px;border:1px solid var(--c-bd);border-radius:var(--r1);padding:11px 14px;font-size:16px;font-family:inherit;background:var(--c-bg);color:var(--c-ink)}
+.foot-nl-msg{font-size:13px;color:var(--c-ink4)}
+.foot-nl-msg:empty{display:none}
+@media(max-width:600px){.foot-nl{flex-direction:column;align-items:flex-start}.foot-nl-form{max-width:none;width:100%}}
 h1,h2,h3,h4{font-family:var(--f);line-height:1.15;letter-spacing:-.025em;font-weight:800}
 img{max-width:100%;display:block}
 a{text-decoration:none;color:inherit}
@@ -712,6 +774,8 @@ html[lang="en"] #legal-de-note{display:block}
   .trust-grid{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:768px){
+  /* svh statt vh: kein Layout-Sprung beim Ein-/Ausblenden der mobilen Adressleiste */
+  .hero{min-height:100svh}
   .hero-grid{grid-template-columns:1fr;gap:0}
   .radar-wrap{display:none}
   #hero-notif{display:none!important}
@@ -728,7 +792,8 @@ html[lang="en"] #legal-de-note{display:block}
   .pay-grid{grid-template-columns:1fr}
   .map-grid{display:block;height:auto;padding:12px}
   .map-frame{height:360px;min-height:360px;margin-bottom:16px}
-  .jlist{height:260px}
+  /* Jobliste mobil im normalen Seitenfluss (kein verschachtelter Scroll-Container = keine Scroll-Falle) */
+  .jlist{height:auto;max-height:none;overflow:visible}
   .nav-links{display:none}
   .hamburger{display:flex}
   .lang-pill{display:none}
@@ -785,6 +850,8 @@ html[lang="en"] #legal-de-note{display:block}
   #scrolltop{bottom:calc(80px + env(safe-area-inset-bottom))}
   .btn{min-height:46px}
   .btn-sm{min-height:38px}
+  /* Fingerfreundliche Filter-Chips (Touch-Target >=40px) */
+  .fc{min-height:40px;padding:9px 16px;font-size:14px}
   .pay-btn-main{min-height:54px;font-size:16px}
   .jcard{padding:18px 16px;border-radius:16px}
   .jcard-t{font-size:15px}
@@ -1499,6 +1566,26 @@ html[lang="en"] #legal-de-note{display:block}
   </div>
 </section>
 
+<!-- FAQ (SEO + Nutzerhilfe) -->
+<section class="sec" id="faq">
+  <div class="wrap" style="max-width:840px">
+    <div class="sec-head">
+      <div class="pill pill-b" style="margin-bottom:16px;display:inline-flex"><span data-i18n="faq.pill">❓ FAQ</span></div>
+      <h2 class="sec-title" data-i18n="faq.title">Häufige Fragen</h2>
+    </div>
+    <div class="faq-list">
+      <details class="faq-item"><summary data-i18n="faq.q1">Was ist Service Radar?</summary><div class="faq-a" data-i18n="faq.a1">Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten.</div></details>
+      <details class="faq-item"><summary data-i18n="faq.q2">Was kostet Service Radar?</summary><div class="faq-a" data-i18n="faq.a2">Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos.</div></details>
+      <details class="faq-item"><summary data-i18n="faq.q3">Welche Dienstleistungen werden vermittelt?</summary><div class="faq-a" data-i18n="faq.a3">Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben.</div></details>
+      <details class="faq-item"><summary data-i18n="faq.q4">Wie finde ich Aufträge in meiner Nähe?</summary><div class="faq-a" data-i18n="faq.a4">Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis.</div></details>
+      <details class="faq-item"><summary data-i18n="faq.q5">Ist Service Radar sicher?</summary><div class="faq-a" data-i18n="faq.a5">Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet.</div></details>
+    </div>
+  </div>
+</section>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Was ist Service Radar?","acceptedAnswer":{"@type":"Answer","text":"Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten."}},{"@type":"Question","name":"Was kostet Service Radar?","acceptedAnswer":{"@type":"Answer","text":"Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos."}},{"@type":"Question","name":"Welche Dienstleistungen werden vermittelt?","acceptedAnswer":{"@type":"Answer","text":"Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben."}},{"@type":"Question","name":"Wie finde ich Aufträge in meiner Nähe?","acceptedAnswer":{"@type":"Answer","text":"Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis."}},{"@type":"Question","name":"Ist Service Radar sicher?","acceptedAnswer":{"@type":"Answer","text":"Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet."}}]}
+</script>
+
 <!-- CTA -->
 <section class="sec cta-sec">
   <div class="wrap">
@@ -2075,6 +2162,8 @@ html[lang="en"] #legal-de-note{display:block}
         <li><a href="#jobs" data-i18n="nav.jobs">Jobs entdecken</a></li>
         <li><a href="#" onclick="openPostJob();return false" data-i18n="foot.post">Aufgabe einstellen</a></li>
         <li><a href="#kategorien" data-i18n="nav.cat">Kategorien</a></li>
+        <li><a href="/leistungen" data-i18n="foot.services">Leistungen</a></li>
+        <li><a href="/blog" data-i18n="foot.blog">Blog</a></li>
         <li><a href="#sicherheit" data-i18n="nav.safety">Sicherheit</a></li>
       </ul></div>
       <div class="foot-col"><h4 data-i18n="foot.legal">Rechtliches</h4><ul>
@@ -2091,6 +2180,17 @@ html[lang="en"] #legal-de-note{display:block}
         <li><a href="#impressum" data-i18n="foot.support">Support</a></li>
       </ul></div>
     </div>
+    <div class="foot-nl">
+      <div>
+        <div class="foot-nl-h" data-i18n="nl.title">📬 Newsletter</div>
+        <div class="foot-nl-p" data-i18n="nl.sub">Neue Aufträge & Tipps aus deiner Region – kostenlos, jederzeit abbestellbar.</div>
+      </div>
+      <form class="foot-nl-form" id="srNlForm" onsubmit="return srNewsletter(event)">
+        <input id="srNlEmail" type="email" required data-i18n-ph="nl.ph" placeholder="Deine E-Mail-Adresse" aria-label="E-Mail">
+        <button class="btn btn-dark" type="submit" data-i18n="nl.btn">Abonnieren</button>
+      </form>
+    </div>
+    <div class="foot-nl-msg" id="srNlMsg" role="status"></div>
     <div class="foot-bot">
       <span data-i18n="foot.copy">© 2026 Service Radar – Alessio Cicatello. Alle Rechte vorbehalten.</span>
     </div>
@@ -2864,6 +2964,27 @@ const I18N = {
   'hero.loc.lbl':{de:'Lokale Aufträge', en:'Local tasks'},
   'hero.loc.val.active':{de:'Aktueller Standort', en:'Current location'},
   'hero.loc.lbl.active':{de:'Dein Standort', en:'Your location'},
+  'faq.pill':{de:'❓ FAQ', en:'❓ FAQ'},
+  'faq.title':{de:'Häufige Fragen', en:'Frequently asked questions'},
+  'faq.q1':{de:'Was ist Service Radar?', en:'What is Service Radar?'},
+  'faq.a1':{de:'Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten.', en:'Service Radar is a local marketplace connecting clients and helpers nearby – for tasks like gardening, cleaning, household help, moving, tutoring or small handyman jobs.'},
+  'faq.q2':{de:'Was kostet Service Radar?', en:'What does Service Radar cost?'},
+  'faq.a2':{de:'Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos.', en:'Registration is free. Publishing a job costs a one-time listing fee of €2. As a helper you apply for free.'},
+  'faq.q3':{de:'Welche Dienstleistungen werden vermittelt?', en:'Which services are offered?'},
+  'faq.a3':{de:'Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben.', en:'Among others gardening, cleaning, household help, moving help, tutoring, handyman work and other local tasks.'},
+  'faq.q4':{de:'Wie finde ich Aufträge in meiner Nähe?', en:'How do I find tasks near me?'},
+  'faq.a4':{de:'Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis.', en:'Share your location or enter your city. The map instantly shows matching tasks within your chosen radius.'},
+  'faq.q5':{de:'Ist Service Radar sicher?', en:'Is Service Radar safe?'},
+  'faq.a5':{de:'Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet.', en:'Yes. Profiles can be verified, ratings build trust and payments run securely via Stripe. Data is processed in compliance with GDPR.'},
+  'foot.services':{de:'Leistungen', en:'Services'},
+  'foot.blog':{de:'Blog', en:'Blog'},
+  'nl.title':{de:'📬 Newsletter', en:'📬 Newsletter'},
+  'nl.sub':{de:'Neue Aufträge & Tipps aus deiner Region – kostenlos, jederzeit abbestellbar.', en:'New tasks & tips from your region – free, unsubscribe anytime.'},
+  'nl.ph':{de:'Deine E-Mail-Adresse', en:'Your email address'},
+  'nl.btn':{de:'Abonnieren', en:'Subscribe'},
+  'nl.sending':{de:'Senden…', en:'Sending…'},
+  'nl.ok':{de:'✅ Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.', en:'✅ Almost done – please confirm via the link in your email.'},
+  'nl.err':{de:'Es ist ein Fehler aufgetreten. Bitte später erneut versuchen.', en:'Something went wrong. Please try again later.'},
   'hero.notif.t':{de:'Neue Bewerbung', en:'New application'},
   'hero.notif.s':{de:'Luca möchte deinen Auftrag übernehmen', en:'Luca wants to take on your job'},
 
@@ -3502,7 +3623,19 @@ function updateBadge(){
   if(mb){ mb.textContent = n>0?String(n):''; mb.style.display = (APP.user && n>0) ? 'flex' : 'none'; }
 }
 /* ── Mobile Bottom-Nav Aktionen (greifen bestehende Funktionen ab) ── */
-function _closeAllModals(){ try{ document.querySelectorAll('.moverlay.open').forEach(function(m){ m.classList.remove('open'); }); }catch(e){} }
+function _closeAllModals(){ try{ var any=document.querySelector('.moverlay.open'); document.querySelectorAll('.moverlay.open').forEach(function(m){ m.classList.remove('open'); }); _openModals=0; if(any) unlockScroll(); }catch(e){} }
+/* Footer-Newsletter (Double-Opt-in via /api/newsletter-subscribe) */
+function srNewsletter(e){
+  if(e&&e.preventDefault) e.preventDefault();
+  var m=document.getElementById('srNlMsg'), inp=document.getElementById('srNlEmail');
+  var email=inp?inp.value:'';
+  if(m){ m.style.color='var(--c-ink4)'; m.textContent=T('nl.sending'); }
+  fetch('/api/newsletter-subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'footer'})})
+    .then(function(r){return r.json();})
+    .then(function(d){ if(!m) return; m.style.color=d.ok?'var(--c-green)':'var(--c-red)'; m.textContent=d.ok?T('nl.ok'):(d.error||T('nl.err')); if(d.ok){var f=document.getElementById('srNlForm'); if(f) f.reset();} })
+    .catch(function(){ if(m){ m.style.color='var(--c-red)'; m.textContent=T('nl.err'); } });
+  return false;
+}
 function mobileHome(){ _closeAllModals(); try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }
 function mobileMap(){ _closeAllModals(); try{ scrollToJobs(); }catch(e){} }
 function mobileChats(){ _closeAllModals(); try{ openChats(); }catch(e){} }
@@ -3905,13 +4038,26 @@ function closeMM() {
 /* ══════════════════════════════════════════════════════
    MODAL SYSTEM
 ══════════════════════════════════════════════════════ */
-let _openModals = 0;
+let _openModals = 0, _scrollY = 0;
+/* iOS-sicherer Scroll-Lock: body fixiert auf aktueller Scrollposition statt nur
+   overflow:hidden (das verhindert auf iOS Safari den Hintergrund-Scroll nicht und
+   lässt die Seite beim Schließen springen). */
+function lockScroll(){
+  _scrollY = window.scrollY || window.pageYOffset || 0;
+  document.body.style.top = (-_scrollY) + 'px';
+  document.body.classList.add('modal-lock');
+}
+function unlockScroll(){
+  if(!document.body.classList.contains('modal-lock')) return;
+  document.body.classList.remove('modal-lock');
+  document.body.style.top = '';
+  window.scrollTo(0, _scrollY);
+}
 function openModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (!el.classList.contains('open')) _openModals++;
+  if (!el.classList.contains('open')) { if (_openModals === 0) lockScroll(); _openModals++; }
   el.classList.add('open');
-  document.body.style.overflow = 'hidden';
   // Always re-apply translations so modal content matches active language
   applyTranslations();
 }
@@ -3920,7 +4066,7 @@ function closeModal(id) {
   if (!el) return;
   if (el.classList.contains('open')) _openModals = Math.max(0, _openModals - 1);
   el.classList.remove('open');
-  if (_openModals === 0) document.body.style.overflow = '';
+  if (_openModals === 0) unlockScroll();
 }
 function overlayClose(e,id){ if(e.target===e.currentTarget) closeModal(id); }
 
@@ -5582,7 +5728,11 @@ function initMap(){
   }
   if(leafMap){ leafMap.invalidateSize(true); addMarkers(); return; }   // idempotent
   if(el.querySelector('iframe')) el.innerHTML = '';                    // evtl. Fallback-iframe entfernen
-  leafMap=L.map('jobMap',{zoomControl:true,scrollWheelZoom:false}).setView([mapCenter.lat,mapCenter.lng],13);
+  // cooperativeGestures (mobil): 1 Finger scrollt die Seite, 2 Finger bewegen die Karte
+  // (verhindert, dass die Karte den Seiten-Scroll mobil blockiert). Unbekannte Option wird
+  // von älteren Leaflet-Builds einfach ignoriert -> kein Risiko.
+  var _coop = (typeof window.matchMedia==='function') && window.matchMedia('(max-width:768px)').matches;
+  leafMap=L.map('jobMap',{zoomControl:true,scrollWheelZoom:false,cooperativeGestures:_coop}).setView([mapCenter.lat,mapCenter.lng],13);
   // OpenStreetMap-Standard-Tiles
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
     attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',maxZoom:19

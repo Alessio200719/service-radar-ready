@@ -1,13 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://service-radar.com/</loc></url>
-  <url><loc>https://service-radar.com/leistungen</loc></url>
-  <url><loc>https://service-radar.com/leistungen/gartenarbeit</loc></url>
-  <url><loc>https://service-radar.com/leistungen/reinigung</loc></url>
-  <url><loc>https://service-radar.com/leistungen/haushaltshilfe</loc></url>
-  <url><loc>https://service-radar.com/leistungen/umzugshilfe</loc></url>
-  <url><loc>https://service-radar.com/leistungen/nachhilfe</loc></url>
-  <url><loc>https://service-radar.com/leistungen/handwerk</loc></url>
-  <url><loc>https://service-radar.com/blog</loc></url>
-  <url><loc>https://service-radar.com/jobs/stuttgart</loc></url>
+
+  <url>
+    <loc>https://service-radar.com/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/gartenarbeit</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/reinigung</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/haushaltshilfe</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/umzugshilfe</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/nachhilfe</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/handwerk</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/leistungen/sonstiges</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog/nebenjob-finden-in-deiner-region</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog/haushaltshilfe-finden</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog/was-kostet-gartenarbeit</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog/tipps-fuer-auftraggeber</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/blog/tipps-fuer-helfer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
+    <loc>https://service-radar.com/jobs/stuttgart</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
+  </url>
+
 </urlset>

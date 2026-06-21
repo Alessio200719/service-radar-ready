@@ -3,6 +3,8 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/blog", "destination": "/api/blog" },
+{ "source": "/blog/:slug", "destination": "/api/blog?slug=:slug" },
     { "source": "/leistungen", "destination": "/api/leistungen" },
     { "source": "/leistungen/:cat", "destination": "/api/leistungen?cat=:cat" },
     { "source": "/jobs/:city", "destination": "/api/jobs-city?city=:city" },

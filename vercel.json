@@ -8,8 +8,7 @@
     { "source": "/leistungen", "destination": "/api/leistungen" },
     { "source": "/leistungen/:cat", "destination": "/api/leistungen?cat=:cat" },
     { "source": "/jobs/:city", "destination": "/api/jobs-city?city=:city" },
-    { "source": "/sitemap.xml", "destination": "/api/sitemap" }
-  ],
+{ "source": "/sitemap.xml", "destination": "/api/sitemap.js" }  ],
   "headers": [
     {
       "source": "/(.*)",

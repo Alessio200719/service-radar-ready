@@ -35,21 +35,31 @@ const ARTICLES = [
   }
 ];
 
-function layout(title, desc, content) {
+function layout(title, desc, canonical, content) {
   return `<!doctype html>
 <html lang="de">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>${S.esc(title)} | Service Radar</title>
+
 <meta name="description" content="${S.esc(desc)}">
-<link rel="canonical" href="${S.SITE}/blog">
+<link rel="canonical" href="${canonical}">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="${S.esc(title)}">
+<meta property="og:description" content="${S.esc(desc)}">
+<meta property="og:url" content="${canonical}">
+<meta property="og:site_name" content="Service Radar">
+
 <style>
 body{font-family:Inter,Arial,sans-serif;margin:0;background:#fff;color:#101418}
 header{border-bottom:1px solid #eef0f3;padding:18px 24px}
 main{max-width:980px;margin:0 auto;padding:56px 24px}
 a{color:#0b66d8;text-decoration:none}
 h1{font-size:44px;line-height:1.08;margin:0 0 18px}
+h2{margin-top:0}
 p{font-size:18px;line-height:1.65;color:#586069}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:28px}
 .card{border:1px solid #d8dee4;border-radius:16px;padding:22px;background:#fff}
@@ -58,9 +68,19 @@ footer{border-top:1px solid #eef0f3;margin-top:60px;padding:24px;color:#586069}
 </style>
 </head>
 <body>
-<header><strong>Service Radar</strong></header>
-<main>${content}</main>
-<footer>service-radar.com</footer>
+
+<header>
+<strong>Service Radar</strong>
+</header>
+
+<main>
+${content}
+</main>
+
+<footer>
+service-radar.com
+</footer>
+
 </body>
 </html>`;
 }
@@ -73,34 +93,60 @@ module.exports = async function handler(req, res) {
 
   if (slug) {
     const article = ARTICLES.find(a => a.slug === slug);
+
     if (!article) {
       return res.status(404).send('Artikel nicht gefunden');
     }
 
-    return res.status(200).send(layout(
-      article.title,
-      article.desc,
-      `<p><a href="/blog">← Zurück zum Blog</a></p>
-       <h1>${S.esc(article.title)}</h1>
-       <p>${S.esc(article.desc)}</p>
-       <p>${S.esc(article.body)}</p>
-       <p><a class="btn" href="/">Aufträge entdecken</a></p>`
-    ));
+    return res.status(200).send(
+      layout(
+        article.title,
+        article.desc,
+        `${S.SITE}/blog/${article.slug}`,
+        `
+        <p><a href="/blog">← Zurück zum Blog</a></p>
+
+        <h1>${S.esc(article.title)}</h1>
+
+        <p>${S.esc(article.desc)}</p>
+
+        <p>${S.esc(article.body)}</p>
+
+        <p>
+          <a class="btn" href="/">Aufträge entdecken</a>
+        </p>
+        `
+      )
+    );
   }
 
   const cards = ARTICLES.map(a => `
     <article class="card">
       <h2>${S.esc(a.title)}</h2>
       <p>${S.esc(a.desc)}</p>
-      <a href="/blog/${a.slug}">Artikel lesen →</a>
+      <a href="/blog/${a.slug}">
+        Artikel lesen →
+      </a>
     </article>
   `).join('');
 
-  return res.status(200).send(layout(
-    'Blog',
-    'Tipps, Informationen und Ratgeber rund um lokale Hilfe, Aufträge und Nebenjobs.',
-    `<h1>Service Radar Blog</h1>
-     <p>Tipps, Informationen und Ratgeber rund um lokale Hilfe, Aufträge und Nebenjobs.</p>
-     <div class="grid">${cards}</div>`
-  ));
+  return res.status(200).send(
+    layout(
+      'Blog',
+      'Tipps, Informationen und Ratgeber rund um lokale Hilfe, Aufträge und Nebenjobs.',
+      `${S.SITE}/blog`,
+      `
+      <h1>Service Radar Blog</h1>
+
+      <p>
+        Tipps, Informationen und Ratgeber rund um lokale Hilfe,
+        Aufträge und Nebenjobs.
+      </p>
+
+      <div class="grid">
+        ${cards}
+      </div>
+      `
+    )
+  );
 };

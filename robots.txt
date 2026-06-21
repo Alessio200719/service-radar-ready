@@ -1,6 +1,4 @@
 # Service Radar – robots.txt
 User-agent: *
 Allow: /
-Disallow: /api/
-
 Sitemap: https://service-radar.com/sitemap.xml

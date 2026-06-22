@@ -6197,5 +6197,77 @@ window.addEventListener('load', () => {
   });
 })();
 </script>
+  <script>
+(function () {
+  function fixProfileScroll() {
+    var modal = document.getElementById('modal-profile');
+    if (!modal || !modal.classList.contains('open')) return;
+
+    var card = modal.querySelector('.mcard');
+    if (!card) return;
+
+    /* Hintergrund sperren */
+    document.documentElement.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden';
+
+    /* Overlay darf NICHT die Seite dahinter scrollen */
+    modal.style.overflow = 'hidden';
+    modal.style.alignItems = 'center';
+    modal.style.padding = '20px';
+
+    /* NUR die Profil-Box scrollt */
+    card.style.maxHeight = 'calc(100dvh - 40px)';
+    card.style.height = 'auto';
+    card.style.overflowY = 'auto';
+    card.style.overflowX = 'hidden';
+    card.style.webkitOverflowScrolling = 'touch';
+    card.style.overscrollBehavior = 'contain';
+    card.style.touchAction = 'pan-y';
+  }
+
+  function unlockIfNoModalOpen() {
+    var anyOpen = document.querySelector('.moverlay.open');
+    if (!anyOpen) {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+  }
+
+  document.addEventListener('click', function () {
+    setTimeout(fixProfileScroll, 50);
+    setTimeout(fixProfileScroll, 200);
+    setTimeout(fixProfileScroll, 500);
+  }, true);
+
+  document.addEventListener('wheel', function (e) {
+    var modal = document.getElementById('modal-profile');
+    if (!modal || !modal.classList.contains('open')) return;
+
+    var card = modal.querySelector('.mcard');
+    if (!card) return;
+
+    if (!card.contains(e.target)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchmove', function (e) {
+    var modal = document.getElementById('modal-profile');
+    if (!modal || !modal.classList.contains('open')) return;
+
+    var card = modal.querySelector('.mcard');
+    if (!card) return;
+
+    if (!card.contains(e.target)) {
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  setInterval(function () {
+    fixProfileScroll();
+    unlockIfNoModalOpen();
+  }, 250);
+})();
+</script>
 </body>
 </html>

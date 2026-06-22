@@ -94,15 +94,6 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 /* App-Feeling auf Touch: kein graues Tap-Highlight, keine Textauswahl auf Bedienelementen */
 button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
 .btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
-/* FAQ (native details/summary – barrierearm, ohne JS) */
-.faq-list{display:flex;flex-direction:column;gap:10px}
-.faq-item{background:var(--c-bg);border:1px solid var(--c-bd);border-radius:var(--r2);padding:0 18px;transition:border-color .15s}
-.faq-item[open]{border-color:var(--c-ink5)}
-.faq-item summary{cursor:pointer;list-style:none;padding:18px 2px;font-weight:600;font-size:15.5px;color:var(--c-ink);display:flex;justify-content:space-between;align-items:center;gap:12px}
-.faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary::after{content:'+';font-size:20px;color:var(--c-ink4);font-weight:400;flex-shrink:0;line-height:1}
-.faq-item[open] summary::after{content:'\2013'}
-.faq-a{padding:0 2px 18px;color:var(--c-ink3);font-size:14.5px;line-height:1.7}
 /* Footer-Newsletter */
 .foot-nl{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:22px 0;border-top:1px solid var(--c-bds);margin-top:8px}
 .foot-nl-h{font-weight:700;font-size:15px;color:var(--c-ink)}
@@ -808,7 +799,7 @@ html[lang="en"] #legal-de-note{display:block}
   .trust-grid{grid-template-columns:1fr 1fr}
   .safety-grid{grid-template-columns:1fr 1fr}
   .sec-title{text-align:center}
-  .chat-win .mcard{height:100vh;max-height:100vh;border-radius:0;border:none}
+  .chat-win .mcard{height:100vh;height:100dvh;max-height:100vh;max-height:100dvh;border-radius:0;border:none}
   /* App showcase 3-col → stack */
   .app-showcase-grid{grid-template-columns:1fr!important}
 }
@@ -1565,26 +1556,6 @@ html[lang="en"] #legal-de-note{display:block}
     </div>
   </div>
 </section>
-
-<!-- FAQ (SEO + Nutzerhilfe) -->
-<section class="sec" id="faq">
-  <div class="wrap" style="max-width:840px">
-    <div class="sec-head">
-      <div class="pill pill-b" style="margin-bottom:16px;display:inline-flex"><span data-i18n="faq.pill">❓ FAQ</span></div>
-      <h2 class="sec-title" data-i18n="faq.title">Häufige Fragen</h2>
-    </div>
-    <div class="faq-list">
-      <details class="faq-item"><summary data-i18n="faq.q1">Was ist Service Radar?</summary><div class="faq-a" data-i18n="faq.a1">Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten.</div></details>
-      <details class="faq-item"><summary data-i18n="faq.q2">Was kostet Service Radar?</summary><div class="faq-a" data-i18n="faq.a2">Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos.</div></details>
-      <details class="faq-item"><summary data-i18n="faq.q3">Welche Dienstleistungen werden vermittelt?</summary><div class="faq-a" data-i18n="faq.a3">Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben.</div></details>
-      <details class="faq-item"><summary data-i18n="faq.q4">Wie finde ich Aufträge in meiner Nähe?</summary><div class="faq-a" data-i18n="faq.a4">Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis.</div></details>
-      <details class="faq-item"><summary data-i18n="faq.q5">Ist Service Radar sicher?</summary><div class="faq-a" data-i18n="faq.a5">Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet.</div></details>
-    </div>
-  </div>
-</section>
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Was ist Service Radar?","acceptedAnswer":{"@type":"Answer","text":"Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten."}},{"@type":"Question","name":"Was kostet Service Radar?","acceptedAnswer":{"@type":"Answer","text":"Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos."}},{"@type":"Question","name":"Welche Dienstleistungen werden vermittelt?","acceptedAnswer":{"@type":"Answer","text":"Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben."}},{"@type":"Question","name":"Wie finde ich Aufträge in meiner Nähe?","acceptedAnswer":{"@type":"Answer","text":"Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis."}},{"@type":"Question","name":"Ist Service Radar sicher?","acceptedAnswer":{"@type":"Answer","text":"Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet."}}]}
-</script>
 
 <!-- CTA -->
 <section class="sec cta-sec">
@@ -2964,18 +2935,6 @@ const I18N = {
   'hero.loc.lbl':{de:'Lokale Aufträge', en:'Local tasks'},
   'hero.loc.val.active':{de:'Aktueller Standort', en:'Current location'},
   'hero.loc.lbl.active':{de:'Dein Standort', en:'Your location'},
-  'faq.pill':{de:'❓ FAQ', en:'❓ FAQ'},
-  'faq.title':{de:'Häufige Fragen', en:'Frequently asked questions'},
-  'faq.q1':{de:'Was ist Service Radar?', en:'What is Service Radar?'},
-  'faq.a1':{de:'Service Radar ist ein lokaler Marktplatz, der Auftraggeber und Helfer in der Nähe zusammenbringt – für Aufgaben wie Gartenarbeit, Reinigung, Haushaltshilfe, Umzug, Nachhilfe oder kleine Handwerksarbeiten.', en:'Service Radar is a local marketplace connecting clients and helpers nearby – for tasks like gardening, cleaning, household help, moving, tutoring or small handyman jobs.'},
-  'faq.q2':{de:'Was kostet Service Radar?', en:'What does Service Radar cost?'},
-  'faq.a2':{de:'Die Registrierung ist kostenlos. Für die Veröffentlichung eines Auftrags fällt eine einmalige Inseratsgebühr von 2 € an. Als Helfer bewirbst du dich kostenlos.', en:'Registration is free. Publishing a job costs a one-time listing fee of €2. As a helper you apply for free.'},
-  'faq.q3':{de:'Welche Dienstleistungen werden vermittelt?', en:'Which services are offered?'},
-  'faq.a3':{de:'Unter anderem Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben.', en:'Among others gardening, cleaning, household help, moving help, tutoring, handyman work and other local tasks.'},
-  'faq.q4':{de:'Wie finde ich Aufträge in meiner Nähe?', en:'How do I find tasks near me?'},
-  'faq.a4':{de:'Gib deinen Standort frei oder gib deine Stadt ein. Die Karte zeigt dir sofort passende Aufträge im gewählten Umkreis.', en:'Share your location or enter your city. The map instantly shows matching tasks within your chosen radius.'},
-  'faq.q5':{de:'Ist Service Radar sicher?', en:'Is Service Radar safe?'},
-  'faq.a5':{de:'Ja. Profile können verifiziert werden, Bewertungen schaffen Vertrauen und Zahlungen laufen sicher über Stripe. Daten werden DSGVO-konform verarbeitet.', en:'Yes. Profiles can be verified, ratings build trust and payments run securely via Stripe. Data is processed in compliance with GDPR.'},
   'foot.services':{de:'Leistungen', en:'Services'},
   'foot.blog':{de:'Blog', en:'Blog'},
   'nl.title':{de:'📬 Newsletter', en:'📬 Newsletter'},
@@ -6189,27 +6148,6 @@ try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind ri
 // Extra safety: re-render map after all resources loaded
 window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
-});
-</script>
-  <script>
-window.addEventListener('DOMContentLoaded', function () {
-  const oldText = '✅ Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.';
-  const newText = '🎉 Danke! Du wurdest erfolgreich für zukünftige Updates von Service Radar eingetragen.';
-
-  const observer = new MutationObserver(function () {
-    document.querySelectorAll('*').forEach(function (el) {
-      if (el.childNodes.length === 1 && el.textContent && el.textContent.includes('Fast geschafft')) {
-        el.textContent = newText;
-        el.style.color = '#1a7f37';
-      }
-    });
-  });
-
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true,
-    characterData: true
-  });
 });
 </script>
 </body>

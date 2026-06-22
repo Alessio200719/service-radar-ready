@@ -24,9 +24,7 @@ async function sendConfirmation(email, confirmUrl) {
       headers: { Authorization: 'Bearer ' + key, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: from, to: [email], subject: 'Bitte bestätige deinen Service-Radar-Newsletter',
-        html: '<div style="font-family:system-ui,sans-serif;max-width:480px;margin:auto">'
-          + '<h2 style="color:#0f1117">Fast geschafft 👋</h2>'
-          + '<p style="color:#586069;line-height:1.6">Bitte bestätige deine Anmeldung zum Service-Radar-Newsletter mit einem Klick:</p>'
+        html: '<div style="font-family:system-ui,sans-serif;max-width:480px;margin:auto">'m.textContent=d.ok?'🎉 Danke! Du wurdest erfolgreich für zukünftige Updates von Service Radar eingetragen.':(d.error||'Es ist ein Fehler aufgetreten.');
           + '<p><a href="' + confirmUrl + '" style="display:inline-block;background:#0f1117;color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:700">Anmeldung bestätigen</a></p>'
           + '<p style="color:#8b949e;font-size:12px">Wenn du das nicht warst, ignoriere diese E-Mail einfach.</p></div>'
       })

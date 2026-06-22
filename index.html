@@ -6150,5 +6150,95 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
+  <script>
+(function () {
+  /* Newsletter-Text korrigieren */
+  function fixNewsletterText() {
+    document.querySelectorAll('*').forEach(function (el) {
+      if (
+        el.childNodes.length === 1 &&
+        el.textContent &&
+        el.textContent.includes('Fast geschafft')
+      ) {
+        el.textContent = '🎉 Danke! Du wurdest erfolgreich für zukünftige Updates von Service Radar eingetragen.';
+        el.style.color = '#1a7f37';
+      }
+    });
+  }
+
+  /* Profil-Modal: nur die weiße Profilbox scrollt */
+  function fixProfileModalScroll() {
+    var modal = document.getElementById('modal-profile');
+    if (!modal) return;
+
+    var card = modal.querySelector('.mcard');
+    if (!card) return;
+
+    if (modal.classList.contains('open')) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+
+      modal.style.overflow = 'hidden';
+      modal.style.alignItems = 'center';
+      modal.style.justifyContent = 'center';
+      modal.style.padding = '20px';
+
+      card.style.maxHeight = 'calc(100dvh - 40px)';
+      card.style.overflowY = 'auto';
+      card.style.overflowX = 'hidden';
+      card.style.webkitOverflowScrolling = 'touch';
+      card.style.overscrollBehavior = 'contain';
+      card.style.touchAction = 'pan-y';
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    }
+  }
+
+  var style = document.createElement('style');
+  style.textContent = `
+    #modal-profile.open {
+      overflow: hidden !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 20px !important;
+    }
+
+    #modal-profile.open .mcard {
+      max-height: calc(100dvh - 40px) !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      -webkit-overflow-scrolling: touch !important;
+      overscroll-behavior: contain !important;
+      touch-action: pan-y !important;
+    }
+
+    @media (max-width: 600px) {
+      #modal-profile.open {
+        padding: 0 !important;
+        align-items: stretch !important;
+      }
+
+      #modal-profile.open .mcard {
+        max-height: 100dvh !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+      }
+    }
+  `;
+  document.head.appendChild(style);
+
+  document.addEventListener('click', function () {
+    setTimeout(fixNewsletterText, 100);
+    setTimeout(fixProfileModalScroll, 100);
+    setTimeout(fixProfileModalScroll, 400);
+  });
+
+  setInterval(function () {
+    fixNewsletterText();
+    fixProfileModalScroll();
+  }, 400);
+})();
+</script>
 </body>
 </html>

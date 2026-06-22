@@ -6150,5 +6150,52 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
+  <script>
+(function () {
+  function isProfileOpen() {
+    var m = document.getElementById('modal-profile');
+    return m && m.classList.contains('open');
+  }
+
+  function hardProfileScrollFix() {
+    var m = document.getElementById('modal-profile');
+    if (!m) return;
+
+    if (isProfileOpen()) {
+      document.body.classList.remove('modal-lock');
+      document.body.style.top = '';
+      document.body.style.position = '';
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+
+      m.style.overflowY = 'auto';
+      m.style.webkitOverflowScrolling = 'touch';
+      m.style.alignItems = 'flex-start';
+      m.style.paddingTop = '84px';
+      m.style.paddingBottom = '24px';
+
+      var card = m.querySelector('.mcard');
+      if (card) {
+        card.style.maxHeight = 'none';
+        card.style.height = 'auto';
+        card.style.overflow = 'visible';
+        card.style.marginBottom = '24px';
+      }
+    }
+  }
+
+  document.addEventListener('click', function () {
+    setTimeout(hardProfileScrollFix, 80);
+    setTimeout(hardProfileScrollFix, 250);
+    setTimeout(hardProfileScrollFix, 600);
+  }, true);
+
+  window.addEventListener('load', function () {
+    setInterval(function () {
+      if (isProfileOpen()) hardProfileScrollFix();
+    }, 500);
+  });
+})();
+</script>
 </body>
 </html>

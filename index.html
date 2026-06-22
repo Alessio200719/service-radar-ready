@@ -6206,53 +6206,39 @@ window.addEventListener('load', () => {
 </style>
 
 <script>
-(function(){
-  const oldOpenProfile = window.openProfile;
-
-  window.openProfile = async function(){
-    if(!window.APP || !APP.user) return;
-
-    if(!APP.viewMode){
-      APP.viewMode = localStorage.getItem('sr_viewmode') || (APP.user.role === 'auftraggeber' ? 'client' : 'helper');
-    }
-
-    try{
-      if(typeof _renderProfile === 'function') _renderProfile();
-    }catch(e){}
-
-    openModal('modal-profile');
-
-    const modal = document.getElementById('modal-profile');
-    const card = modal ? modal.querySelector('.mcard') : null;
-    if(card) card.scrollTop = 0;
-
-    Promise.allSettled([
-      typeof loadMyApplications === 'function' ? loadMyApplications() : null,
-      typeof loadOwnerJobs === 'function' ? loadOwnerJobs() : null,
-      typeof loadThreads === 'function' ? loadThreads() : null,
-      typeof loadReceivedApplications === 'function' ? loadReceivedApplications() : null,
-      typeof loadSavedJobs === 'function' ? loadSavedJobs() : null,
-      typeof refreshPushStatus === 'function' ? refreshPushStatus() : null
-    ]).then(function(){
-      try{
-        if(document.getElementById('modal-profile')?.classList.contains('open')){
-          _renderProfile();
-        }
-      }catch(e){}
-    });
-  };
-
-  function fixNewsletterText(){
-    document.querySelectorAll('*').forEach(function(el){
-      if(el.childNodes.length === 1 && el.textContent && el.textContent.includes('Fast geschafft')){
-        el.textContent = '🎉 Danke! Du wurdest erfolgreich für zukünftige Updates von Service Radar eingetragen.';
-        el.style.color = '#1a7f37';
-      }
-    });
+<style>
+/* SAFE FIX: Profil auf Handy sauber scrollen, ohne JavaScript zu überschreiben */
+@media (max-width: 700px) {
+  #modal-profile.open {
+    padding: 0 !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    overflow: hidden !important;
   }
 
-  setInterval(fixNewsletterText, 800);
-})();
-</script>
+  #modal-profile.open .mcard {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  #modal-profile.open .mcard-inner {
+    padding: 18px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  #modal-profile * {
+    box-sizing: border-box !important;
+  }
+}
+</style>
 </body>
 </html>

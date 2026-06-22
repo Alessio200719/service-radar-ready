@@ -744,6 +744,11 @@ html[lang="en"] #legal-de-note{display:block}
 
 /* ══ PROFILE ═════════════════════════════════════ */
 .prof-modal .mcard{max-width:540px}
+/* Profilmodal: dezente, native Standard-Scrollbar (schmal, heller Track, dunkler Thumb) */
+.mcard.prof-modal{scrollbar-width:thin;scrollbar-color:var(--c-ink3) var(--c-bg2)}
+.mcard.prof-modal::-webkit-scrollbar{width:8px}
+.mcard.prof-modal::-webkit-scrollbar-track{background:var(--c-bg2);border-radius:8px}
+.mcard.prof-modal::-webkit-scrollbar-thumb{background:var(--c-ink3);border-radius:8px}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
@@ -4437,14 +4442,16 @@ function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollH
 async function openProfile(){
   if(!APP.user) return;
   if(!APP.viewMode) APP.viewMode = localStorage.getItem('sr_viewmode') || (APP.user.role==='auftraggeber'?'client':'helper');
+  _renderProfile();             // sofort mit aktuellem Stand rendern
+  openModal('modal-profile');   // Profil öffnet sofort – keine Verzögerung
+  // Daten danach im Hintergrund nachladen und neu rendern (nur falls noch geöffnet)
   await loadMyApplications();
   await loadOwnerJobs();
   await loadThreads();
   await loadReceivedApplications();
   await loadSavedJobs();
   await refreshPushStatus();
-  _renderProfile();
-  openModal('modal-profile');
+  _profileRerenderIfOpen();
 }
 
 // Applications received across the current user's own jobs.

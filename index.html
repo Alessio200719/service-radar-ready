@@ -6191,5 +6191,26 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
+  <script>
+window.addEventListener('DOMContentLoaded', function () {
+  const oldText = '✅ Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.';
+  const newText = '🎉 Danke! Du wurdest erfolgreich für zukünftige Updates von Service Radar eingetragen.';
+
+  const observer = new MutationObserver(function () {
+    document.querySelectorAll('*').forEach(function (el) {
+      if (el.childNodes.length === 1 && el.textContent && el.textContent.includes('Fast geschafft')) {
+        el.textContent = newText;
+        el.style.color = '#1a7f37';
+      }
+    });
+  });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true
+  });
+});
+</script>
 </body>
 </html>

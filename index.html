@@ -761,24 +761,6 @@ html[lang="en"] #legal-de-note{display:block}
 .pj-row{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r0);padding:10px 14px;font-size:13.5px}
 .pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
 .pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
-#modal-profile .mcard,
-#modal-profile .mcard-inner,
-#modal-profile .pj-list,
-#modal-profile .jlist,
-#modal-profile .msg-area,
-#modal-profile .thread-list,
-#modal-profile .ch-textarea{
-  max-height:none !important;
-  overflow:visible !important;
-  overscroll-behavior:auto !important;
-  -webkit-overflow-scrolling:auto !important;
-  touch-action:auto !important;
-}
-
-#modal-profile{
-  -webkit-overflow-scrolling:touch;
-  touch-action:pan-y;
-}
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){
   .foot-top{grid-template-columns:1fr 1fr}
@@ -6175,5 +6157,81 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
+  <style>
+/* === SERVICE RADAR: SAFE PROFILE SCROLL FIX === */
+
+/* Hintergrund sperren, sobald Profil offen ist */
+html:has(#modal-profile.open),
+body:has(#modal-profile.open) {
+  overflow: hidden !important;
+  height: 100% !important;
+}
+
+/* Profil-Overlay: kein Hintergrundscroll */
+#modal-profile.open {
+  overflow: hidden !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  padding: 0 !important;
+}
+
+/* Nur die Profilbox scrollt */
+#modal-profile.open .mcard {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100dvh !important;
+  max-height: 100dvh !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+}
+
+/* Inhalt bleibt klickbar */
+#modal-profile.open button,
+#modal-profile.open a,
+#modal-profile.open input,
+#modal-profile.open textarea,
+#modal-profile.open select,
+#modal-profile.open label,
+#modal-profile.open summary {
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+
+/* Scrollen überall im Profil erlauben */
+#modal-profile.open .mcard,
+#modal-profile.open .mcard-inner {
+  touch-action: pan-y !important;
+}
+
+/* Keine inneren Scrollfallen im Profil */
+#modal-profile.open .mcard-inner,
+#modal-profile.open .pj-list,
+#modal-profile.open .app-list,
+#modal-profile.open .saved-list,
+#modal-profile.open .thread-list {
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+/* Breite sauber halten */
+#modal-profile.open .mcard-inner {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding: 18px !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+}
+
+#modal-profile.open * {
+  box-sizing: border-box !important;
+  max-width: 100%;
+}
+</style>
 </body>
 </html>

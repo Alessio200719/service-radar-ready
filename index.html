@@ -750,12 +750,18 @@ html[lang="en"] #legal-de-note{display:block}
 #modal-profile{
   display:flex;
   overflow:hidden;
-  align-items:center;
+  align-items:stretch;
   justify-content:center;
+  height:100vh;
+  height:100dvh;
+  max-height:100dvh;
 }
-/* Nur die weiße Profilkarte scrollt. Dadurch scrollt jeder Bereich im Profil gleich. */
+
 #modal-profile .mcard{
-  max-height:calc(100dvh - 40px);
+  max-height:100vh;
+  max-height:100dvh;
+  height:100vh;
+  height:100dvh;
   overflow-y:auto;
   overflow-x:hidden;
   margin:0 auto;

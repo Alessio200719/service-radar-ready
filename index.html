@@ -761,10 +761,23 @@ html[lang="en"] #legal-de-note{display:block}
 .pj-row{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r0);padding:10px 14px;font-size:13.5px}
 .pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
 .pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
-modal-profile .pj-list{
-  max-height:none;
-  overflow:visible;
-  overscroll-behavior:auto;
+#modal-profile .mcard,
+#modal-profile .mcard-inner,
+#modal-profile .pj-list,
+#modal-profile .jlist,
+#modal-profile .msg-area,
+#modal-profile .thread-list,
+#modal-profile .ch-textarea{
+  max-height:none !important;
+  overflow:visible !important;
+  overscroll-behavior:auto !important;
+  -webkit-overflow-scrolling:auto !important;
+  touch-action:auto !important;
+}
+
+#modal-profile{
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
 }
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){

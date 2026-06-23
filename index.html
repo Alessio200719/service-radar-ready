@@ -743,24 +743,191 @@ html[lang="en"] #legal-de-note{display:block}
 .ch-send-btn:disabled{background:var(--c-bg2);color:var(--c-ink4);transform:none;cursor:not-allowed}
 
 /* ══ PROFILE ═════════════════════════════════════ */
-.prof-modal .mcard{max-width:540px}
-/* Profil: EIN einziger nativer Scroll-Container = das Modal selbst. Der Inhalt fließt,
-   das Modal scrollt – native Scrollbar am Rand, voll greifbar, wie eine normale Seite. */
-#modal-profile{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--c-ink4) transparent}
-#modal-profile .mcard{max-height:none;overflow:visible;margin:0 auto}
-#modal-profile::-webkit-scrollbar{width:10px}
-#modal-profile::-webkit-scrollbar-thumb{background:var(--c-ink4);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
-.prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
-.prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
-.stat-row{display:flex;gap:14px;margin-bottom:22px}
-.sbox{flex:1;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px;text-align:center}
-.sbox .sv{font-size:22px;font-weight:800;color:var(--c-ink);margin-bottom:2px}.sbox .sl{font-size:12px;color:var(--c-ink3)}
-.prof-sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink3);margin-bottom:10px}
-.pj-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:20px}
-.pj-row{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r0);padding:10px 14px;font-size:13.5px}
-.pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
-.pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
+.prof-modal .mcard{
+  max-width:540px;
+}
+/* Profil: Overlay ist nur Hintergrund. Es scrollt NICHT selbst. */
+#modal-profile{
+  display:flex;
+  overflow:hidden;
+  align-items:center;
+  justify-content:center;
+}
+/* Nur die weiße Profilkarte scrollt. Dadurch scrollt jeder Bereich im Profil gleich. */
+#modal-profile .mcard{
+  max-height:calc(100dvh - 40px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  margin:0 auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:pan-y;
+}
+
+/* Profilinhalt fließt normal innerhalb der scrollbaren Karte */
+#modal-profile .mcard-inner{
+  overflow:visible;
+}
+
+/* Keine innere Scrollfalle mehr in den Profil-Listen */
+#modal-profile .pj-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  max-height:none;
+  overflow:visible;
+  margin-bottom:20px;
+}
+
+/* Dezente native Scrollbar nur an der Profilkarte */
+#modal-profile .mcard::-webkit-scrollbar{
+  width:8px;
+}
+
+#modal-profile .mcard::-webkit-scrollbar-track{
+  background:transparent;
+}
+
+#modal-profile .mcard::-webkit-scrollbar-thumb{
+  background:var(--c-ink5);
+  border-radius:999px;
+  border:2px solid transparent;
+  background-clip:padding-box;
+}
+
+.prof-header{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  background:var(--c-bg1);
+  border:1px solid var(--c-bds);
+  border-radius:var(--r3);
+  padding:20px;
+  margin-bottom:22px;
+}
+
+.prof-av{
+  width:64px;
+  height:64px;
+  border-radius:50%;
+  color:#fff;
+  font-size:24px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+}
+
+.prof-av-info .pn{
+  font-size:18px;
+  font-weight:800;
+}
+
+.prof-av-info .pr{
+  font-size:13px;
+  color:var(--c-ink3);
+  margin-top:2px;
+}
+
+.prof-av-info .pm{
+  margin-top:6px;
+}
+
+.stat-row{
+  display:flex;
+  gap:14px;
+  margin-bottom:22px;
+}
+
+.sbox{
+  flex:1;
+  background:var(--c-bg1);
+  border:1px solid var(--c-bds);
+  border-radius:var(--r2);
+  padding:14px;
+  text-align:center;
+}
+
+.sbox .sv{
+  font-size:22px;
+  font-weight:800;
+  color:var(--c-ink);
+  margin-bottom:2px;
+}
+
+.sbox .sl{
+  font-size:12px;
+  color:var(--c-ink3);
+}
+
+.prof-sec-title{
+  font-size:12px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  color:var(--c-ink3);
+  margin-bottom:10px;
+}
+
+.pj-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  background:var(--c-bg1);
+  border:1px solid var(--c-bds);
+  border-radius:var(--r0);
+  padding:10px 14px;
+  font-size:13.5px;
+}
+
+.pj-row .pj-t{
+  font-weight:600;
+  flex:1;
+  padding-right:8px;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.pj-row .pj-p{
+  font-weight:700;
+  color:var(--c-green);
+  flex-shrink:0;
+}
+
+.pj-row .pj-s{
+  font-size:11px;
+  color:var(--c-ink4);
+  margin-left:8px;
+}
+
+.pj-empty{
+  text-align:center;
+  padding:20px;
+  color:var(--c-ink4);
+  font-size:13px;
+}
+
+@media(max-width:700px){
+  #modal-profile{
+    align-items:stretch;
+    justify-content:flex-start;
+    padding:0;
+  }
+
+  #modal-profile .mcard{
+    width:100vw;
+    max-width:100vw;
+    height:100dvh;
+    max-height:100dvh;
+    margin:0;
+    border-radius:0;
+  }
+
+  #modal-profile .mcard-inner{
+    padding:18px;
+  }
+}
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){
   .foot-top{grid-template-columns:1fr 1fr}
@@ -6157,81 +6324,6 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
-  <style>
-/* === SERVICE RADAR: SAFE PROFILE SCROLL FIX === */
-
-/* Hintergrund sperren, sobald Profil offen ist */
-html:has(#modal-profile.open),
-body:has(#modal-profile.open) {
-  overflow: hidden !important;
-  height: 100% !important;
-}
-
-/* Profil-Overlay: kein Hintergrundscroll */
-#modal-profile.open {
-  overflow: hidden !important;
-  align-items: stretch !important;
-  justify-content: flex-start !important;
-  padding: 0 !important;
-}
-
-/* Nur die Profilbox scrollt */
-#modal-profile.open .mcard {
-  width: 100vw !important;
-  max-width: 100vw !important;
-  height: 100dvh !important;
-  max-height: 100dvh !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
-  overscroll-behavior: contain !important;
-}
-
-/* Inhalt bleibt klickbar */
-#modal-profile.open button,
-#modal-profile.open a,
-#modal-profile.open input,
-#modal-profile.open textarea,
-#modal-profile.open select,
-#modal-profile.open label,
-#modal-profile.open summary {
-  pointer-events: auto !important;
-  touch-action: manipulation !important;
-}
-
-/* Scrollen überall im Profil erlauben */
-#modal-profile.open .mcard,
-#modal-profile.open .mcard-inner {
-  touch-action: pan-y !important;
-}
-
-/* Keine inneren Scrollfallen im Profil */
-#modal-profile.open .mcard-inner,
-#modal-profile.open .pj-list,
-#modal-profile.open .app-list,
-#modal-profile.open .saved-list,
-#modal-profile.open .thread-list {
-  overflow: visible !important;
-  max-height: none !important;
-  height: auto !important;
-}
-
-/* Breite sauber halten */
-#modal-profile.open .mcard-inner {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding: 18px !important;
-  box-sizing: border-box !important;
-  overflow-x: hidden !important;
-}
-
-#modal-profile.open * {
-  box-sizing: border-box !important;
-  max-width: 100%;
-}
 </style>
 </body>
 </html>

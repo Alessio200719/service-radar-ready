@@ -85,7 +85,7 @@
   --sh4:0 16px 40px rgba(31,35,40,.15),0 1px 3px rgba(31,35,40,.1);
   --r0:6px;--r1:10px;--r2:14px;--r3:20px;--r4:28px;
 }
-html{scroll-behavior:smooth;scroll-padding-top:76px}
+html{scroll-behavior:smooth;scroll-padding-top:76px;overflow-x:hidden}
 body{font-family:var(--f);background:var(--c-bg);color:var(--c-ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 /* iOS-sicherer Scroll-Lock (Modale): body wird fixiert, Scrollposition via JS gemerkt/wiederhergestellt */
 body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
@@ -104,7 +104,8 @@ button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:tr
 .foot-nl-msg:empty{display:none}
 @media(max-width:600px){.foot-nl{flex-direction:column;align-items:flex-start}.foot-nl-form{max-width:none;width:100%}}
 h1,h2,h3,h4{font-family:var(--f);line-height:1.15;letter-spacing:-.025em;font-weight:800}
-img{max-width:100%;display:block}
+img,canvas{max-width:100%}
+img{display:block}
 a{text-decoration:none;color:inherit}
 button{cursor:pointer;font-family:inherit;border:none;outline:none}
 input,textarea,select{font-family:inherit}
@@ -743,191 +744,25 @@ html[lang="en"] #legal-de-note{display:block}
 .ch-send-btn:disabled{background:var(--c-bg2);color:var(--c-ink4);transform:none;cursor:not-allowed}
 
 /* ══ PROFILE ═════════════════════════════════════ */
-.prof-modal .mcard{
-  max-width:540px;
-}
-/* Profil: Overlay ist nur Hintergrund. Es scrollt NICHT selbst. */
-#modal-profile{
-  display:block;
-  overflow-y:auto;
-  overflow-x:hidden;
-  height:100dvh;
-  max-height:100dvh;
+.prof-modal .mcard{max-width:540px}
+/* Profil: EIN einziger nativer Scroll-Container = das Modal selbst. Der Inhalt fließt,
+   das Modal scrollt – native Scrollbar am Rand, voll greifbar, wie eine normale Seite. */
+#modal-profile{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--c-ink4) transparent}
+#modal-profile .mcard{max-height:none;overflow:visible;margin:0 auto}
+#modal-profile::-webkit-scrollbar{width:10px}
+#modal-profile::-webkit-scrollbar-thumb{background:var(--c-ink4);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
+.prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
+.prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
+.stat-row{display:flex;gap:14px;margin-bottom:22px}
+.sbox{flex:1;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px;text-align:center}
+.sbox .sv{font-size:22px;font-weight:800;color:var(--c-ink);margin-bottom:2px}.sbox .sl{font-size:12px;color:var(--c-ink3)}
+.prof-sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink3);margin-bottom:10px}
+.pj-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:20px}
+.pj-row{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r0);padding:10px 14px;font-size:13.5px}
+.pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
+.pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
 
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-}
-
-#modal-profile .mcard{
-  max-height:none;
-  height:auto;
-  overflow:visible;
-  margin:0 auto;
-
-/* Profilinhalt fließt normal innerhalb der scrollbaren Karte */
-#modal-profile .mcard-inner{
-  overflow:visible;
-}
-
-/* Keine innere Scrollfalle mehr in den Profil-Listen */
-#modal-profile .pj-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-  max-height:none;
-  overflow:visible;
-  margin-bottom:20px;
-}
-
-/* Dezente native Scrollbar nur an der Profilkarte */
-#modal-profile .mcard::-webkit-scrollbar{
-  width:8px;
-}
-
-#modal-profile .mcard::-webkit-scrollbar-track{
-  background:transparent;
-}
-
-#modal-profile .mcard::-webkit-scrollbar-thumb{
-  background:var(--c-ink5);
-  border-radius:999px;
-  border:2px solid transparent;
-  background-clip:padding-box;
-}
-
-.prof-header{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  background:var(--c-bg1);
-  border:1px solid var(--c-bds);
-  border-radius:var(--r3);
-  padding:20px;
-  margin-bottom:22px;
-}
-
-.prof-av{
-  width:64px;
-  height:64px;
-  border-radius:50%;
-  color:#fff;
-  font-size:24px;
-  font-weight:700;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-shrink:0;
-}
-
-.prof-av-info .pn{
-  font-size:18px;
-  font-weight:800;
-}
-
-.prof-av-info .pr{
-  font-size:13px;
-  color:var(--c-ink3);
-  margin-top:2px;
-}
-
-.prof-av-info .pm{
-  margin-top:6px;
-}
-
-.stat-row{
-  display:flex;
-  gap:14px;
-  margin-bottom:22px;
-}
-
-.sbox{
-  flex:1;
-  background:var(--c-bg1);
-  border:1px solid var(--c-bds);
-  border-radius:var(--r2);
-  padding:14px;
-  text-align:center;
-}
-
-.sbox .sv{
-  font-size:22px;
-  font-weight:800;
-  color:var(--c-ink);
-  margin-bottom:2px;
-}
-
-.sbox .sl{
-  font-size:12px;
-  color:var(--c-ink3);
-}
-
-.prof-sec-title{
-  font-size:12px;
-  font-weight:700;
-  text-transform:uppercase;
-  letter-spacing:.05em;
-  color:var(--c-ink3);
-  margin-bottom:10px;
-}
-
-.pj-row{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background:var(--c-bg1);
-  border:1px solid var(--c-bds);
-  border-radius:var(--r0);
-  padding:10px 14px;
-  font-size:13.5px;
-}
-
-.pj-row .pj-t{
-  font-weight:600;
-  flex:1;
-  padding-right:8px;
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-
-.pj-row .pj-p{
-  font-weight:700;
-  color:var(--c-green);
-  flex-shrink:0;
-}
-
-.pj-row .pj-s{
-  font-size:11px;
-  color:var(--c-ink4);
-  margin-left:8px;
-}
-
-.pj-empty{
-  text-align:center;
-  padding:20px;
-  color:var(--c-ink4);
-  font-size:13px;
-}
-
-@media(max-width:700px){
-  #modal-profile{
-    align-items:stretch;
-    justify-content:flex-start;
-    padding:0;
-  }
-
-  #modal-profile .mcard{
-    width:100vw;
-    max-width:100vw;
-    height:100dvh;
-    max-height:100dvh;
-    margin:0;
-    border-radius:0;
-  }
-
-  #modal-profile .mcard-inner{
-    padding:18px;
-  }
-}
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){
   .foot-top{grid-template-columns:1fr 1fr}
@@ -1034,18 +869,18 @@ html[lang="en"] #legal-de-note{display:block}
 
 <!-- MOBILE BOTTOM NAV (per CSS nur auf Smartphones <=640px sichtbar; Desktop/Tablet: display:none) -->
 <nav class="mobile-bottomnav" aria-label="Mobile Navigation">
-  <button class="mbn-item" onclick="mobileHome()"><span class="mbn-ic">🏠</span><span data-i18n="mnav.home">Start</span></button>
-  <button class="mbn-item" onclick="mobileMap()"><span class="mbn-ic">🗺️</span><span data-i18n="mnav.map">Karte</span></button>
-  <button class="mbn-item mbn-add" onclick="mobileAdd()" aria-label="Auftrag erstellen"><span class="mbn-ic">+</span><span data-i18n="mnav.add">Auftrag</span></button>
-  <button class="mbn-item" onclick="mobileChats()"><span class="mbn-ic">💬</span><span class="mbn-badge" id="mnav-chat-badge"></span><span data-i18n="mnav.msg">Chats</span></button>
-  <button class="mbn-item" onclick="mobileProfile()"><span class="mbn-ic">👤</span><span data-i18n="mnav.profile">Profil</span></button>
+  <button class="mbn-item" onclick="mobileHome()"><span class="mbn-ic"><i data-lucide="house" width="22" height="22"></i></span><span data-i18n="mnav.home">Start</span></button>
+  <button class="mbn-item" onclick="mobileMap()"><span class="mbn-ic"><i data-lucide="map" width="22" height="22"></i></span><span data-i18n="mnav.map">Karte</span></button>
+  <button class="mbn-item mbn-add" onclick="mobileAdd()" aria-label="Auftrag erstellen"><span class="mbn-ic"><i data-lucide="plus" width="24" height="24"></i></span><span data-i18n="mnav.add">Auftrag</span></button>
+  <button class="mbn-item" onclick="mobileChats()"><span class="mbn-ic"><i data-lucide="message-circle" width="22" height="22"></i></span><span class="mbn-badge" id="mnav-chat-badge"></span><span data-i18n="mnav.msg">Chats</span></button>
+  <button class="mbn-item" onclick="mobileProfile()"><span class="mbn-ic"><i data-lucide="user" width="22" height="22"></i></span><span data-i18n="mnav.profile">Profil</span></button>
 </nav>
 
 <!-- NAV -->
 <nav id="nav">
   <div class="wrap nav-inner">
     <a href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false" class="logo">
-      <div class="logo-icon">📡</div>
+      <div class="logo-icon"><i data-lucide="radar" width="18" height="18" stroke="#fff"></i></div>
       Service Radar
     </a>
     <ul class="nav-links" id="navLinks">
@@ -1135,11 +970,11 @@ html[lang="en"] #legal-de-note{display:block}
           <button class="btn btn-outline btn-lg" onclick="openPostJob()" style="font-size:16px;padding:14px 28px" data-i18n="hero.cta2">📋 Aufgabe einstellen</button>
         </div>
         <div class="hero-proof" style="animation:fadeUp .55s ease-out .32s both">
-          <div class="proof-item"><div class="proof-ck">✓</div><span data-i18n="hero.proof1">Kostenlos registrieren</span></div>
+          <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof1">Kostenlos registrieren</span></div>
           <div class="proof-sep"></div>
-          <div class="proof-item"><div class="proof-ck">✓</div><span data-i18n="hero.proof2">Faire Bezahlung</span></div>
+          <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof2">Faire Bezahlung</span></div>
           <div class="proof-sep"></div>
-          <div class="proof-item"><div class="proof-ck">✓</div><span data-i18n="hero.proof3">Verifizierte Nutzer</span></div>
+          <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof3">Verifizierte Nutzer</span></div>
         </div>
         <!-- Mini stats strip -->
         <div style="display:flex;gap:24px;margin-top:28px;flex-wrap:wrap;animation:fadeUp .55s ease-out .4s both">
@@ -1376,42 +1211,42 @@ html[lang="en"] #legal-de-note{display:block}
     </div>
     <div class="cat-grid">
       <div class="cat-pill" onclick="setFilter('g');scrollToJobs()" style="background:linear-gradient(135deg,#eafbf0,#d1f7c4);border-color:#aceebb">
-        <div class="cp-icon" style="background:rgba(45,164,78,.15);font-size:26px">🌿</div>
+        <div class="cp-icon" style="background:rgba(45,164,78,.15);font-size:26px"><i data-lucide="sprout" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.g">Gartenarbeit</div>
         <div class="cp-rate" style="color:#1a7f37;font-weight:600">10–15 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('h');scrollToJobs()" style="background:linear-gradient(135deg,#eef6ff,#ddf4ff);border-color:#b6e3ff">
-        <div class="cp-icon" style="background:rgba(9,105,218,.1);font-size:26px">🏠</div>
+        <div class="cp-icon" style="background:rgba(9,105,218,.1);font-size:26px"><i data-lucide="house" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.h">Haushalt</div>
         <div class="cp-rate" style="color:#0969da;font-weight:600">10–14 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('s');scrollToJobs()" style="background:linear-gradient(135deg,#fffdf0,#fff8c5);border-color:#e3c84a">
-        <div class="cp-icon" style="background:rgba(154,103,0,.1);font-size:26px">🛒</div>
+        <div class="cp-icon" style="background:rgba(154,103,0,.1);font-size:26px"><i data-lucide="shopping-cart" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.s">Einkaufen</div>
         <div class="cp-rate" style="color:#9a6700;font-weight:600">8–12 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#f8f0ff,#fbefff);border-color:#d8b4fe">
-        <div class="cp-icon" style="background:rgba(102,57,186,.1);font-size:26px">🪛</div>
+        <div class="cp-icon" style="background:rgba(102,57,186,.1);font-size:26px"><i data-lucide="screwdriver" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.furniture">Möbel aufbauen</div>
         <div class="cp-rate" style="color:#6639ba;font-weight:600">12–18 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#fff5f0,#ffebe9);border-color:#ffb0a0">
-        <div class="cp-icon" style="background:rgba(207,34,46,.08);font-size:26px">📦</div>
+        <div class="cp-icon" style="background:rgba(207,34,46,.08);font-size:26px"><i data-lucide="package" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.moving">Umzugshilfe</div>
         <div class="cp-rate" style="color:#cf222e;font-weight:600">12–16 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f0fdf9,#d1f7c4);border-color:#6ee7b7">
-        <div class="cp-icon" style="background:rgba(5,150,105,.1);font-size:26px">🐕</div>
+        <div class="cp-icon" style="background:rgba(5,150,105,.1);font-size:26px"><i data-lucide="dog" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.dog">Hundesitting</div>
         <div class="cp-rate" style="color:#047857;font-weight:600">8–14 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#eff8ff,#dbeafe);border-color:#93c5fd">
-        <div class="cp-icon" style="background:rgba(37,99,235,.1);font-size:26px">📚</div>
+        <div class="cp-icon" style="background:rgba(37,99,235,.1);font-size:26px"><i data-lucide="book-open" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.tutor">Nachhilfe</div>
         <div class="cp-rate" style="color:#1d4ed8;font-weight:600">12–20 €/h</div>
       </div>
       <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f9f9f9,#f3f4f6);border-color:#d1d5db">
-        <div class="cp-icon" style="background:rgba(75,85,99,.1);font-size:26px">🤝</div>
+        <div class="cp-icon" style="background:rgba(75,85,99,.1);font-size:26px"><i data-lucide="handshake" width="26" height="26"></i></div>
         <div class="cp-name" data-i18n="cat.card.other">Sonstige Hilfe</div>
         <div class="cp-rate" style="color:#4b5563;font-weight:600" data-i18n="cat.rate.other">Preis variiert</div>
       </div>
@@ -1577,17 +1412,17 @@ html[lang="en"] #legal-de-note{display:block}
     </div>
     <div class="testi-grid">
       <div class="tcard">
-        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🔒</div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true"><i data-lucide="lock" width="28" height="28"></i></div>
         <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c1.t">Sichere Zahlung über Stripe</h3>
         <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c1.p">Die Inseratsgebühr läuft geschützt über Stripe – 2 € pro Auftrag, keine versteckten Kosten und kein Abo.</p>
       </div>
       <div class="tcard">
-        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🛡️</div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true"><i data-lucide="shield-check" width="28" height="28"></i></div>
         <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c2.t">Schutz & Meldefunktion</h3>
         <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c2.p">Sicherheitshinweise, eine Meldefunktion und ein Sperrsystem schützen alle Nutzer auf der Plattform.</p>
       </div>
       <div class="tcard">
-        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true">🇪🇺</div>
+        <div style="font-size:30px;margin-bottom:10px" aria-hidden="true"><i data-lucide="badge-check" width="28" height="28"></i></div>
         <h3 style="font-size:16px;font-weight:800;color:var(--c-ink);margin-bottom:6px" data-i18n="safe.c3.t">DSGVO-konform</h3>
         <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c3.p">Deine Daten werden DSGVO-konform und ausschließlich auf Servern innerhalb der EU verarbeitet.</p>
       </div>
@@ -2298,7 +2133,7 @@ html[lang="en"] #legal-de-note{display:block}
   <div class="wrap">
     <div class="foot-top">
       <div class="foot-brand">
-        <div class="logo"><div class="logo-icon">📡</div> Service Radar</div>
+        <div class="logo"><div class="logo-icon"><i data-lucide="radar" width="18" height="18" stroke="#fff"></i></div> Service Radar</div>
         <p data-i18n="foot.tagline">Lokale Aufgaben finden & vergeben – einfach, fair und sicher.</p>
       </div>
       <div class="foot-col"><h4 data-i18n="foot.platform">Plattform</h4><ul>
@@ -2447,7 +2282,7 @@ html[lang="en"] #legal-de-note{display:block}
       </div>
       <!-- SUCCESS -->
       <div id="pane-success" style="display:none" class="success-screen">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon"><i data-lucide="party-popper" width="52" height="52"></i></div>
         <h3 data-i18n="auth.succ.title">Willkommen bei Service Radar!</h3>
         <p data-i18n="auth.succ.p">Dein Konto wurde erstellt. Entdecke jetzt Aufgaben in deiner Nähe.</p>
         <button class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-auth')" data-i18n="auth.succ.btn">Los geht's! 🚀</button>
@@ -2552,7 +2387,7 @@ html[lang="en"] #legal-de-note{display:block}
           <!-- Payment method selection -->
           <div class="pay-methods">
             <div class="pay-method selected" id="pm-card" onclick="selectPayMethod('card')">
-              <div class="pay-method-icon">💳</div>
+              <div class="pay-method-icon"><i data-lucide="credit-card" width="24" height="24"></i></div>
               <div class="pay-method-body">
                 <div class="pay-method-name" data-i18n="pay.m.card">Kreditkarte / Debitkarte</div>
                 <div class="pay-method-sub" data-i18n="pay.m.card.s">Visa, Mastercard, American Express</div>
@@ -2560,7 +2395,7 @@ html[lang="en"] #legal-de-note{display:block}
               <div class="pay-method-check">✓</div>
             </div>
             <div class="pay-method" id="pm-paypal" onclick="selectPayMethod('paypal')">
-              <div class="pay-method-icon">🅿️</div>
+              <div class="pay-method-icon"><i data-lucide="wallet" width="24" height="24"></i></div>
               <div class="pay-method-body">
                 <div class="pay-method-name">PayPal</div>
                 <div class="pay-method-sub" data-i18n="pay.m.paypal.s">Schnell und sicher mit deinem PayPal-Konto</div>
@@ -2568,7 +2403,7 @@ html[lang="en"] #legal-de-note{display:block}
               <div class="pay-method-check"></div>
             </div>
             <div class="pay-method" id="pm-sepa" onclick="selectPayMethod('sepa')">
-              <div class="pay-method-icon">🏦</div>
+              <div class="pay-method-icon"><i data-lucide="landmark" width="24" height="24"></i></div>
               <div class="pay-method-body">
                 <div class="pay-method-name" data-i18n="pay.m.sepa">SEPA-Lastschrift</div>
                 <div class="pay-method-sub" data-i18n="pay.m.sepa.s">Bankeinzug (Deutschland / EU)</div>
@@ -2611,7 +2446,7 @@ html[lang="en"] #legal-de-note{display:block}
         </div>
       </div>
       <div id="ps-ok" style="display:none" class="success-screen">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon"><i data-lucide="party-popper" width="52" height="52"></i></div>
         <h3 data-i18n="post.ok.t">Aufgabe inseriert!</h3>
         <p data-i18n="post.ok.p">Deine Aufgabe ist live. Helfer in deiner Nähe können sie direkt entdecken und dich per Chat kontaktieren.</p>
         <button class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-post');renderJobCards();addMarkers();showToast(T('toast.post.succ'),'ok')" data-i18n="post.ok.btn">Super, danke!</button>
@@ -2811,7 +2646,7 @@ html[lang="en"] #legal-de-note{display:block}
   <div class="mcard">
     <button class="mclose" onclick="closeModal('modal-delete-job')" aria-label="Schließen">✕</button>
     <div class="mcard-inner">
-      <div style="text-align:center;font-size:40px;margin-bottom:6px">🗑️</div>
+      <div style="text-align:center;font-size:40px;margin-bottom:6px"><i data-lucide="trash-2" width="36" height="36"></i></div>
       <h3 style="font-size:18px;font-weight:800;text-align:center;margin-bottom:8px" data-i18n="job.del.t">Auftrag löschen?</h3>
       <p style="text-align:center;color:var(--c-ink3);font-size:14px;margin-bottom:4px" data-i18n="job.del.p">Möchtest du diesen Auftrag wirklich dauerhaft löschen?</p>
       <p id="del-job-title" style="text-align:center;font-weight:700;margin:4px 0 12px"></p>
@@ -2849,7 +2684,7 @@ html[lang="en"] #legal-de-note{display:block}
 <div class="moverlay" id="modal-delete-account" onclick="overlayClose(event,'modal-delete-account')">
   <div class="mcard"><button class="mclose" onclick="closeModal('modal-delete-account')" data-i18n-aria="del.cancel" aria-label="Abbrechen">✕</button>
     <div class="mcard-inner">
-      <div style="text-align:center;font-size:44px;margin-bottom:8px">🗑️</div>
+      <div style="text-align:center;font-size:44px;margin-bottom:8px"><i data-lucide="trash-2" width="40" height="40"></i></div>
       <h3 style="font-size:19px;font-weight:800;margin-bottom:10px;text-align:center" data-i18n="del.title">Konto wirklich löschen?</h3>
       <div class="warn-box" data-i18n="del.body" style="margin-bottom:12px">Dies entfernt dein Konto dauerhaft aus diesem Browser. Alle deine Inserate, Bewerbungen und Chats werden gelöscht. Daten anderer Nutzer bleiben unberührt.</div>
       <p style="font-size:12px;color:var(--c-ink4);margin-bottom:14px" data-i18n="del.gdpr">Für eine vollständige DSGVO-Löschung wende dich an info@service-radar.com.</p>
@@ -2868,7 +2703,7 @@ html[lang="en"] #legal-de-note{display:block}
 </button>
 <div id="toast"></div>
 <div id="cookie" role="dialog" aria-label="Cookie-Einstellungen" aria-live="polite">
-  <div class="ck-title">🍪 <span id="ck-title-txt">Cookie-Hinweis</span></div>
+  <div class="ck-title"><i data-lucide="cookie" width="18" height="18" style="vertical-align:-3px"></i> <span id="ck-title-txt">Cookie-Hinweis</span></div>
   <p class="ck-text" id="ck-body-txt">Service Radar verwendet ausschließlich technisch notwendige Speicherungen (z. B. localStorage für Login, Sprache und Einstellungen). Es werden keine Tracking-, Marketing- oder Analyse-Cookies eingesetzt. Details in unserer <a onclick="openLegalDocument('cookie')" class="legal-link">Cookie-Richtlinie</a>.</p>
   <div class="ck-btns">
     <button class="ck-btn ck-accept" onclick="saveCookieConsent('essential')">Verstanden</button>
@@ -4187,11 +4022,9 @@ function unlockScroll(){
 function openModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (!el.classList.contains('open')) {
-    if (_openModals === 0) lockScroll();
-    _openModals++;
-  }
+  if (!el.classList.contains('open')) { if (_openModals === 0) lockScroll(); _openModals++; }
   el.classList.add('open');
+  // Always re-apply translations so modal content matches active language
   applyTranslations();
 }
 function closeModal(id) {
@@ -6326,188 +6159,7 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
 });
 </script>
-</style>
-  <style>
-/* === SERVICE RADAR: SAFARI PROFILE SCROLL FIX === */
-
-.mcard.prof-modal{
-  max-width:540px !important;
-}
-
-/* Das Profil-Overlay ist der einzige Scrollbereich */
-#modal-profile{
-  display:block !important;
-  overflow-y:auto !important;
-  overflow-x:hidden !important;
-  height:100vh !important;
-  height:100dvh !important;
-  max-height:100dvh !important;
-  padding:20px !important;
-  -webkit-overflow-scrolling:touch !important;
-  overscroll-behavior:contain !important;
-  touch-action:pan-y !important;
-}
-
-/* Die Profilkarte selbst darf NICHT eigener Scrollcontainer sein */
-#modal-profile .mcard{
-  max-height:none !important;
-  height:auto !important;
-  overflow:visible !important;
-  margin:0 auto !important;
-}
-
-/* Der Inhalt fließt normal */
-#modal-profile .mcard-inner{
-  overflow:visible !important;
-}
-
-/* Keine inneren Scrollfallen */
-#modal-profile .pj-list,
-#modal-profile .jlist,
-#modal-profile .thread-list,
-#modal-profile .msg-area{
-  max-height:none !important;
-  height:auto !important;
-  overflow:visible !important;
-}
-
-/* Auf Handy Vollbreite */
-@media(max-width:700px){
-  #modal-profile{
-    padding:0 !important;
-  }
-
-  #modal-profile .mcard{
-    width:100vw !important;
-    max-width:100vw !important;
-    min-height:100dvh !important;
-    border-radius:0 !important;
-  }
-
-  #modal-profile .mcard-inner{
-    padding:18px !important;
-  }
-}
-</style>
-
-<script>
-/* === Safari Touch-Fix: Scrollen überall im Profil ermöglichen === */
-(function(){
-  if(window.__srProfileScrollFix) return;
-  window.__srProfileScrollFix = true;
-
-  var modal = document.getElementById('modal-profile');
-  if(!modal) return;
-
-  var startY = 0;
-  var startScroll = 0;
-  var active = false;
-
-  function isOpen(){
-    return modal.classList.contains('open');
-  }
-
-  function ignoreTarget(target){
-    return target.closest('input, textarea, select, [contenteditable="true"]');
-  }
-
-  modal.addEventListener('touchstart', function(e){
-    if(!isOpen()) return;
-    if(!e.touches || !e.touches[0]) return;
-    if(ignoreTarget(e.target)) return;
-
-    active = true;
-    startY = e.touches[0].clientY;
-    startScroll = modal.scrollTop;
-  }, { passive:true });
-
-  modal.addEventListener('touchmove', function(e){
-    if(!active || !isOpen()) return;
-    if(!e.touches || !e.touches[0]) return;
-    if(ignoreTarget(e.target)) return;
-
-    var currentY = e.touches[0].clientY;
-    var delta = startY - currentY;
-
-    if(Math.abs(delta) < 2) return;
-
-    modal.scrollTop = startScroll + delta;
-
-    e.preventDefault();
-    e.stopPropagation();
-  }, { passive:false });
-
-  modal.addEventListener('touchend', function(){
-    active = false;
-  }, { passive:true });
-
-  modal.addEventListener('touchcancel', function(){
-    active = false;
-  }, { passive:true });
-})();
-</script>
-  <style>
-/* === MOBILE EMERGENCY FIX: keine seitliche Verschiebung === */
-html,
-body{
-  width:100% !important;
-  max-width:100% !important;
-  overflow-x:hidden !important;
-}
-
-*{
-  box-sizing:border-box !important;
-}
-
-@media(max-width:700px){
-  body{
-    overflow-x:hidden !important;
-  }
-
-  .hero,
-  .hero-inner,
-  .hero-grid,
-  .hero-content,
-  .hero-visual,
-  .container,
-  main,
-  section{
-    width:100% !important;
-    max-width:100% !important;
-    overflow-x:hidden !important;
-  }
-
-  .hero-grid{
-    display:block !important;
-  }
-
-  .hero-visual{
-    display:none !important;
-  }
-
-  .hero h1,
-  .hero p,
-  .hero .actions,
-  .hero .trust-row,
-  .hero .stats,
-  .hero .hero-content{
-    max-width:100% !important;
-  }
-
-  img,
-  svg,
-  canvas,
-  video{
-    max-width:100% !important;
-  }
-
-  .topbar,
-  .nav,
-  header{
-    max-width:100vw !important;
-    overflow-x:auto !important;
-  }
-}
-</style>
+<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>try{ if(window.lucide) lucide.createIcons(); }catch(e){}</script>
 </body>
 </html>

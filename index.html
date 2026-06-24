@@ -748,27 +748,21 @@ html[lang="en"] #legal-de-note{display:block}
 }
 /* Profil: Overlay ist nur Hintergrund. Es scrollt NICHT selbst. */
 #modal-profile{
-  display:flex;
-  overflow:hidden;
-  align-items:stretch;
-  justify-content:center;
-  height:100vh;
+  display:block;
+  overflow-y:auto;
+  overflow-x:hidden;
   height:100dvh;
   max-height:100dvh;
+
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
 }
 
 #modal-profile .mcard{
-  max-height:100vh;
-  max-height:100dvh;
-  height:100vh;
-  height:100dvh;
-  overflow-y:auto;
-  overflow-x:hidden;
+  max-height:none;
+  height:auto;
+  overflow:visible;
   margin:0 auto;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-  touch-action:pan-y;
-}
 
 /* Profilinhalt fließt normal innerhalb der scrollbaren Karte */
 #modal-profile .mcard-inner{
@@ -4193,17 +4187,10 @@ function unlockScroll(){
 function openModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
-
   if (!el.classList.contains('open')) {
-
-    // Profil bekommt KEIN body-lock (Safari Scroll Fix)
-    if (_openModals === 0 && id !== 'modal-profile') {
-      lockScroll();
-    }
-
+    if (_openModals === 0) lockScroll();
     _openModals++;
   }
-
   el.classList.add('open');
   applyTranslations();
 }

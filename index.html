@@ -6446,5 +6446,68 @@ window.addEventListener('load', () => {
   }, { passive:true });
 })();
 </script>
+  <style>
+/* === MOBILE EMERGENCY FIX: keine seitliche Verschiebung === */
+html,
+body{
+  width:100% !important;
+  max-width:100% !important;
+  overflow-x:hidden !important;
+}
+
+*{
+  box-sizing:border-box !important;
+}
+
+@media(max-width:700px){
+  body{
+    overflow-x:hidden !important;
+  }
+
+  .hero,
+  .hero-inner,
+  .hero-grid,
+  .hero-content,
+  .hero-visual,
+  .container,
+  main,
+  section{
+    width:100% !important;
+    max-width:100% !important;
+    overflow-x:hidden !important;
+  }
+
+  .hero-grid{
+    display:block !important;
+  }
+
+  .hero-visual{
+    display:none !important;
+  }
+
+  .hero h1,
+  .hero p,
+  .hero .actions,
+  .hero .trust-row,
+  .hero .stats,
+  .hero .hero-content{
+    max-width:100% !important;
+  }
+
+  img,
+  svg,
+  canvas,
+  video{
+    max-width:100% !important;
+  }
+
+  .topbar,
+  .nav,
+  header{
+    max-width:100vw !important;
+    overflow-x:auto !important;
+  }
+}
+</style>
 </body>
 </html>

@@ -6327,5 +6327,124 @@ window.addEventListener('load', () => {
 });
 </script>
 </style>
+  <style>
+/* === SERVICE RADAR: SAFARI PROFILE SCROLL FIX === */
+
+.mcard.prof-modal{
+  max-width:540px !important;
+}
+
+/* Das Profil-Overlay ist der einzige Scrollbereich */
+#modal-profile{
+  display:block !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  height:100vh !important;
+  height:100dvh !important;
+  max-height:100dvh !important;
+  padding:20px !important;
+  -webkit-overflow-scrolling:touch !important;
+  overscroll-behavior:contain !important;
+  touch-action:pan-y !important;
+}
+
+/* Die Profilkarte selbst darf NICHT eigener Scrollcontainer sein */
+#modal-profile .mcard{
+  max-height:none !important;
+  height:auto !important;
+  overflow:visible !important;
+  margin:0 auto !important;
+}
+
+/* Der Inhalt fließt normal */
+#modal-profile .mcard-inner{
+  overflow:visible !important;
+}
+
+/* Keine inneren Scrollfallen */
+#modal-profile .pj-list,
+#modal-profile .jlist,
+#modal-profile .thread-list,
+#modal-profile .msg-area{
+  max-height:none !important;
+  height:auto !important;
+  overflow:visible !important;
+}
+
+/* Auf Handy Vollbreite */
+@media(max-width:700px){
+  #modal-profile{
+    padding:0 !important;
+  }
+
+  #modal-profile .mcard{
+    width:100vw !important;
+    max-width:100vw !important;
+    min-height:100dvh !important;
+    border-radius:0 !important;
+  }
+
+  #modal-profile .mcard-inner{
+    padding:18px !important;
+  }
+}
+</style>
+
+<script>
+/* === Safari Touch-Fix: Scrollen überall im Profil ermöglichen === */
+(function(){
+  if(window.__srProfileScrollFix) return;
+  window.__srProfileScrollFix = true;
+
+  var modal = document.getElementById('modal-profile');
+  if(!modal) return;
+
+  var startY = 0;
+  var startScroll = 0;
+  var active = false;
+
+  function isOpen(){
+    return modal.classList.contains('open');
+  }
+
+  function ignoreTarget(target){
+    return target.closest('input, textarea, select, [contenteditable="true"]');
+  }
+
+  modal.addEventListener('touchstart', function(e){
+    if(!isOpen()) return;
+    if(!e.touches || !e.touches[0]) return;
+    if(ignoreTarget(e.target)) return;
+
+    active = true;
+    startY = e.touches[0].clientY;
+    startScroll = modal.scrollTop;
+  }, { passive:true });
+
+  modal.addEventListener('touchmove', function(e){
+    if(!active || !isOpen()) return;
+    if(!e.touches || !e.touches[0]) return;
+    if(ignoreTarget(e.target)) return;
+
+    var currentY = e.touches[0].clientY;
+    var delta = startY - currentY;
+
+    if(Math.abs(delta) < 2) return;
+
+    modal.scrollTop = startScroll + delta;
+
+    e.preventDefault();
+    e.stopPropagation();
+  }, { passive:false });
+
+  modal.addEventListener('touchend', function(){
+    active = false;
+  }, { passive:true });
+
+  modal.addEventListener('touchcancel', function(){
+    active = false;
+  }, { passive:true });
+})();
+</script>
 </body>
 </html>

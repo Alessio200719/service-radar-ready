@@ -90,7 +90,7 @@ body{font-family:var(--f);background:var(--c-bg);color:var(--c-ink);line-height:
 /* iOS-sicherer Scroll-Lock (Modale): body wird fixiert, Scrollposition via JS gemerkt/wiederhergestellt */
 body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 /* Scroll-Chaining/Jank verhindern: innere Scrollbereiche kapseln ihren Scroll */
-.jlist,.msg-area,.thread-list,.mcard,.mobile-menu,.pj-list,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.jlist,.msg-area,.thread-list,.mcard,.mobile-menu,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 /* App-Feeling auf Touch: kein graues Tap-Highlight, keine Textauswahl auf Bedienelementen */
 button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
 .btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
@@ -748,7 +748,8 @@ html[lang="en"] #legal-de-note{display:block}
 /* Profil: EIN einziger nativer Scroll-Container = das Modal selbst. Der Inhalt fließt,
    das Modal scrollt – native Scrollbar am Rand, voll greifbar, wie eine normale Seite. */
 #modal-profile{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--c-ink4) transparent}
-#modal-profile .mcard{max-height:none;overflow:visible;margin:0 auto}
+#modal-profile .mcard{max-height:none;overflow:visible;margin:0 auto;-webkit-overflow-scrolling:auto}
+#modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
 #modal-profile::-webkit-scrollbar{width:10px}
 #modal-profile::-webkit-scrollbar-thumb{background:var(--c-ink4);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
@@ -758,7 +759,7 @@ html[lang="en"] #legal-de-note{display:block}
 .sbox{flex:1;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px;text-align:center}
 .sbox .sv{font-size:22px;font-weight:800;color:var(--c-ink);margin-bottom:2px}.sbox .sl{font-size:12px;color:var(--c-ink3)}
 .prof-sec-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink3);margin-bottom:10px}
-.pj-list{display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:20px}
+.pj-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
 .pj-row{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r0);padding:10px 14px;font-size:13.5px}
 .pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
 .pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
@@ -1184,10 +1185,10 @@ html[lang="en"] #legal-de-note{display:block}
     <div class="filter-bar">
       <span class="filter-lbl" data-i18n="map.filter">Filter:</span>
       <button class="fc on" data-cat="all" onclick="setFilter('all',this)" data-i18n="filter.all">Alle</button>
-      <button class="fc"    data-cat="g" onclick="setFilter('g',this)">🌿 <span data-i18n="filter.g">Garten</span></button>
-      <button class="fc"    data-cat="h" onclick="setFilter('h',this)">🏠 <span data-i18n="filter.h">Haushalt</span></button>
-      <button class="fc"    data-cat="s" onclick="setFilter('s',this)">🛒 <span data-i18n="filter.s">Einkaufen</span></button>
-      <button class="fc"    data-cat="m" onclick="setFilter('m',this)">📦 <span data-i18n="filter.m">Möbel/Umzug</span></button>
+      <button class="fc"    data-cat="g" onclick="setFilter('g',this)"><i data-lucide="sprout" width="16" height="16" style="vertical-align:-3px"></i> <span data-i18n="filter.g">Garten</span></button>
+      <button class="fc"    data-cat="h" onclick="setFilter('h',this)"><i data-lucide="house" width="16" height="16" style="vertical-align:-3px"></i> <span data-i18n="filter.h">Haushalt</span></button>
+      <button class="fc"    data-cat="s" onclick="setFilter('s',this)"><i data-lucide="shopping-cart" width="16" height="16" style="vertical-align:-3px"></i> <span data-i18n="filter.s">Einkaufen</span></button>
+      <button class="fc"    data-cat="m" onclick="setFilter('m',this)"><i data-lucide="package" width="16" height="16" style="vertical-align:-3px"></i> <span data-i18n="filter.m">Möbel/Umzug</span></button>
     </div>
     <div class="map-grid">
       <div class="map-frame">
@@ -1394,10 +1395,10 @@ html[lang="en"] #legal-de-note{display:block}
       <p class="sec-desc" data-i18n="pay.desc">Vor dem Inserieren siehst du empfohlene Richtwerte – damit niemand ausgenutzt wird.</p>
     </div>
     <div class="pay-grid">
-      <div class="paycard"><div class="pay-emoji">🌿</div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c1.t">Gartenarbeit</div><div class="pay-sub" data-i18n="pay.c1.s">Rasen mähen, Unkraut jäten, Laub harken</div></div><div class="pay-range">10–15 €/h</div></div>
-      <div class="paycard"><div class="pay-emoji">🏠</div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c2.t">Haushalt & Reinigung</div><div class="pay-sub" data-i18n="pay.c2.s">Putzen, Einkaufen, Aufräumen</div></div><div class="pay-range">10–14 €/h</div></div>
-      <div class="paycard"><div class="pay-emoji">📦</div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c3.t">Umzug & Aufbau</div><div class="pay-sub" data-i18n="pay.c3.s">Möbel aufbauen, Umzugshilfe</div></div><div class="pay-range">12–18 €/h</div></div>
-      <div class="paycard"><div class="pay-emoji">📚</div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c4.t">Nachhilfe & Sonstiges</div><div class="pay-sub" data-i18n="pay.c4.s">Nachhilfe, Hundesitting und mehr</div></div><div class="pay-range">10–20 €/h</div></div>
+      <div class="paycard"><div class="pay-emoji"><i data-lucide="sprout" width="28" height="28"></i></div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c1.t">Gartenarbeit</div><div class="pay-sub" data-i18n="pay.c1.s">Rasen mähen, Unkraut jäten, Laub harken</div></div><div class="pay-range">10–15 €/h</div></div>
+      <div class="paycard"><div class="pay-emoji"><i data-lucide="house" width="28" height="28"></i></div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c2.t">Haushalt & Reinigung</div><div class="pay-sub" data-i18n="pay.c2.s">Putzen, Einkaufen, Aufräumen</div></div><div class="pay-range">10–14 €/h</div></div>
+      <div class="paycard"><div class="pay-emoji"><i data-lucide="package" width="28" height="28"></i></div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c3.t">Umzug & Aufbau</div><div class="pay-sub" data-i18n="pay.c3.s">Möbel aufbauen, Umzugshilfe</div></div><div class="pay-range">12–18 €/h</div></div>
+      <div class="paycard"><div class="pay-emoji"><i data-lucide="book-open" width="28" height="28"></i></div><div class="pay-info"><div class="pay-cat" data-i18n="pay.c4.t">Nachhilfe & Sonstiges</div><div class="pay-sub" data-i18n="pay.c4.s">Nachhilfe, Hundesitting und mehr</div></div><div class="pay-range">10–20 €/h</div></div>
     </div>
     <p style="text-align:center;margin-top:20px;font-size:12.5px;color:var(--c-ink4)"><span data-i18n="pay.foot">* Richtwerte basieren auf regionalen Durchschnittswerten. Endpreis wird frei vereinbart.</span></p>
   </div>
@@ -2336,10 +2337,10 @@ html[lang="en"] #legal-de-note{display:block}
         <div class="step-lbl" data-i18n="post.s1.lbl">SCHRITT 1 / 4 – KATEGORIE</div>
         <h3 style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="post.s1.h">Welche Art von Aufgabe?</h3>
         <div class="cat-pick">
-          <div class="cpick on" id="cp-g" onclick="pickCat('g')"><div class="ci">🌿</div><div class="cn" data-i18n="post.cat.g">Gartenarbeit</div><div class="cs">10–15 €/h</div></div>
-          <div class="cpick" id="cp-h" onclick="pickCat('h')"><div class="ci">🏠</div><div class="cn" data-i18n="post.cat.h">Haushalt</div><div class="cs">10–14 €/h</div></div>
-          <div class="cpick" id="cp-s" onclick="pickCat('s')"><div class="ci">🛒</div><div class="cn" data-i18n="post.cat.s">Einkaufen</div><div class="cs">8–12 €/h</div></div>
-          <div class="cpick" id="cp-m" onclick="pickCat('m')"><div class="ci">📦</div><div class="cn" data-i18n="post.cat.m">Umzug/Möbel</div><div class="cs">12–18 €/h</div></div>
+          <div class="cpick on" id="cp-g" onclick="pickCat('g')"><div class="ci"><i data-lucide="sprout" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.g">Gartenarbeit</div><div class="cs">10–15 €/h</div></div>
+          <div class="cpick" id="cp-h" onclick="pickCat('h')"><div class="ci"><i data-lucide="house" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.h">Haushalt</div><div class="cs">10–14 €/h</div></div>
+          <div class="cpick" id="cp-s" onclick="pickCat('s')"><div class="ci"><i data-lucide="shopping-cart" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.s">Einkaufen</div><div class="cs">8–12 €/h</div></div>
+          <div class="cpick" id="cp-m" onclick="pickCat('m')"><div class="ci"><i data-lucide="package" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.m">Umzug/Möbel</div><div class="cs">12–18 €/h</div></div>
         </div>
         <button class="btn btn-dark btn-full mt-16" onclick="goPostStep(2)" data-i18n="post.next">Weiter →</button>
       </div>

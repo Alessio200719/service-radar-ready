@@ -777,10 +777,11 @@ html[lang="en"] #legal-de-note{display:block}
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-/* Lange Modals: das Overlay scrollt, nicht die .mcard (behebt tote Scroll-Zonen in Safari/WebKit) */
+/* Lange Modals: Overlay als block-basierter Scrollcontainer (kein Flex mehr) – behebt
+   die toten Scroll-Zonen in Safari/WebKit. .mcard hat kein eigenes overflow/max-height. */
 #modal-auth,
 #modal-profile,
-#modal-pubprofile{overflow-y:auto;overflow-x:hidden;align-items:flex-start}
+#modal-pubprofile{display:block;overflow-y:auto;overflow-x:hidden}
 #modal-auth .mcard,
 #modal-profile .mcard,
 #modal-pubprofile .mcard{max-height:none;overflow:visible;margin:20px auto}

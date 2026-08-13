@@ -91,10 +91,11 @@ body{font-family:var(--f);background:var(--c-bg);color:var(--c-ink);line-height:
 body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 /* Scroll-Chaining/Jank verhindern: innere Scrollbereiche kapseln ihren Scroll */
 .jlist,.msg-area,.thread-list,.mobile-menu,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
-/* .mcard: overscroll-Kapselung behalten (verhindert Scroll-Chaining zum gesperrten Body),
-   aber KEIN -webkit-overflow-scrolling:touch – der erzwungene Momentum-Layer ruckelt in
-   Safari zusammen mit transform + backdrop-filter des Modals. */
-.mcard{overscroll-behavior:contain}
+/* .mcard: WEDER overscroll-behavior NOCH -webkit-overflow-scrolling auf dem Modal-
+   Scroll-Container. In Safari/WebKit bricht overscroll-behavior:contain zusammen mit
+   dem transform des Modals das Scroll-Hit-Testing → die Scroll-Geste erreicht .mcard
+   nur über manchen Kind-Elementen ("tote Scroll-Zonen"). Der Hintergrund kann trotzdem
+   nicht mitscrollen, das verhindert bereits body.modal-lock (position:fixed). */
 /* Barrierefreiheit + Performance: Nutzer mit "Bewegung reduzieren" bekommen keine
    pulsierenden/floatenden Animationen und keine Übergangs-Motion. Ändert NICHT das
    Layout – nur die Bewegung. Der Radar schaltet zusätzlich per JS auf ein statisches Bild. */

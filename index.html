@@ -890,11 +890,10 @@ html[lang="en"] #legal-de-note{display:block}
   .prof-header{flex-direction:column;align-items:center;text-align:center;gap:10px}
 }
 
-/* SAFARI TEST B: remove backdrop blur only on profile overlays */
-html.is-safari #modal-profile,
-html.is-safari #modal-pubprofile{
-  backdrop-filter:none!important;
-  -webkit-backdrop-filter:none!important;
+/* SAFARI TEST C: lock background without position:fixed on body */
+html.safari-modal-lock,
+html.safari-modal-lock body.safari-modal-lock-body{
+  overflow:hidden!important;
 }
 
 </style>
@@ -4044,10 +4043,21 @@ let _openModals = 0, _scrollY = 0;
    lässt die Seite beim Schließen springen). */
 function lockScroll(){
   _scrollY = window.scrollY || window.pageYOffset || 0;
+  if(document.documentElement.classList.contains('is-safari')){
+    document.documentElement.classList.add('safari-modal-lock');
+    document.body.classList.add('safari-modal-lock-body');
+    return;
+  }
   document.body.style.top = (-_scrollY) + 'px';
   document.body.classList.add('modal-lock');
 }
 function unlockScroll(){
+  if(document.documentElement.classList.contains('is-safari')){
+    document.documentElement.classList.remove('safari-modal-lock');
+    document.body.classList.remove('safari-modal-lock-body');
+    window.scrollTo(0, _scrollY);
+    return;
+  }
   if(!document.body.classList.contains('modal-lock')) return;
   document.body.classList.remove('modal-lock');
   document.body.style.top = '';

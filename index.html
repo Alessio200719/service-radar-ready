@@ -90,7 +90,22 @@ body{font-family:var(--f);background:var(--c-bg);color:var(--c-ink);line-height:
 /* iOS-sicherer Scroll-Lock (Modale): body wird fixiert, Scrollposition via JS gemerkt/wiederhergestellt */
 body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 /* Scroll-Chaining/Jank verhindern: innere Scrollbereiche kapseln ihren Scroll */
-.jlist,.msg-area,.thread-list,.mcard,.mobile-menu,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.jlist,.msg-area,.thread-list,.mobile-menu,.ch-textarea{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+/* .mcard: overscroll-Kapselung behalten (verhindert Scroll-Chaining zum gesperrten Body),
+   aber KEIN -webkit-overflow-scrolling:touch – der erzwungene Momentum-Layer ruckelt in
+   Safari zusammen mit transform + backdrop-filter des Modals. */
+.mcard{overscroll-behavior:contain}
+/* Barrierefreiheit + Performance: Nutzer mit "Bewegung reduzieren" bekommen keine
+   pulsierenden/floatenden Animationen und keine Übergangs-Motion. Ändert NICHT das
+   Layout – nur die Bewegung. Der Radar schaltet zusätzlich per JS auf ein statisches Bild. */
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.001ms!important;
+    scroll-behavior:auto!important;
+  }
+}
 /* App-Feeling auf Touch: kein graues Tap-Highlight, keine Textauswahl auf Bedienelementen */
 button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
 .btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
@@ -267,7 +282,7 @@ nav.scrolled{box-shadow:var(--sh2)}
 .jlist::-webkit-scrollbar{width:4px}.jlist::-webkit-scrollbar-thumb{background:var(--c-bg2);border-radius:4px}
 .jcard{background:var(--c-bg);border:1px solid var(--c-bd);border-radius:var(--r2);padding:14px;cursor:pointer;transition:all .15s;position:relative}
 /* scroll-to-top */
-#scrolltop{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--c-ink);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh3);opacity:0;pointer-events:none;transition:all .25s;z-index:200}
+#scrolltop{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--c-ink);color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh3);opacity:0;pointer-events:none;transition:opacity .25s;z-index:200}
 #scrolltop.show{opacity:1;pointer-events:all}
 #scrolltop:hover{background:var(--c-ink2);transform:translateY(-2px)}
 .jcard:hover,.jcard.on{border-color:var(--c-blue);box-shadow:0 0 0 3px rgba(9,105,218,.08),var(--sh1)}
@@ -620,7 +635,10 @@ html[lang="en"] #legal-de-note{display:block}
 #cookie-ok:hover{background:var(--c-green2)}
 
 /* ══ MODALS ══════════════════════════════════════ */
-.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+/* Overlay-Blur bewusst nur unpräfixiert (wie bisher) + auf 4px reduziert. KEIN
+   -webkit-backdrop-filter: würde den teuren Blur in älteren iOS-Safari erst aktivieren
+   (dort aktuell aus) → mehr Ruckeln statt weniger. Der dunkle 72%-Tint trägt den Look. */
+.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
 .moverlay.open{opacity:1;pointer-events:all}
 .mcard{background:var(--c-bg);border-radius:var(--r4);width:100%;max-width:500px;box-shadow:var(--sh4);position:relative;max-height:90vh;overflow-y:auto;transform:translateY(16px) scale(.97);transition:transform .2s;border:1px solid var(--c-bds)}
 .moverlay.open .mcard{transform:none}
@@ -745,13 +763,11 @@ html[lang="en"] #legal-de-note{display:block}
 
 /* ══ PROFILE ═════════════════════════════════════ */
 .prof-modal .mcard{max-width:540px}
-/* Profil: EIN einziger nativer Scroll-Container = das Modal selbst. Der Inhalt fließt,
-   das Modal scrollt – native Scrollbar am Rand, voll greifbar, wie eine normale Seite. */
-#modal-profile{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--c-ink4) transparent}
-#modal-profile .mcard{max-height:none;overflow:visible;margin:0 auto;-webkit-overflow-scrolling:auto}
+/* Profil: die KARTE (.mcard) ist der EINE Scroll-Container – exakt wie bei allen
+   anderen Modalen (siehe .mcard Zeile 625: overflow-y:auto; max-height:90vh / mobil
+   92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
+   fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-#modal-profile::-webkit-scrollbar{width:10px}
-#modal-profile::-webkit-scrollbar-thumb{background:var(--c-ink4);border-radius:8px;border:3px solid transparent;background-clip:padding-box}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
@@ -4117,7 +4133,6 @@ function initMinorCheck(){
 
 async function handleLogin(e) {
   if (e && e.preventDefault) e.preventDefault();
-  console.log('[SR] login submit');
   const emailEl = document.getElementById('l-email');
   const pwEl    = document.getElementById('l-pw');
   const btn     = document.getElementById('l-btn');
@@ -4136,9 +4151,7 @@ async function handleLogin(e) {
   await whenSRReady();
   if (!window.SR) { console.error('[SR] window.SR missing – Supabase SDK not loaded'); return showErr(T('auth.err.backend')); }
   try {
-    console.log('[SR] signIn start', email);
     await SR.signIn(email, pw);
-    console.log('[SR] signIn success');
     const user = await SR.getUser();
     const prof = await SR.ensureProfile(user);
     await loginOk(buildAppUser(prof));
@@ -4151,7 +4164,6 @@ async function handleLogin(e) {
 
 async function handleRegister(e) {
   if (e && e.preventDefault) e.preventDefault();
-  console.log('[SR] register submit');
   const fn      = document.getElementById('r-fn').value.trim();
   const ln      = document.getElementById('r-ln').value.trim();
   const email   = document.getElementById('r-email').value.trim().toLowerCase();
@@ -4838,43 +4850,33 @@ async function refreshPushStatus(){
   } catch(e){ console.error('Push status error:', e); APP.pushSubscribed = false; }
 }
 async function enablePushNotifications(){
-  console.log("1 push activate clicked");
-  // 4) currentUser.id muss vorhanden sein
+  // currentUser.id muss vorhanden sein
   if(!APP.user || !APP.user.id){ showToast(LANG==='de'?'Bitte neu einloggen.':'Please log in again.','err'); return; }
   if(!pushSupported()){ showToast(LANG==='de'?'Dein Browser unterstützt keine Push-Benachrichtigungen.':'Your browser does not support push notifications.','err'); return; }
   try{
     var permission = await Notification.requestPermission();
-    console.log("2 permission result:", permission);
     if(permission!=='granted'){ APP.pushSubscribed=false; _profileRerenderIfOpen(); showToast(LANG==='de'?'Benachrichtigungen wurden nicht erlaubt.':'Notifications were not allowed.','err'); return; }
 
     // Service Worker DIREKT registrieren -> ein 404 auf /sw.js wirft hier sichtbar
     // (statt später still an serviceWorker.ready zu hängen).
     var registration = await navigator.serviceWorker.register('/sw.js');
-    console.log("3 service worker registered:", registration);
     // Auf aktiven SW warten, aber MIT Timeout (kein endloses Hängen)
     await Promise.race([
       navigator.serviceWorker.ready,
       new Promise(function(_, reject){ setTimeout(function(){ reject(new Error('Service Worker wurde nicht aktiv – ist /sw.js deployt und per HTTPS erreichbar?')); }, 10000); })
     ]);
     registration = (await navigator.serviceWorker.getRegistration()) || registration;
-    console.log("3b service worker ready:", registration);
 
     var publicKey = await getVapidKey();
-    console.log("4 vapid key loaded:", publicKey);
     if(!publicKey){ showToast(LANG==='de'?'VAPID Public Key fehlt (/api/vapid-public-key).':'VAPID public key missing.','err'); return; }
     var applicationServerKey = urlBase64ToUint8Array(publicKey);
-    console.log("5 applicationServerKey converted:", applicationServerKey);
 
     var subscription = await registration.pushManager.getSubscription();
     if(!subscription){ subscription = await registration.pushManager.subscribe({ userVisibleOnly:true, applicationServerKey: applicationServerKey }); }
-    console.log("6 subscription created:", subscription);
 
     var payload = { user_id: APP.user.id, subscription: subscription };
-    console.log("7 saving subscription payload:", payload);
     var response = await fetch('/api/save-push-subscription', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-    console.log("8 save response status:", response.status);
     var result = await response.json().catch(function(){ return {}; });
-    console.log("9 save response body:", result);
     if(!response.ok){ throw new Error(result.error || ('HTTP '+response.status)); }
 
     APP.pushSubscribed=true; _profileRerenderIfOpen();
@@ -5688,14 +5690,14 @@ function initMap(){
   if(typeof L === 'undefined') return;            // Leaflet noch nicht da → Loader ruft initMap erneut
   const el = document.getElementById('jobMap');
   if(!el) return;
-  // (8) Debug-Ausgabe + (9) NICHT initialisieren, solange der Container 0×0 ist
-  console.log('[SR MAP] container size', el.offsetWidth, el.offsetHeight);
+  // (9) NICHT initialisieren, solange der Container 0×0 ist – EIN kontrollierter Retry-Timer
   if(!el.offsetWidth || !el.offsetHeight){
     clearTimeout(window._srMapRetry);
     window._srMapRetry = setTimeout(initMap, 300);   // 300 ms später erneut versuchen
     return;
   }
-  if(leafMap){ leafMap.invalidateSize(true); addMarkers(); return; }   // idempotent
+  clearTimeout(window._srMapRetry);                                   // erfolgreiche Größe → Retry stoppen
+  if(leafMap){ leafMap.invalidateSize(false); addMarkers(); return; } // idempotent, keine erneute Init
   if(el.querySelector('iframe')) el.innerHTML = '';                    // evtl. Fallback-iframe entfernen
   // cooperativeGestures (mobil): 1 Finger scrollt die Seite, 2 Finger bewegen die Karte
   // (verhindert, dass die Karte den Seiten-Scroll mobil blockiert). Unbekannte Option wird
@@ -5711,31 +5713,21 @@ function initMap(){
   const r0=parseInt(document.getElementById('rSlider')?.value||5);
   radiusCircle=L.circle([mapCenter.lat,mapCenter.lng],{radius:r0*1000,color:'#0969da',fillColor:'#0969da',fillOpacity:.04,weight:1.5,dashArray:'6 4'}).addTo(leafMap);
   addMarkers();
-  // Karte neu berechnen, sobald der Container seine echte Größe erreicht (echtes Leaflet UND Mini-Lib)
+  // Einmalige Größenkorrektur nach dem ersten Layout (ersetzt die früheren mehrfachen
+  // invalidateSize/Recenter-Timer, die Safari unnötig belasteten).
+  requestAnimationFrame(function(){ if(leafMap) leafMap.invalidateSize(false); });
+  // Spätere ECHTE Größenänderungen des Containers: EIN debounced ResizeObserver.
+  // invalidateSize(false) ändert die Elementgröße nicht → keine RO↔Leaflet-Feedback-Schleife.
   try {
     if (window.ResizeObserver && !window._jobMapRO) {
-      window._jobMapRO = new ResizeObserver(function(){ if (leafMap && leafMap.invalidateSize) leafMap.invalidateSize(true); });
+      var _mapRT = null;
+      window._jobMapRO = new ResizeObserver(function(){
+        clearTimeout(_mapRT);
+        _mapRT = setTimeout(function(){ if (leafMap && leafMap.invalidateSize) leafMap.invalidateSize(false); }, 150);
+      });
       window._jobMapRO.observe(el);
     }
   } catch(e){}
-  // (5) Nach Map-Erstellung: rAF + Diagnose + mehrfaches invalidateSize(true)
-  function _srBox(sel){var n=sel[0]==='#'?document.getElementById(sel.slice(1)):document.querySelector(sel);if(!n)return sel+':—';var r=n.getBoundingClientRect();return sel+' off='+n.offsetWidth+'x'+n.offsetHeight+' rect='+Math.round(r.width)+'x'+Math.round(r.height);}
-  function _srFit(){ if(leafMap) leafMap.invalidateSize(true); }
-  // Real-Leaflet: nach Resize einmal neu zentrieren → entfernt evtl. Pane-Versatz
-  function _srRecenter(){ if(!leafMap) return; leafMap.invalidateSize(true);
-    try{ var z=leafMap.getZoom?leafMap.getZoom():(leafMap.zoom||13); leafMap.setView([mapCenter.lat,mapCenter.lng],z); }catch(e){} }
-  console.log('[SR MAP] leaflet lib:', (typeof L!=='undefined' && L.version) || '?');
-  requestAnimationFrame(function(){
-    setTimeout(function(){
-      _srFit();
-      console.log('[SR MAP] after init', el.offsetWidth, el.offsetHeight);
-      console.log('[SR MAP] boxes:', _srBox('.map-grid'),'|',_srBox('.map-frame'),'|',_srBox('#jobMap'),'|',_srBox('.leaflet-container'));
-    }, 500);
-  });
-  // Mehrfach gegen Lazy-Render / verzögertes Layout / langsame Fonts+Bilder
-  [60,300,1000,1200].forEach(function(ms){ setTimeout(_srFit, ms); });
-  setTimeout(_srRecenter, 1500);
-  setTimeout(_srRecenter, 2600);
 }
 
 /* ── Dynamische Standortanzeige (Hero-Stat + Karten-Hinweis) ──
@@ -5959,7 +5951,8 @@ function initRadar(){
     {rx:.22,ry:.38,t:'g',op:0},{rx:-.35,ry:.42,t:'h',op:0},
   ];
   blips.forEach(b=>{b.sx=CX+b.rx*R;b.sy=CY+b.ry*R;b.ang=Math.atan2(b.ry,b.rx)});
-  let sw=0;
+  let sw=0, radarRAF=null, radarRunning=false;
+  const radarReduced = (typeof window.matchMedia==='function') && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function aD(a,b){return((a-b)%(Math.PI*2)+Math.PI*2)%(Math.PI*2)}
   function frame(){
     ctx.clearRect(0,0,S,S);ctx.save();
@@ -5987,9 +5980,26 @@ function initRadar(){
     ctx.restore();
     ctx.beginPath();ctx.arc(CX,CY,R,0,Math.PI*2);ctx.strokeStyle='rgba(26,127,55,.2)';ctx.lineWidth=1.5;ctx.stroke();
     sw+=SPD;if(sw>=Math.PI*2)sw-=Math.PI*2;
-    requestAnimationFrame(frame);
+    if(radarRunning) radarRAF=requestAnimationFrame(frame);
   }
-  frame();
+  function startRadar(){
+    if(radarRunning) return;
+    if(radarReduced){ frame(); return; }   // reduced motion: EIN statisches Bild, keine Schleife
+    radarRunning=true; radarRAF=requestAnimationFrame(frame);
+  }
+  function stopRadar(){
+    radarRunning=false;
+    if(radarRAF){ cancelAnimationFrame(radarRAF); radarRAF=null; }
+  }
+  // Nur animieren, solange der Radar sichtbar ist (spart CPU/GPU, v.a. Safari)
+  if('IntersectionObserver' in window){
+    var radarIO=new IntersectionObserver(function(es){
+      es.forEach(function(en){ if(en.isIntersecting) startRadar(); else stopRadar(); });
+    }, {threshold:0});
+    radarIO.observe(cv);
+  } else {
+    startRadar();
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -6077,6 +6087,8 @@ function bindAuthForms() {
   if (rf && !rf._srBound) { rf._srBound = true; rf.addEventListener('submit', handleRegister); }
 }
 function bindEventListeners() {
+  if (window._srListenersBound) return;   // Guard: Listener nur einmal pro Seitenladung binden
+  window._srListenersBound = true;
   bindAuthForms();
   // Window resize → Karte neu berechnen (debounced)
   var _rsz;
@@ -6094,13 +6106,20 @@ function bindEventListeners() {
     }, { threshold: 0.1 });
     mapObs.observe(jobsSection);
   }
-  // Scroll-to-top button
+  // Scroll-to-top button + Nav-Schatten – per requestAnimationFrame gedrosselt,
+  // passiver Listener (kein preventDefault) → flüssigeres Scrollen in Safari.
   const stt = document.getElementById('scrolltop');
+  const navEl = document.getElementById('nav');
+  let _scrollTick = false;
   window.addEventListener('scroll', () => {
-    if (stt) stt.classList.toggle('show', scrollY > 400);
-    // Nav shadow
-    document.getElementById('nav')?.classList.toggle('scrolled', scrollY > 10);
-  });
+    if (_scrollTick) return;
+    _scrollTick = true;
+    requestAnimationFrame(() => {
+      if (stt) stt.classList.toggle('show', scrollY > 400);
+      if (navEl) navEl.classList.toggle('scrolled', scrollY > 10);
+      _scrollTick = false;
+    });
+  }, { passive: true });
 
   // Close mobile menu on outside click
   document.addEventListener('click', e => {
@@ -6153,11 +6172,11 @@ document.addEventListener('DOMContentLoaded', initApp);
 document.addEventListener('DOMContentLoaded', function(){ try{ registerServiceWorker(); }catch(e){} });
 window.addEventListener('hashchange', handleProfileHash);
 document.addEventListener('DOMContentLoaded', bindAuthForms);
-document.addEventListener('DOMContentLoaded', function(){ setTimeout(function(){ if (typeof leafMap!=='undefined' && leafMap) leafMap.invalidateSize(true); }, 400); });
 try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind right away
-// Extra safety: re-render map after all resources loaded
+// EIN einmaliger Settle-Aufruf nachdem alle Ressourcen (Fonts/Bilder) geladen sind.
+// Ersetzt die früheren mehrfachen invalidateSize-Timer.
 window.addEventListener('load', () => {
-  setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(); }, 500);
+  setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(false); }, 400);
 });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>

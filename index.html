@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<script id="sr-safari-detect">
-(function(){
-  var ua=navigator.userAgent || '';
-  var isSafari=/Safari/i.test(ua) && !/(Chrome|Chromium|CriOS|Edg|OPR|Android)/i.test(ua);
-  if(isSafari) document.documentElement.classList.add('is-safari');
-})();
-</script>
-
 <meta charset="UTF-8">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
@@ -771,20 +763,12 @@ html[lang="en"] #legal-de-note{display:block}
 .ch-send-btn:disabled{background:var(--c-bg2);color:var(--c-ink4);transform:none;cursor:not-allowed}
 
 /* ══ PROFILE ═════════════════════════════════════ */
-.mcard.prof-modal{max-width:540px}
+.prof-modal .mcard{max-width:540px}
 /* Profil: die KARTE (.mcard) ist der EINE Scroll-Container – exakt wie bei allen
    anderen Modalen (siehe .mcard Zeile 625: overflow-y:auto; max-height:90vh / mobil
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-/* Lange Modals: Overlay als block-basierter Scrollcontainer (kein Flex mehr) – behebt
-   die toten Scroll-Zonen in Safari/WebKit. .mcard hat kein eigenes overflow/max-height. */
-#modal-auth,
-#modal-profile,
-#modal-pubprofile{display:block;overflow-y:auto;overflow-x:hidden}
-#modal-auth .mcard,
-#modal-profile .mcard,
-#modal-pubprofile .mcard{max-height:none;overflow:visible;margin:20px auto}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
@@ -896,12 +880,6 @@ html[lang="en"] #legal-de-note{display:block}
   input,textarea,select{font-size:16px}
   .field input,.field textarea,.field select{padding:12px 14px}
   .prof-header{flex-direction:column;align-items:center;text-align:center;gap:10px}
-}
-
-/* SAFARI TEST C: lock background without position:fixed on body */
-html.safari-modal-lock,
-html.safari-modal-lock body.safari-modal-lock-body{
-  overflow:hidden!important;
 }
 
 </style>
@@ -4051,21 +4029,10 @@ let _openModals = 0, _scrollY = 0;
    lässt die Seite beim Schließen springen). */
 function lockScroll(){
   _scrollY = window.scrollY || window.pageYOffset || 0;
-  if(document.documentElement.classList.contains('is-safari')){
-    document.documentElement.classList.add('safari-modal-lock');
-    document.body.classList.add('safari-modal-lock-body');
-    return;
-  }
   document.body.style.top = (-_scrollY) + 'px';
   document.body.classList.add('modal-lock');
 }
 function unlockScroll(){
-  if(document.documentElement.classList.contains('is-safari')){
-    document.documentElement.classList.remove('safari-modal-lock');
-    document.body.classList.remove('safari-modal-lock-body');
-    window.scrollTo(0, _scrollY);
-    return;
-  }
   if(!document.body.classList.contains('modal-lock')) return;
   document.body.classList.remove('modal-lock');
   document.body.style.top = '';

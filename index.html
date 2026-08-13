@@ -769,13 +769,18 @@ html[lang="en"] #legal-de-note{display:block}
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-/* Safari-Scroll-Hit-Testing: für diese drei langen, scrollenden Modals alle Compositing-
-   Trigger rund um den Scroll-Container (.mcard) entfernen – KEIN transform auf der Karte
-   und KEIN backdrop-filter auf dem Overlay. Beides zwingt WebKit zu eigenen Layern und
-   bricht die Weitergabe der Scroll-Geste über Kind-Elementen (tote Zonen). Öffnung bleibt
-   über das Overlay-Opacity-Fade sichtbar; der dunkle Tint bleibt erhalten. */
-#modal-auth,#modal-profile,#modal-pubprofile{backdrop-filter:none;-webkit-backdrop-filter:none}
-#modal-auth .mcard,#modal-profile .mcard,#modal-pubprofile .mcard{transform:none}
+/* Lange Modals – iOS-Safari-robustes Muster (wie Bootstrap-Modals): das OVERLAY selbst
+   ist der Block-Scrollcontainer mit nativem Momentum; die .mcard fließt ohne eigenen
+   Scroll. Zusätzlich alle Compositing-Trigger entfernt (kein transform auf der Karte,
+   kein backdrop-filter auf dem Overlay), damit WebKit die Scroll-Geste über allen
+   Kind-Elementen zulässt. Öffnungs-Fade + dunkler Tint bleiben erhalten. */
+#modal-auth,#modal-profile,#modal-pubprofile{
+  display:block;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+#modal-auth .mcard,#modal-profile .mcard,#modal-pubprofile .mcard{
+  max-height:none;overflow:visible;transform:none;margin:20px auto;
+}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}

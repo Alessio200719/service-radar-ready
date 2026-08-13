@@ -769,14 +769,13 @@ html[lang="en"] #legal-de-note{display:block}
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-/* Lange Modals: Overlay als block-basierter Scrollcontainer (kein Flex mehr) – behebt
-   die toten Scroll-Zonen in Safari/WebKit. .mcard hat kein eigenes overflow/max-height. */
-#modal-auth,
-#modal-profile,
-#modal-pubprofile{display:block;overflow-y:auto;overflow-x:hidden}
-#modal-auth .mcard,
-#modal-profile .mcard,
-#modal-pubprofile .mcard{max-height:none;overflow:visible;margin:20px auto}
+/* Safari-Scroll-Hit-Testing: für diese drei langen, scrollenden Modals alle Compositing-
+   Trigger rund um den Scroll-Container (.mcard) entfernen – KEIN transform auf der Karte
+   und KEIN backdrop-filter auf dem Overlay. Beides zwingt WebKit zu eigenen Layern und
+   bricht die Weitergabe der Scroll-Geste über Kind-Elementen (tote Zonen). Öffnung bleibt
+   über das Overlay-Opacity-Fade sichtbar; der dunkle Tint bleibt erhalten. */
+#modal-auth,#modal-profile,#modal-pubprofile{backdrop-filter:none;-webkit-backdrop-filter:none}
+#modal-auth .mcard,#modal-profile .mcard,#modal-pubprofile .mcard{transform:none}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}

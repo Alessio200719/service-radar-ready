@@ -639,10 +639,14 @@ html[lang="en"] #legal-de-note{display:block}
 /* Overlay-Blur bewusst nur unpräfixiert (wie bisher) + auf 4px reduziert. KEIN
    -webkit-backdrop-filter: würde den teuren Blur in älteren iOS-Safari erst aktivieren
    (dort aktuell aus) → mehr Ruckeln statt weniger. Der dunkle 72%-Tint trägt den Look. */
-.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s}
+/* ── Sauberes, einheitliches Modal-Scroll-System (ein Container, iOS-Safari-sicher) ──
+   Overlay: zentriert, KEIN backdrop-filter (Compositing-Trigger, bricht WebKit-Scroll-
+   Hit-Testing), scrollt selbst nicht (overflow:hidden). Die .mcard ist der EINE
+   Scroll-Container: overflow-y:auto + natives Momentum, KEIN transform (der zweite
+   Compositing-Trigger, der in Safari das Scrollen über Kind-Elementen blockiert). */
+.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s}
 .moverlay.open{opacity:1;pointer-events:all}
-.mcard{background:var(--c-bg);border-radius:var(--r4);width:100%;max-width:500px;box-shadow:var(--sh4);position:relative;max-height:90vh;overflow-y:auto;transform:translateY(16px) scale(.97);transition:transform .2s;border:1px solid var(--c-bds)}
-.moverlay.open .mcard{transform:none}
+.mcard{background:var(--c-bg);border-radius:var(--r4);width:100%;max-width:500px;box-shadow:var(--sh4);position:relative;margin:auto;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid var(--c-bds)}
 .mcard-inner{padding:36px}
 .mclose{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:var(--c-bg1);border:1px solid var(--c-bd);font-size:14px;color:var(--c-ink3);transition:all .15s;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .mclose:hover{background:var(--c-bg2);color:var(--c-ink)}
@@ -769,18 +773,6 @@ html[lang="en"] #legal-de-note{display:block}
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
 #modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
-/* Lange Modals – iOS-Safari-robustes Muster (wie Bootstrap-Modals): das OVERLAY selbst
-   ist der Block-Scrollcontainer mit nativem Momentum; die .mcard fließt ohne eigenen
-   Scroll. Zusätzlich alle Compositing-Trigger entfernt (kein transform auf der Karte,
-   kein backdrop-filter auf dem Overlay), damit WebKit die Scroll-Geste über allen
-   Kind-Elementen zulässt. Öffnungs-Fade + dunkler Tint bleiben erhalten. */
-#modal-auth,#modal-profile,#modal-pubprofile{
-  display:block;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;
-  backdrop-filter:none;-webkit-backdrop-filter:none;
-}
-#modal-auth .mcard,#modal-profile .mcard,#modal-pubprofile .mcard{
-  max-height:none;overflow:visible;transform:none;margin:20px auto;
-}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}

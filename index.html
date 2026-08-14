@@ -775,7 +775,7 @@ html[lang="en"] #legal-de-note{display:block}
    anderen Modalen (siehe .mcard Zeile 625: overflow-y:auto; max-height:90vh / mobil
    92dvh Zeile 580). Der Overlay bleibt der normale zentrierte Layer. Die Profil-Listen
    fließen (kein eigener Scroll) → kein Scroll-Chaining, keine toten Zonen. */
-#modal-profile .pj-list,#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
+#modal-pubprofile .pj-list{max-height:none;overflow:visible;overscroll-behavior:auto}
 .prof-header{display:flex;align-items:center;gap:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r3);padding:20px;margin-bottom:22px}
 .prof-av{width:64px;height:64px;border-radius:50%;color:#fff;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .prof-av-info .pn{font-size:18px;font-weight:800}.prof-av-info .pr{font-size:13px;color:var(--c-ink3);margin-top:2px}.prof-av-info .pm{margin-top:6px}
@@ -788,48 +788,79 @@ html[lang="en"] #legal-de-note{display:block}
 .pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
 .pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
 
-/* ══ PROFIL – neues, app-orientiertes Layout (nur #modal-profile) ══════════════
-   Eigener .pf-* Namensraum. Die alten .prof-*/.pj-* Klassen bleiben unverändert,
-   weil das ÖFFENTLICHE Profil (#modal-pubprofile) sie weiterhin verwendet. */
-.pf-head{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--c-bds)}
-.pf-ava{position:relative;flex-shrink:0}
-.pf-ava-edit{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;border:2px solid var(--c-bg);background:var(--c-ink);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-.pf-id{flex:1;min-width:0}
-.pf-name{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
-.pf-mail{font-size:13px;color:var(--c-ink3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pf-meta{display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap}
-.pf-link{font-size:12.5px;color:var(--c-blue);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-top:7px}
-.pf-star{font-size:12.5px;color:#bf8700;font-weight:700}
-.pf-seg{display:flex;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:10px;padding:3px;gap:3px;margin:16px 0 14px}
-.pf-seg button{flex:1;border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--c-ink3);padding:8px 6px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
-.pf-seg button.on{background:var(--c-bg);color:var(--c-ink);box-shadow:var(--sh1)}
-.pf-row{display:flex;align-items:center;gap:12px;width:100%;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:12px;padding:12px 14px;cursor:pointer;font-family:inherit;text-align:left;color:var(--c-ink);margin-bottom:14px}
-.pf-row:hover{background:var(--c-bg1)}
-.pf-row-ic{width:34px;height:34px;border-radius:9px;background:var(--c-bg1);border:1px solid var(--c-bds);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c-ink2)}
-.pf-row-t{flex:1;min-width:0;font-size:14px;font-weight:600}
-.pf-row-s{font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:1px}
-.pf-count{background:var(--c-blue);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
-.pf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
-.pf-stat{background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:10px;padding:12px 8px;text-align:center}
-.pf-stat .v{font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--c-ink)}
-.pf-stat .l{font-size:11px;color:var(--c-ink3);margin-top:2px}
-.pf-tabs{display:flex;gap:2px;border-bottom:1px solid var(--c-bds);margin-bottom:16px;overflow-x:auto}
-.pf-tabs button{border:none;background:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--c-ink3);padding:10px 12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
-.pf-tabs button.on{color:var(--c-ink);border-bottom-color:var(--c-ink)}
-.pf-panel{display:none}
-.pf-panel.on{display:block}
-.pf-lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink4);margin:0 0 9px}
-.pf-card{background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:12px;padding:14px;margin-bottom:14px}
-.pf-item{display:flex;align-items:center;gap:10px;background:var(--c-bg);border:1px solid var(--c-bds);border-radius:10px;padding:11px 13px;margin-bottom:7px;flex-wrap:wrap}
-.pf-item-t{flex:1;min-width:0;font-size:13.5px;font-weight:600}
-.pf-item-sub{font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:2px}
-.pf-item-p{font-size:13.5px;font-weight:700;color:var(--c-green);flex-shrink:0}
-.pf-empty{text-align:center;padding:22px 12px;color:var(--c-ink4);font-size:13px;background:var(--c-bg1);border:1px dashed var(--c-bds);border-radius:10px}
-.pf-mini{font-size:11.5px;padding:5px 10px;border-radius:8px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;white-space:nowrap;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
-.pf-mini:hover{background:var(--c-bg1)}
-.pf-mini.danger{border-color:#cf222e;color:#cf222e}
-.pf-acts{flex-basis:100%;display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
-.pf-ic{color:var(--c-ink3);flex-shrink:0}
+/* ══ ACCOUNT — eigener Bereich (#modal-profile) ═══════════════════════════════
+   Scroll-Architektur: EIN einziger Scroll-Container = das Overlay .acct-overlay.
+   Innerhalb des Accounts gibt es KEIN overflow/max-height/height:100vh, also
+   keine verschachtelten Scrollflaechen (Safari-/iOS-sicher).
+   Desktop = kompaktes Panel . Mobile = vollflaechiger Account-Screen (100dvh). */
+.acct-overlay{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0}
+.acct{position:relative;width:100%;max-width:440px;margin:34px auto;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:14px}
+.acct-bar{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid var(--c-bds);background:var(--c-bg);border-radius:14px 14px 0 0}
+.acct-ib{width:32px;height:32px;border-radius:8px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
+.acct-ib:hover{background:var(--c-bg1)}
+.acct-bt{flex:1;min-width:0;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.acct-body{padding:18px 16px 24px}
+.acct-hero{display:flex;gap:14px;align-items:center}
+.acct-ava{position:relative;flex-shrink:0}
+.acct-ava-btn{position:absolute;right:-3px;bottom:-3px;width:24px;height:24px;border-radius:50%;border:2px solid var(--c-bg);background:var(--c-ink);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.acct-hid{flex:1;min-width:0}
+.acct-name{font-size:17px;font-weight:600;letter-spacing:-.015em;line-height:1.3}
+.acct-sub{font-size:13px;color:var(--c-ink3);margin-top:4px;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.acct-rate{color:var(--c-ink2)}
+.acct-rate b{color:var(--c-ink);font-weight:600}
+.acct-prog{margin-top:18px}
+.acct-prog-top{display:flex;justify-content:space-between;font-size:12px;color:var(--c-ink3);margin-bottom:6px}
+.acct-prog-bar{height:4px;border-radius:2px;background:var(--c-bg2)}
+.acct-prog-fill{height:4px;background:var(--c-ink);border-radius:2px}
+.acct-nav{margin-top:20px;border-top:1px solid var(--c-bds)}
+.acct-row{display:flex;align-items:center;gap:13px;width:100%;padding:14px 2px;background:none;border:none;border-bottom:1px solid var(--c-bds);font-family:inherit;text-align:left;color:var(--c-ink);cursor:pointer}
+.acct-row:hover{background:var(--c-bg1)}
+.acct-row-ic{width:20px;display:flex;justify-content:center;color:var(--c-ink3);flex-shrink:0}
+.acct-row-tx{flex:1;min-width:0}
+.acct-row-t{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
+.acct-row-s{font-size:12.5px;color:var(--c-ink3);margin-top:2px;font-weight:400}
+.acct-row-ch{color:var(--c-ink4);flex-shrink:0}
+/* Spans in <button>/Flex-Kontext als Block ausrichten */
+.acct-row-tx,.acct-row-t,.acct-row-s,.acct-item-t,.acct-item-s{display:block}
+.acct-badge{background:var(--c-blue);color:#fff;font-size:11px;font-weight:700;min-width:19px;height:19px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
+.acct-out{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:18px;padding:11px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--c-ink3);cursor:pointer;border-radius:8px}
+.acct-out:hover{background:var(--c-bg1);color:var(--c-ink)}
+.acct-lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c-ink4);margin:22px 0 10px}
+.acct-lab.first{margin-top:0}
+.acct-f{margin-bottom:13px}
+.acct-f label{display:block;font-size:12.5px;font-weight:600;color:var(--c-ink2);margin-bottom:5px}
+.acct-f input,.acct-f textarea,.acct-f select{width:100%;padding:10px 12px;border:1px solid var(--c-bd);border-radius:8px;font-family:inherit;font-size:14px;color:var(--c-ink);background:var(--c-bg);outline:none}
+.acct-f input:focus,.acct-f textarea:focus,.acct-f select:focus{border-color:var(--c-ink3)}
+.acct-f textarea{resize:vertical;min-height:84px;line-height:1.55}
+.acct-hint{font-size:11.5px;color:var(--c-ink4);margin-top:5px;line-height:1.5}
+.acct-item{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--c-bds);flex-wrap:wrap}
+.acct-item-t{flex:1;min-width:0;font-size:14px;font-weight:600;letter-spacing:-.01em}
+.acct-item-s{font-size:12.5px;color:var(--c-ink3);font-weight:400;margin-top:2px}
+.acct-item-p{font-size:14px;font-weight:600;color:var(--c-ink);flex-shrink:0}
+.acct-acts{flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.acct-mini{font-size:12px;padding:5px 10px;border-radius:7px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;white-space:nowrap;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.acct-mini:hover{background:var(--c-bg1)}
+.acct-mini.danger{color:#cf222e;border-color:#f2c6c6}
+.acct-empty{padding:30px 12px;text-align:center;color:var(--c-ink4);font-size:13px}
+.acct-tag{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--c-bg1);border:1px solid var(--c-bds);color:var(--c-ink3);white-space:nowrap}
+.acct-seg{display:flex;gap:2px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:9px;padding:3px}
+.acct-seg button{flex:1;border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--c-ink3);padding:7px 6px;border-radius:7px;cursor:pointer}
+.acct-seg button.on{background:var(--c-bg);color:var(--c-ink);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.acct-score{display:flex;align-items:baseline;gap:10px;padding-bottom:16px;border-bottom:1px solid var(--c-bds)}
+.acct-score-v{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.acct-score-s{font-size:13px;color:var(--c-ink3)}
+.acct-rev{display:flex;gap:11px;padding:14px 0;border-bottom:1px solid var(--c-bds)}
+.acct-rev-h{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.acct-rev-n{font-size:13.5px;font-weight:600}
+.acct-rev-c{font-size:13px;color:var(--c-ink2);margin-top:4px;line-height:1.55}
+.acct-rev-d{font-size:11.5px;color:var(--c-ink4);margin-top:4px}
+.acct-btn{width:100%;padding:11px;border-radius:9px;background:var(--c-ink);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px}
+.acct-btn:hover{opacity:.9}
+.acct-btn:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:600px){
+  .acct{margin:0;max-width:none;min-height:100dvh;border:none;border-radius:0}
+  .acct-bar{position:sticky;top:0;z-index:2;border-radius:0}
+}
 
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){
@@ -2573,10 +2604,8 @@ html[lang="en"] #legal-de-note{display:block}
 </div>
 
 <!-- MODAL: PROFILE -->
-<div class="moverlay" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
-  <div class="mcard prof-modal"><button class="mclose" onclick="closeModal('modal-profile')" aria-label="Schließen">✕</button>
-    <div class="mcard-inner" id="profile-content"></div>
-  </div>
+<div class="moverlay acct-overlay" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
+  <div class="acct" id="acct-root"></div>
 </div>
 
 <!-- MODAL: RESUME PAYMENT (für ausstehende Jobs aus dem Profil) -->
@@ -4509,16 +4538,17 @@ function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollH
 async function openProfile(){
   if(!APP.user) return;
   if(!APP.viewMode) APP.viewMode = localStorage.getItem('sr_viewmode') || (APP.user.role==='auftraggeber'?'client':'helper');
-  _renderProfile();             // sofort mit aktuellem Stand rendern
-  openModal('modal-profile');   // Profil öffnet sofort – keine Verzögerung
-  // Daten danach im Hintergrund nachladen und neu rendern (nur falls noch geöffnet)
+  APP._acctView = 'home';
+  renderAccount();              // sofort mit aktuellem Stand rendern
+  openModal('modal-profile');   // Account oeffnet ohne Verzoegerung
+  // Daten danach im Hintergrund nachladen (bestehende Loader, unveraendert)
   await loadMyApplications();
   await loadOwnerJobs();
   await loadThreads();
   await loadReceivedApplications();
   await loadSavedJobs();
   await refreshPushStatus();
-  _profileRerenderIfOpen();
+  if(_acctIsOpen()) renderAccount();
 }
 
 // Applications received across the current user's own jobs.
@@ -4646,187 +4676,344 @@ function handleProfileHash(){
   if(m && m[1]){ try{ openPublicProfile(decodeURIComponent(m[1])); }catch(e){} }
 }
 
-function _renderProfile(){
-  if(!APP.user) return;
-  const u=APP.user;
-  if(!APP.viewMode) APP.viewMode = localStorage.getItem('sr_viewmode') || (APP.user.role==='auftraggeber'?'client':'helper');
-  const mode = APP.viewMode;
-  const apps=getUserApps();
-  const ownedJobs=getAllJobsForOwner();
-  const received=STATE.received||[];
-  const chats=STATE.threads.length;
-  const ini=u.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
-  const trustScore=calcTrustScore(u);
-  const trustInfo=getTrustLabel(trustScore);
-  const avgRating=getAvgRating(u.email);
-  const warnings=getWarnings(u.email);
-  const banned=isBanned(u.email);
+/* ══════════════════════════════════════════════════════
+   ACCOUNT — eigener Bereich (#modal-profile)
+   Ebene 1: kompakte Uebersicht · Ebene 2: Detailansicht.
+   Alle Daten/Loader/Supabase-Aufrufe werden wiederverwendet.
+══════════════════════════════════════════════════════ */
+var ACCT_VIEWS = ['home','profile','activity','reviews','settings','legal'];
 
-  const de = LANG==='de';
-  const I = (n,s)=>`<i data-lucide="${n}" width="${s||16}" height="${s||16}"></i>`;
+function _acctIsOpen(){ var m=document.getElementById('modal-profile'); return !!(m && m.classList.contains('open')); }
+function _acctIcon(n,s){ return '<i data-lucide="'+n+'" width="'+(s||18)+'" height="'+(s||18)+'"></i>'; }
 
-  /* ── Statistiken (modusabhängig) ── */
-  const statsBlock = mode==='client' ? `
-    <div class="pf-stats">
-      <div class="pf-stat"><div class="v">${ownedJobs.length}</div><div class="l">${T('prof.tasks')}</div></div>
-      <div class="pf-stat"><div class="v">${received.length}</div><div class="l">${T('prof.apps')}</div></div>
-      <div class="pf-stat"><div class="v">${avgRating?'★ '+avgRating:'–'}</div><div class="l">${T('prof.rating')}</div></div>
-    </div>` : `
-    <div class="pf-stats">
-      <div class="pf-stat"><div class="v">${apps.length}</div><div class="l">${T('prof.apps')}</div></div>
-      <div class="pf-stat"><div class="v">${chats}</div><div class="l">${T('prof.chats')}</div></div>
-      <div class="pf-stat"><div class="v">${avgRating?'★ '+avgRating:'–'}</div><div class="l">${T('prof.rating')}</div></div>
-    </div>`;
+/* Navigation zwischen den Ebenen */
+function acctGo(view){
+  APP._acctView = (ACCT_VIEWS.indexOf(view)>=0) ? view : 'home';
+  renderAccount();
+  var ov=document.getElementById('modal-profile'); if(ov) ov.scrollTop=0;
+  if(APP._acctView==='reviews') _acctLoadReviews();
+}
+function acctBack(){ acctGo('home'); }
 
-  /* ── Aktivität: Helfer = eigene Bewerbungen ── */
-  const helperActivity = `
-    <button class="btn btn-outline btn-full" style="margin-bottom:16px" onclick="closeModal('modal-profile');scrollToJobs()">${T('prof.available')}</button>
-    <div class="pf-lab">${T('prof.apps')}</div>
-    ${apps.length?apps.map(a=>`
-      <div class="pf-item">
-        <div class="pf-item-t">${esc(a.title||'–')}</div>
-        <div class="pf-item-p">${a.price||0} €</div>
-        ${a.chatKey?`<button class="pf-mini" onclick="openThreadOrList('${a.chatKey}')">${I('message-square',14)} ${de?'Chat':'Chat'}</button>`:''}
-      </div>`).join(''):`<div class="pf-empty">${T('prof.nojobs')}</div>`}`;
+/* Bewertungen werden ERST beim Oeffnen der Kategorie geladen (einmalig) */
+async function _acctLoadReviews(){
+  if(!APP.user || !window.SR) return;
+  if(APP._acctReviewsLoading || Array.isArray(APP._acctReviews)) return;
+  APP._acctReviewsLoading = true;
+  try { APP._acctReviews = (await SR.listReviews(APP.user.id)) || []; }
+  catch(e){ console.error('[SR] listReviews', e); APP._acctReviews = []; }
+  APP._acctReviewsLoading = false;
+  if(_acctIsOpen() && APP._acctView==='reviews') renderAccount();
+}
 
-  /* ── Aktivität: Auftraggeber = eigene Aufträge + Anfragen ── */
-  const clientActivity = `
-    <button class="btn btn-dark btn-full" style="margin-bottom:16px" onclick="closeModal('modal-profile');openPostJob()">${T('prof.create')}</button>
-    <div class="pf-lab">${T('prof.tasks')}</div>
-    ${ownedJobs.length?ownedJobs.map(j=>{
-      const status=j.status||'active', isPending=status==='pending', isFlagged=status==='flagged', isClosed=status==='closed';
-      const badge=isPending?`<span class="pj-status pending">${T('prof.status.pending')}</span>`
-        :isFlagged?`<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">${T('prof.status.flagged')}</span>`
-        :isClosed?`<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">${T('prof.status.closed')}</span>`
-        :`<span class="pj-status active">${T('prof.status.active')}</span>`;
-      const id=esc(String(j.id));
-      const acts=[];
-      if(isPending) acts.push(`<button class="pf-mini" onclick="closeModal('modal-profile');resumePayment('${id}')">${I('credit-card',13)} ${T('prof.paynow')}</button>`);
-      if(status==='active'){
-        acts.push(`<button class="pf-mini" onclick="openEditJob('${id}')">${I('pencil',13)} ${T('job.edit')}</button>`);
-        acts.push(`<button class="pf-mini" onclick="closeJobConfirm('${id}')">${I('check',13)} ${T('job.complete')}</button>`);
+/* Profilvollstaendigkeit aus vorhandenen Feldern */
+function acctCompleteness(){
+  var u=APP.user||{}, n=0;
+  if(u.name) n++; if(u.avatar_url) n++; if(u.city) n++; if(u.bio) n++;
+  return Math.round(n/4*100);
+}
+
+/* Persoenliche Daten speichern (bestehende SR.updateProfile) */
+async function acctSaveProfile(){
+  if(!APP.user || !window.SR){ showToast(T('toast.needlogin'),'err'); return; }
+  var de = LANG==='de';
+  var nEl=document.getElementById('acct-in-name'), cEl=document.getElementById('acct-in-city'), bEl=document.getElementById('acct-in-bio');
+  var name=(nEl?nEl.value:'').trim(), city=(cEl?cEl.value:'').trim(), bio=(bEl?bEl.value:'').trim();
+  if(!name){ showToast(de?'Bitte gib deinen Namen an.':'Please enter your name.','err'); return; }
+  var btn=document.getElementById('acct-save');
+  if(btn){ btn.disabled=true; btn.textContent = de?'Wird gespeichert…':'Saving…'; }
+  try{
+    await SR.updateProfile(APP.user.id, { full_name:name, city:city, bio:bio });
+    APP.user.name=name; APP.user.city=city; APP.user.bio=bio;
+    try{ updateNav(); }catch(e){}
+    showToast(de?'Profil gespeichert.':'Profile saved.','ok');
+    acctGo('home');
+  }catch(e){
+    console.error('[SR] updateProfile', e);
+    showToast(de?'Speichern fehlgeschlagen.':'Saving failed.','err');
+    if(btn){ btn.disabled=false; btn.textContent = de?'Speichern':'Save'; }
+  }
+}
+
+/* Kopfleiste: optionaler Zurueck-Button + Titel + Schliessen */
+function _acctBar(title, back){
+  var de=LANG==='de';
+  return '<div class="acct-bar">'+
+    (back ? '<button class="acct-ib" onclick="acctBack()" aria-label="'+(de?'Zurück':'Back')+'">'+_acctIcon('arrow-left',17)+'</button>' : '')+
+    '<div class="acct-bt">'+title+'</div>'+
+    '<button class="acct-ib" onclick="closeModal(\'modal-profile\')" aria-label="'+(de?'Schließen':'Close')+'">'+_acctIcon('x',17)+'</button>'+
+  '</div>';
+}
+function _acctRow(icon,title,sub,go,badge){
+  return '<button class="acct-row" onclick="'+go+'">'+
+    '<span class="acct-row-ic">'+_acctIcon(icon,18)+'</span>'+
+    '<span class="acct-row-tx"><span class="acct-row-t">'+title+'</span>'+(sub?'<span class="acct-row-s">'+sub+'</span>':'')+'</span>'+
+    (badge?'<span class="acct-badge">'+badge+'</span>':'')+
+    '<span class="acct-row-ch">'+_acctIcon('chevron-right',18)+'</span></button>';
+}
+
+/* ── Ebene 1: Account-Uebersicht ───────────────────── */
+function _acctHome(){
+  var de=LANG==='de', u=APP.user;
+  var rating=getAvgRating(u.email), rc=u.review_count||0;
+  var pct=acctCompleteness();
+  var unread=0; try{ unread=totalUnread()||0; }catch(e){}
+  var chats=(STATE.threads||[]).length;
+  var isClient = APP.viewMode==='client';
+  var actN = isClient ? (getAllJobsForOwner()||[]).length : (getUserApps()||[]).length;
+  var actSub = isClient
+    ? (actN+' '+(de?(actN===1?'Auftrag':'Aufträge'):(actN===1?'job':'jobs')))
+    : (actN+' '+(de?(actN===1?'Bewerbung':'Bewerbungen'):(actN===1?'application':'applications')));
+  var revSub = rating ? (rating+' · '+rc+' '+(de?(rc===1?'Bewertung':'Bewertungen'):(rc===1?'review':'reviews')))
+                      : (de?'Noch keine Bewertungen':'No reviews yet');
+  var meta=[];
+  if(u.city) meta.push(esc(u.city));
+  meta.push(isClient?(de?'Auftraggeber':'Client'):(de?'Helfer':'Helper'));
+
+  return _acctBar(de?'Account':'Account', false)+
+  '<div class="acct-body">'+
+    '<div class="acct-hero">'+
+      '<div class="acct-ava">'+avatarHtml(u.name,u.avatar_url,58)+'</div>'+
+      '<div class="acct-hid">'+
+        '<div class="acct-name">'+esc(u.name)+'</div>'+
+        '<div class="acct-sub">'+
+          (rating?'<span class="acct-rate">★ <b>'+rating+'</b> · '+rc+' '+(de?'Bewertungen':'reviews')+'</span>':'<span class="acct-rate">'+(de?'Noch keine Bewertungen':'No reviews yet')+'</span>')+
+        '</div>'+
+        '<div class="acct-sub">'+meta.join(' · ')+'</div>'+
+      '</div>'+
+    '</div>'+
+
+    (pct<100 ? '<div class="acct-prog">'+
+      '<div class="acct-prog-top"><span>'+(de?'Profil vervollständigen':'Complete your profile')+'</span><span>'+pct+' %</span></div>'+
+      '<div class="acct-prog-bar"><div class="acct-prog-fill" style="width:'+pct+'%"></div></div>'+
+    '</div>' : '')+
+
+    '<div class="acct-nav">'+
+      _acctRow('user',           de?'Profil':'Profile',        de?'Persönliche Daten und Verifizierung':'Personal details and verification', "acctGo('profile')")+
+      _acctRow('list-checks',    de?'Aktivitäten':'Activity',   actSub,   "acctGo('activity')")+
+      _acctRow('star',           de?'Bewertungen':'Reviews',    revSub,   "acctGo('reviews')")+
+      _acctRow('message-square', T('nav.messages'),             chats+' '+(de?(chats===1?'Unterhaltung':'Unterhaltungen'):(chats===1?'conversation':'conversations')), "closeModal('modal-profile');openChats()", unread>0?unread:0)+
+      _acctRow('settings',       de?'Einstellungen':'Settings',  de?'Sprache, Benachrichtigungen, Konto':'Language, notifications, account', "acctGo('settings')")+
+      _acctRow('life-buoy',      de?'Hilfe & Rechtliches':'Help & legal', de?'AGB, Datenschutz, Impressum':'Terms, privacy, imprint', "acctGo('legal')")+
+    '</div>'+
+
+    '<button class="acct-out" onclick="logout();closeModal(\'modal-profile\')">'+_acctIcon('log-out',16)+' '+T('nav.logout')+'</button>'+
+  '</div>';
+}
+
+/* ── Ebene 2: Profil / persoenliche Daten ──────────── */
+function _acctProfile(){
+  var de=LANG==='de', u=APP.user;
+  var trustScore=calcTrustScore(u), trustInfo=getTrustLabel(trustScore);
+  return _acctBar(de?'Profil':'Profile', true)+
+  '<div class="acct-body">'+
+    '<div class="acct-hero">'+
+      '<div class="acct-ava">'+avatarHtml(u.name,u.avatar_url,58)+
+        '<button class="acct-ava-btn" onclick="document.getElementById(\'acct-avatar-file\').click()" title="'+(de?'Profilbild ändern':'Change photo')+'">'+_acctIcon('pencil',12)+'</button>'+
+      '</div>'+
+      '<input type="file" id="acct-avatar-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarFile(this.files&&this.files[0])">'+
+      '<div class="acct-hid"><div class="acct-name">'+esc(u.name)+'</div><div class="acct-sub">'+esc(u.email)+'</div></div>'+
+    '</div>'+
+
+    '<div class="acct-lab">'+(de?'Persönliche Daten':'Personal details')+'</div>'+
+    '<div class="acct-f"><label for="acct-in-name">'+(de?'Name':'Name')+'</label>'+
+      '<input id="acct-in-name" type="text" maxlength="60" value="'+esc(u.name||'')+'"></div>'+
+    '<div class="acct-f"><label for="acct-in-city">'+(de?'Ort':'Location')+'</label>'+
+      '<input id="acct-in-city" type="text" maxlength="60" value="'+esc(u.city||'')+'" placeholder="'+(de?'z. B. Esslingen am Neckar':'e.g. Berlin')+'"></div>'+
+    '<div class="acct-f"><label for="acct-in-bio">'+(de?'Über mich':'About me')+'</label>'+
+      '<textarea id="acct-in-bio" maxlength="400" placeholder="'+(de?'Kurze Beschreibung – was du anbietest oder suchst.':'Short description – what you offer or look for.')+'">'+esc(u.bio||'')+'</textarea>'+
+      '<div class="acct-hint">'+(de?'Für andere Nutzer in deinem öffentlichen Profil sichtbar.':'Visible to other users on your public profile.')+'</div></div>'+
+    '<button class="acct-btn" id="acct-save" onclick="acctSaveProfile()">'+(de?'Speichern':'Save')+'</button>'+
+
+    '<div class="acct-lab">'+(de?'Vertrauen':'Trust')+'</div>'+
+    '<div class="trust-score"><span style="font-size:12.5px;color:var(--c-ink3);min-width:78px">'+T('prof.trust')+'</span>'+
+      '<div class="ts-bar"><div class="ts-fill" style="width:'+trustScore+'%"></div></div>'+
+      '<span style="font-size:12.5px;font-weight:600;color:var(--c-ink2);min-width:32px;text-align:right">'+trustScore+'%</span></div>'+
+    '<div style="margin-top:10px"><span class="trust-badge '+trustInfo.cls+'">'+trustInfo.label+'</span></div>'+
+
+    '<div class="acct-lab">'+T('prof.verifstand')+'</div>'+
+    '<div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">'+T('prof.v.email')+'</span></div>'+
+    '<div class="verif-item"><div class="verif-dot '+(u.consentAGB?'done':'open')+'">'+(u.consentAGB?'✓':'○')+'</div><span style="font-size:13px">'+T('prof.v.agb')+'</span></div>'+
+    '<div class="verif-item"><div class="verif-dot open">○</div><span style="font-size:13px;color:var(--c-ink3)">'+T('prof.v.id')+' <span class="acct-tag">'+T('prof.soon')+'</span></span></div>'+
+
+    '<button class="acct-mini" style="margin-top:16px" onclick="openPublicProfile(\''+esc(String(u.id))+'\')">'+_acctIcon('external-link',13)+' '+(de?'Öffentliches Profil ansehen':'View public profile')+'</button>'+
+  '</div>';
+}
+
+/* ── Ebene 2: Aktivitaeten (rollenabhaengig) ───────── */
+function _acctActivity(){
+  var de=LANG==='de';
+  var isClient = APP.viewMode==='client';
+  var body='';
+
+  body += '<div class="acct-seg">'+
+    '<button class="'+(!isClient?'on':'')+'" onclick="setViewMode(\'helper\')">'+(de?'Helfer':'Helper')+'</button>'+
+    '<button class="'+(isClient?'on':'')+'" onclick="setViewMode(\'client\')">'+(de?'Auftraggeber':'Client')+'</button>'+
+  '</div>';
+
+  if(isClient){
+    var owned=getAllJobsForOwner()||[], received=STATE.received||[];
+    body += '<div class="acct-lab">'+T('prof.tasks')+'</div>';
+    body += owned.length ? owned.map(function(j){
+      var st=j.status||'active', pend=st==='pending', flag=st==='flagged', clo=st==='closed';
+      var tag = pend?'<span class="pj-status pending">'+T('prof.status.pending')+'</span>'
+        : flag?'<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">'+T('prof.status.flagged')+'</span>'
+        : clo ?'<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">'+T('prof.status.closed')+'</span>'
+        :      '<span class="pj-status active">'+T('prof.status.active')+'</span>';
+      var id=esc(String(j.id)), a=[];
+      if(pend) a.push('<button class="acct-mini" onclick="closeModal(\'modal-profile\');resumePayment(\''+id+'\')">'+_acctIcon('credit-card',13)+' '+T('prof.paynow')+'</button>');
+      if(st==='active'){
+        a.push('<button class="acct-mini" onclick="openEditJob(\''+id+'\')">'+_acctIcon('pencil',13)+' '+T('job.edit')+'</button>');
+        a.push('<button class="acct-mini" onclick="closeJobConfirm(\''+id+'\')">'+_acctIcon('check',13)+' '+T('job.complete')+'</button>');
       }
-      acts.push(`<button class="pf-mini danger" onclick="deleteJobConfirm('${id}')">${I('trash-2',13)} ${T('job.delete')}</button>`);
-      return `<div class="pf-item${isPending?' pj-row-pending':''}">
-        <div class="pf-item-t" style="cursor:pointer" onclick="openJobDetail('${id}')">${esc(jobTitle(j))}</div>${badge}<div class="pf-item-p">${j.price} €</div>
-        <div class="pf-acts">${acts.join('')}</div>
-      </div>`;
-    }).join(''):`<div class="pf-empty">${T('prof.nojobs')}</div>`}
+      a.push('<button class="acct-mini danger" onclick="deleteJobConfirm(\''+id+'\')">'+_acctIcon('trash-2',13)+' '+T('job.delete')+'</button>');
+      return '<div class="acct-item">'+
+        '<span class="acct-item-t" style="cursor:pointer" onclick="openJobDetail(\''+id+'\')">'+esc(jobTitle(j))+'</span>'+
+        tag+'<span class="acct-item-p">'+j.price+' €</span>'+
+        '<span class="acct-acts">'+a.join('')+'</span></div>';
+    }).join('') : '<div class="acct-empty">'+T('prof.nojobs')+'</div>';
 
-    <div class="pf-lab" style="margin-top:18px">${T('prof.received')}</div>
-    ${received.length?received.map(r=>`
-      <div class="pf-item">
-        ${avatarHtml(r.helperName, r.helperAvatar, 34, r.helperId)}
-        <div class="pf-item-t">${esc(r.helperName)}${r.helperRating?' '+ratingHtml(r.helperRating):''} <span style="color:var(--c-ink4);font-weight:400">· ${esc(r.jobTitle)}</span><div class="pf-item-sub">${esc((r.message||'').slice(0,60))}${(r.message||'').length>60?'…':''}</div></div>
-        <button class="pf-mini" onclick="openThreadOrList('${r.jobId}::${r.helperId}')">${I('message-square',14)} ${de?'Chat':'Chat'}</button>
-      </div>`).join(''):`<div class="pf-empty">${T('prof.noreceived')}</div>`}`;
+    body += '<div class="acct-lab">'+T('prof.received')+'</div>';
+    body += received.length ? received.map(function(r){
+      return '<div class="acct-item">'+avatarHtml(r.helperName,r.helperAvatar,34,r.helperId)+
+        '<span class="acct-item-t">'+esc(r.helperName)+(r.helperRating?' '+ratingHtml(r.helperRating):'')+
+          '<span class="acct-item-s">'+esc(r.jobTitle)+(r.message?' · '+esc((r.message||'').slice(0,50)):'')+'</span></span>'+
+        '<button class="acct-mini" onclick="openThreadOrList(\''+r.jobId+'::'+r.helperId+'\')">'+_acctIcon('message-square',13)+'</button></div>';
+    }).join('') : '<div class="acct-empty">'+T('prof.noreceived')+'</div>';
 
-  /* aktiver Tab bleibt über Re-Renders erhalten */
-  const tab = APP._profTab || 'over';
-  const on = (t)=> tab===t ? ' on' : '';
-  let unread = 0; try{ unread = totalUnread()||0; }catch(e){ unread = 0; }
+    body += '<button class="acct-btn" onclick="closeModal(\'modal-profile\');openPostJob()">'+T('prof.create')+'</button>';
+  } else {
+    var apps=getUserApps()||[];
+    body += '<div class="acct-lab">'+T('prof.apps')+'</div>';
+    body += apps.length ? apps.map(function(a){
+      return '<div class="acct-item">'+
+        '<span class="acct-item-t">'+esc(a.title||'–')+'</span>'+
+        '<span class="acct-item-p">'+(a.price||0)+' €</span>'+
+        (a.chatKey?'<button class="acct-mini" onclick="openThreadOrList(\''+a.chatKey+'\')">'+_acctIcon('message-square',13)+'</button>':'')+
+      '</div>';
+    }).join('') : '<div class="acct-empty">'+T('prof.nojobs')+'</div>';
+    body += '<button class="acct-btn" onclick="closeModal(\'modal-profile\');scrollToJobs()">'+T('prof.available')+'</button>';
+  }
 
-  document.getElementById('profile-content').innerHTML=`
-    ${banned ? `<div class="warn-box" style="margin-bottom:14px"><strong>${T('prof.banned')}</strong> ${T('prof.banned.contact')} <a href="mailto:info@service-radar.com">info@service-radar.com</a></div>` : ''}
-    ${warnings.length>0 && !banned ? `<div class="warn-box" style="margin-bottom:14px"><strong>${warnings.length} ${de?'Verwarnung'+(warnings.length>1?'en':''):'Warning'+(warnings.length>1?'s':'')}</strong> – ${T('prof.warn.text')}</div>` : ''}
+  var saved=(STATE.savedJobs||[]);
+  body += '<div class="acct-lab">'+(de?'Gemerkte Aufträge':'Saved jobs')+'</div>';
+  body += saved.length ? saved.map(function(j){
+    var id=esc(String(j.id));
+    return '<div class="acct-item">'+
+      '<span class="acct-item-t" style="cursor:pointer" onclick="closeModal(\'modal-profile\');openJobDetail(\''+id+'\')">'+esc(jobTitle(j))+
+        '<span class="acct-item-s">'+esc(j.posterName||'')+'</span></span>'+
+      '<span class="acct-item-p">'+j.price+' €</span>'+
+      '<button class="acct-mini danger" title="'+(de?'Entfernen':'Remove')+'" onclick="toggleSaveJob(\''+id+'\',event)">'+_acctIcon('x',13)+'</button></div>';
+  }).join('') : '<div class="acct-empty">'+(de?'Noch keine gemerkten Aufträge.':'No saved jobs yet.')+'</div>';
 
-    <div class="pf-head">
-      <div class="pf-ava">
-        ${avatarHtml(u.name, u.avatar_url, 60)}
-        <button class="pf-ava-edit" onclick="document.getElementById('avatar-file').click()" title="${de?'Profilbild ändern':'Change photo'}">${I('pencil',12)}</button>
-      </div>
-      <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarFile(this.files&&this.files[0])">
-      <div class="pf-id">
-        <div class="pf-name">${esc(u.name)}</div>
-        <div class="pf-mail">${esc(u.email)}</div>
-        <div class="pf-meta">
-          <span class="trust-badge ${trustInfo.cls}">${trustInfo.label}</span>
-          ${avgRating ? `<span class="pf-star">★ ${avgRating}</span>` : ''}
-        </div>
-        <a class="pf-link" onclick="openPublicProfile('${esc(String(u.id))}')">${de?'Öffentliches Profil ansehen':'View public profile'} ${I('arrow-right',13)}</a>
-      </div>
-    </div>
+  return _acctBar(de?'Aktivitäten':'Activity', true)+'<div class="acct-body">'+body+'</div>';
+}
 
-    <div class="pf-seg" role="group" data-i18n-aria="vm.toggle">
-      <button class="${mode==='helper'?'on':''}" onclick="setViewMode('helper')">${I('handshake',15)} ${de?'Helfer':'Helper'}</button>
-      <button class="${mode==='client'?'on':''}" onclick="setViewMode('client')">${I('clipboard-list',15)} ${de?'Auftraggeber':'Client'}</button>
-    </div>
+/* ── Ebene 2: Bewertungen (lazy geladen) ───────────── */
+function _acctReviews(){
+  var de=LANG==='de', u=APP.user;
+  var rating=getAvgRating(u.email), rc=u.review_count||0;
+  var list=APP._acctReviews;
+  var inner;
+  if(!Array.isArray(list)){
+    inner='<div class="acct-empty">'+(de?'Bewertungen werden geladen…':'Loading reviews…')+'</div>';
+  } else if(!list.length){
+    inner='<div class="acct-empty">'+(de?'Du hast noch keine Bewertungen erhalten.':'You have not received any reviews yet.')+'</div>';
+  } else {
+    inner=list.map(function(r){
+      var rn=(r.reviewer&&r.reviewer.full_name)||'Nutzer';
+      return '<div class="acct-rev">'+avatarHtml(rn,(r.reviewer&&r.reviewer.avatar_url),34)+
+        '<div style="flex:1;min-width:0">'+
+          '<div class="acct-rev-h"><span class="acct-rev-n">'+esc(rn)+'</span><span style="font-size:12px;color:#bf8700;white-space:nowrap">'+starStr(r.rating)+'</span></div>'+
+          (r.comment?'<div class="acct-rev-c">'+esc(r.comment)+'</div>':'')+
+          '<div class="acct-rev-d">'+(r.created_at?new Date(r.created_at).toLocaleDateString(de?'de-DE':'en-GB'):'')+'</div>'+
+        '</div></div>';
+    }).join('');
+  }
+  return _acctBar(de?'Bewertungen':'Reviews', true)+
+  '<div class="acct-body">'+
+    '<div class="acct-score"><span class="acct-score-v">'+(rating||'–')+'</span>'+
+      '<span class="acct-score-s">'+(rating?'★ '+(de?'Durchschnitt':'average')+' · ':'')+rc+' '+(de?'Bewertungen':'reviews')+'</span></div>'+
+    inner+
+  '</div>';
+}
 
-    <button class="pf-row" onclick="closeModal('modal-profile');openChats()">
-      <span class="pf-row-ic">${I('message-square',17)}</span>
-      <span class="pf-row-t">${T('nav.messages')}<span class="pf-row-s">${chats} ${de?(chats===1?'Unterhaltung':'Unterhaltungen'):(chats===1?'conversation':'conversations')}</span></span>
-      ${unread>0?`<span class="pf-count">${unread}</span>`:''}
-      <span class="pf-ic">${I('chevron-right',18)}</span>
-    </button>
+/* ── Ebene 2: Einstellungen ────────────────────────── */
+function _acctSettings(){
+  var de=LANG==='de';
+  var push='';
+  if(pushSupported()){
+    if(typeof Notification!=='undefined' && Notification.permission==='denied'){
+      push='<div class="acct-hint">'+(de?'Benachrichtigungen sind im Browser blockiert. Bitte in den Browser-Einstellungen erlauben.':'Notifications are blocked in your browser. Please allow them in your browser settings.')+'</div>';
+    } else if(APP.pushSubscribed){
+      push='<div class="acct-item"><span class="acct-item-t">'+(de?'Push-Benachrichtigungen':'Push notifications')+
+        '<span class="acct-item-s">'+(de?'Aktiv':'Active')+'</span></span>'+
+        '<button class="acct-mini" onclick="disablePushNotifications()">'+(de?'Deaktivieren':'Disable')+'</button></div>';
+    } else {
+      push='<div class="acct-item"><span class="acct-item-t">'+(de?'Push-Benachrichtigungen':'Push notifications')+
+        '<span class="acct-item-s">'+(de?'Hinweise zu Nachrichten und Bewerbungen':'Alerts for messages and applications')+'</span></span>'+
+        '<button class="acct-mini" onclick="enablePushNotifications()">'+(de?'Aktivieren':'Enable')+'</button></div>';
+    }
+  }
+  return _acctBar(de?'Einstellungen':'Settings', true)+
+  '<div class="acct-body">'+
+    '<div class="acct-lab first">'+(de?'Sprache':'Language')+'</div>'+
+    '<div class="acct-seg">'+
+      '<button class="'+(LANG==='de'?'on':'')+'" onclick="setLang(\'de\');acctGo(\'settings\')">Deutsch</button>'+
+      '<button class="'+(LANG==='en'?'on':'')+'" onclick="setLang(\'en\');acctGo(\'settings\')">English</button>'+
+    '</div>'+
+    '<div class="acct-lab">'+(de?'Benachrichtigungen':'Notifications')+'</div>'+
+    (push || '<div class="acct-hint">'+(de?'Dieser Browser unterstützt keine Push-Benachrichtigungen.':'This browser does not support push notifications.')+'</div>')+
+    '<div class="acct-lab">'+(de?'Konto':'Account')+'</div>'+
+    '<div class="acct-item"><span class="acct-item-t">'+(de?'E-Mail':'Email')+
+      '<span class="acct-item-s">'+esc(APP.user.email)+'</span></span></div>'+
+    '<div style="margin-top:16px">'+
+      '<button class="acct-mini danger" onclick="confirmDeleteAccount()">'+_acctIcon('trash-2',13)+' '+T('prof.del')+'</button>'+
+      '<div class="acct-hint">'+T('prof.del.hint')+'</div>'+
+    '</div>'+
+  '</div>';
+}
 
-    ${statsBlock}
+/* ── Ebene 2: Hilfe & Rechtliches ──────────────────── */
+function _acctLegal(){
+  var de=LANG==='de';
+  var lrow=function(t,doc){ return '<button class="acct-row" onclick="openLegalDocument(\''+doc+'\')">'+
+    '<span class="acct-row-tx"><span class="acct-row-t">'+t+'</span></span>'+
+    '<span class="acct-row-ch">'+_acctIcon('chevron-right',18)+'</span></button>'; };
+  return _acctBar(de?'Hilfe & Rechtliches':'Help & legal', true)+
+  '<div class="acct-body">'+
+    '<div class="acct-lab first">'+(de?'Support':'Support')+'</div>'+
+    '<div class="acct-item"><span class="acct-item-t">'+(de?'Kontakt':'Contact')+
+      '<span class="acct-item-s"><a href="mailto:info@service-radar.com" style="color:var(--c-blue)">info@service-radar.com</a></span></span></div>'+
+    '<div class="acct-lab">'+(de?'Rechtliches':'Legal')+'</div>'+
+    '<div class="acct-nav" style="margin-top:0">'+
+      lrow(de?'AGB':'Terms','agb')+
+      lrow(de?'Datenschutzerklärung':'Privacy policy','datenschutz')+
+      lrow(de?'Nutzungsbedingungen':'Terms of use','nutzung')+
+      lrow(de?'Cookie-Richtlinie':'Cookie policy','cookie')+
+      lrow(de?'Impressum':'Imprint','impressum')+
+    '</div>'+
+  '</div>';
+}
 
-    <div class="pf-tabs" role="tablist">
-      <button class="${on('over')}"  onclick="setProfTab('over')">${de?'Übersicht':'Overview'}</button>
-      <button class="${on('act')}"   onclick="setProfTab('act')">${de?'Aktivität':'Activity'}</button>
-      <button class="${on('save')}"  onclick="setProfTab('save')">${de?'Gemerkt':'Saved'}</button>
-      <button class="${on('acc')}"   onclick="setProfTab('acc')">${de?'Konto':'Account'}</button>
-    </div>
-
-    <div class="pf-panel${on('over')}" id="pf-p-over">
-      <div class="pf-card">
-        <div class="trust-score">
-          <span style="font-size:12px;color:var(--c-ink3);min-width:80px">${T('prof.trust')}</span>
-          <div class="ts-bar"><div class="ts-fill" style="width:${trustScore}%"></div></div>
-          <span style="font-size:12px;font-weight:700;color:var(--c-ink2);min-width:32px;text-align:right">${trustScore}%</span>
-        </div>
-      </div>
-      <div class="verif-bar">
-        <div class="pf-lab">${T('prof.verifstand')}</div>
-        <div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">${T('prof.v.email')}</span></div>
-        <div class="verif-item"><div class="verif-dot ${u.consentAGB?'done':'open'}">${u.consentAGB?'✓':'○'}</div><span style="font-size:13px">${T('prof.v.agb')}</span></div>
-        <div class="verif-item"><div class="verif-dot open">○</div><span style="font-size:13px;color:var(--c-ink3)">${T('prof.v.id')} <span style="background:var(--c-alt);color:var(--c-amber);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:4px">${T('prof.soon')}</span></span></div>
-      </div>
-      ${pushStatusHtml()}
-    </div>
-
-    <div class="pf-panel${on('act')}" id="pf-p-act">
-      ${mode==='client' ? clientActivity : helperActivity}
-    </div>
-
-    <div class="pf-panel${on('save')}" id="pf-p-save">
-      <div class="pf-lab">${de?'Gemerkte Aufträge':'Saved jobs'}</div>
-      ${(STATE.savedJobs && STATE.savedJobs.length) ? STATE.savedJobs.map(j=>`
-        <div class="pf-item">
-          <div class="pf-item-t" style="cursor:pointer" onclick="closeModal('modal-profile');openJobDetail('${esc(String(j.id))}')">${esc(jobTitle(j))}<div class="pf-item-sub">${esc(j.posterName||'')}</div></div>
-          <div class="pf-item-p">${j.price} €</div>
-          <button class="pf-mini danger" title="${de?'Entfernen':'Remove'}" onclick="toggleSaveJob('${esc(String(j.id))}',event)">${I('x',13)}</button>
-        </div>`).join('') : `<div class="pf-empty">${de?'Noch keine gemerkten Aufträge.':'No saved jobs yet.'}</div>`}
-    </div>
-
-    <div class="pf-panel${on('acc')}" id="pf-p-acc">
-      <button class="pf-row" onclick="logout();closeModal('modal-profile')">
-        <span class="pf-row-ic">${I('log-out',17)}</span>
-        <span class="pf-row-t">${T('nav.logout')}</span>
-        <span class="pf-ic">${I('chevron-right',18)}</span>
-      </button>
-      <div class="pf-card" style="text-align:center;margin-top:4px">
-        <button class="pf-mini danger" onclick="confirmDeleteAccount()">${I('trash-2',13)} ${T('prof.del')}</button>
-        <p style="font-size:11px;color:var(--c-ink4);margin-top:8px;line-height:1.5">${T('prof.del.hint')}</p>
-      </div>
-    </div>`;
-
+/* Zentraler Renderer — schreibt in #acct-root */
+function renderAccount(){
+  var root=document.getElementById('acct-root');
+  if(!root || !APP.user) return;
+  var v = APP._acctView || 'home';
+  root.innerHTML =
+      v==='profile'  ? _acctProfile()
+    : v==='activity' ? _acctActivity()
+    : v==='reviews'  ? _acctReviews()
+    : v==='settings' ? _acctSettings()
+    : v==='legal'    ? _acctLegal()
+    : _acctHome();
   try{ if(window.lucide) lucide.createIcons(); }catch(e){}
 }
 
-/* Profil-Tabs: reines Umschalten der Sichtbarkeit – kein Re-Render, kein Datenverlust */
-function setProfTab(t){
-  APP._profTab = t;
-  var root = document.getElementById('profile-content');
-  if(!root) return;
-  var order = ['over','act','save','acc'];
-  var btns = root.querySelectorAll('.pf-tabs button');
-  order.forEach(function(k,i){
-    var p = document.getElementById('pf-p-'+k);
-    if(p) p.classList.toggle('on', k===t);
-    if(btns[i]) btns[i].classList.toggle('on', k===t);
-  });
-}
+/* Alias: bestehende Aufrufer (setViewMode, handleAvatarFile, _profileRerenderIfOpen,
+   renderProfile) rufen weiterhin _renderProfile() auf. */
+function _renderProfile(){ renderAccount(); }
 
 /* ── Konto löschen (Self-Service) ───────────────────────── */
 

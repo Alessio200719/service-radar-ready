@@ -788,6 +788,49 @@ html[lang="en"] #legal-de-note{display:block}
 .pj-row .pj-t{font-weight:600;flex:1;padding-right:8px}.pj-row .pj-p{font-weight:700;color:var(--c-green);flex-shrink:0}.pj-row .pj-s{font-size:11px;color:var(--c-ink4);margin-left:8px}
 .pj-empty{text-align:center;padding:20px;color:var(--c-ink4);font-size:13px}
 
+/* ══ PROFIL – neues, app-orientiertes Layout (nur #modal-profile) ══════════════
+   Eigener .pf-* Namensraum. Die alten .prof-*/.pj-* Klassen bleiben unverändert,
+   weil das ÖFFENTLICHE Profil (#modal-pubprofile) sie weiterhin verwendet. */
+.pf-head{display:flex;gap:14px;align-items:flex-start;padding-bottom:16px;border-bottom:1px solid var(--c-bds)}
+.pf-ava{position:relative;flex-shrink:0}
+.pf-ava-edit{position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;border:2px solid var(--c-bg);background:var(--c-ink);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+.pf-id{flex:1;min-width:0}
+.pf-name{font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.pf-mail{font-size:13px;color:var(--c-ink3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pf-meta{display:flex;align-items:center;gap:8px;margin-top:9px;flex-wrap:wrap}
+.pf-link{font-size:12.5px;color:var(--c-blue);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:4px;margin-top:7px}
+.pf-star{font-size:12.5px;color:#bf8700;font-weight:700}
+.pf-seg{display:flex;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:10px;padding:3px;gap:3px;margin:16px 0 14px}
+.pf-seg button{flex:1;border:none;background:none;font-family:inherit;font-size:13px;font-weight:600;color:var(--c-ink3);padding:8px 6px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.pf-seg button.on{background:var(--c-bg);color:var(--c-ink);box-shadow:var(--sh1)}
+.pf-row{display:flex;align-items:center;gap:12px;width:100%;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:12px;padding:12px 14px;cursor:pointer;font-family:inherit;text-align:left;color:var(--c-ink);margin-bottom:14px}
+.pf-row:hover{background:var(--c-bg1)}
+.pf-row-ic{width:34px;height:34px;border-radius:9px;background:var(--c-bg1);border:1px solid var(--c-bds);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--c-ink2)}
+.pf-row-t{flex:1;min-width:0;font-size:14px;font-weight:600}
+.pf-row-s{font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:1px}
+.pf-count{background:var(--c-blue);color:#fff;font-size:11px;font-weight:700;min-width:20px;height:20px;border-radius:10px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
+.pf-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.pf-stat{background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:10px;padding:12px 8px;text-align:center}
+.pf-stat .v{font-size:19px;font-weight:700;letter-spacing:-.02em;color:var(--c-ink)}
+.pf-stat .l{font-size:11px;color:var(--c-ink3);margin-top:2px}
+.pf-tabs{display:flex;gap:2px;border-bottom:1px solid var(--c-bds);margin-bottom:16px;overflow-x:auto}
+.pf-tabs button{border:none;background:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--c-ink3);padding:10px 12px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;margin-bottom:-1px}
+.pf-tabs button.on{color:var(--c-ink);border-bottom-color:var(--c-ink)}
+.pf-panel{display:none}
+.pf-panel.on{display:block}
+.pf-lab{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink4);margin:0 0 9px}
+.pf-card{background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:12px;padding:14px;margin-bottom:14px}
+.pf-item{display:flex;align-items:center;gap:10px;background:var(--c-bg);border:1px solid var(--c-bds);border-radius:10px;padding:11px 13px;margin-bottom:7px;flex-wrap:wrap}
+.pf-item-t{flex:1;min-width:0;font-size:13.5px;font-weight:600}
+.pf-item-sub{font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:2px}
+.pf-item-p{font-size:13.5px;font-weight:700;color:var(--c-green);flex-shrink:0}
+.pf-empty{text-align:center;padding:22px 12px;color:var(--c-ink4);font-size:13px;background:var(--c-bg1);border:1px dashed var(--c-bds);border-radius:10px}
+.pf-mini{font-size:11.5px;padding:5px 10px;border-radius:8px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;white-space:nowrap;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+.pf-mini:hover{background:var(--c-bg1)}
+.pf-mini.danger{border-color:#cf222e;color:#cf222e}
+.pf-acts{flex-basis:100%;display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+.pf-ic{color:var(--c-ink3);flex-shrink:0}
+
 /* ══ RESPONSIVE ══════════════════════════════════ */
 @media(max-width:1024px){
   .foot-top{grid-template-columns:1fr 1fr}
@@ -4619,121 +4662,170 @@ function _renderProfile(){
   const warnings=getWarnings(u.email);
   const banned=isBanned(u.email);
 
-  const helperBlock = `
-    <div class="stat-row">
-      <div class="sbox"><div class="sv">${apps.length}</div><div class="sl">${T('prof.apps')}</div></div>
-      <div class="sbox"><div class="sv">${chats}</div><div class="sl">${T('prof.chats')}</div></div>
-      <div class="sbox"><div class="sv">${avgRating?'★ '+avgRating:'–'}</div><div class="sl">${T('prof.rating')}</div></div>
-    </div>
-    <button class="btn btn-outline btn-full" style="margin-bottom:14px" onclick="closeModal('modal-profile');scrollToJobs()">${T('prof.available')}</button>
-    <div class="prof-sec-title">${T('prof.apps')}</div>
-    <div class="pj-list">
-      ${apps.length?apps.map(a=>`
-        <div class="pj-row">
-          <div class="pj-t">${esc(a.title||'–')}</div>
-          <div class="pj-p">${a.price||0} €</div>
-          ${a.chatKey?`<button class="pj-pay-now" style="background:var(--c-ink3)" onclick="openThreadOrList('${a.chatKey}')">💬</button>`:''}
-        </div>`).join(''):`<div class="pj-empty">${T('prof.nojobs')}</div>`}
+  const de = LANG==='de';
+  const I = (n,s)=>`<i data-lucide="${n}" width="${s||16}" height="${s||16}"></i>`;
+
+  /* ── Statistiken (modusabhängig) ── */
+  const statsBlock = mode==='client' ? `
+    <div class="pf-stats">
+      <div class="pf-stat"><div class="v">${ownedJobs.length}</div><div class="l">${T('prof.tasks')}</div></div>
+      <div class="pf-stat"><div class="v">${received.length}</div><div class="l">${T('prof.apps')}</div></div>
+      <div class="pf-stat"><div class="v">${avgRating?'★ '+avgRating:'–'}</div><div class="l">${T('prof.rating')}</div></div>
+    </div>` : `
+    <div class="pf-stats">
+      <div class="pf-stat"><div class="v">${apps.length}</div><div class="l">${T('prof.apps')}</div></div>
+      <div class="pf-stat"><div class="v">${chats}</div><div class="l">${T('prof.chats')}</div></div>
+      <div class="pf-stat"><div class="v">${avgRating?'★ '+avgRating:'–'}</div><div class="l">${T('prof.rating')}</div></div>
     </div>`;
 
-  const clientBlock = `
-    <div class="stat-row">
-      <div class="sbox"><div class="sv">${ownedJobs.length}</div><div class="sl">${T('prof.tasks')}</div></div>
-      <div class="sbox"><div class="sv">${received.length}</div><div class="sl">${T('prof.apps')}</div></div>
-      <div class="sbox"><div class="sv">${avgRating?'★ '+avgRating:'–'}</div><div class="sl">${T('prof.rating')}</div></div>
-    </div>
-    <button class="btn btn-dark btn-full" style="margin-bottom:14px" onclick="closeModal('modal-profile');openPostJob()">${T('prof.create')}</button>
-    <div class="prof-sec-title">${T('prof.tasks')}</div>
-    <div class="pj-list">
-      ${ownedJobs.length?ownedJobs.map(j=>{
-        const status=j.status||'active', isPending=status==='pending', isFlagged=status==='flagged', isClosed=status==='closed';
-        const badge=isPending?`<span class="pj-status pending">${T('prof.status.pending')}</span>`
-          :isFlagged?`<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">${T('prof.status.flagged')}</span>`
-          :isClosed?`<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">${T('prof.status.closed')}</span>`
-          :`<span class="pj-status active">${T('prof.status.active')}</span>`;
-        const id=esc(String(j.id));
-        const bs='font-size:11px;padding:4px 9px;border-radius:7px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);cursor:pointer;font-weight:600;white-space:nowrap';
-        const acts=[];
-        if(isPending) acts.push(`<button style="${bs}" onclick="closeModal('modal-profile');resumePayment('${id}')">${T('prof.paynow')}</button>`);
-        if(status==='active'){ acts.push(`<button style="${bs}" onclick="openEditJob('${id}')">✏️ ${T('job.edit')}</button>`); acts.push(`<button style="${bs}" onclick="closeJobConfirm('${id}')">✅ ${T('job.complete')}</button>`); }
-        acts.push(`<button style="${bs};border-color:#cf222e;color:#cf222e" onclick="deleteJobConfirm('${id}')">🗑️ ${T('job.delete')}</button>`);
-        return `<div class="pj-row${isPending?' pj-row-pending':''}" style="flex-wrap:wrap">
-          <div class="pj-t" style="cursor:pointer" onclick="openJobDetail('${id}')">${esc(jobTitle(j))}</div>${badge}<div class="pj-p" style="margin-left:auto">${j.price} €</div>
-          <div style="flex-basis:100%;display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">${acts.join('')}</div>
-        </div>`;
-      }).join(''):`<div class="pj-empty">${T('prof.nojobs')}</div>`}
-    </div>
-    <div class="prof-sec-title" style="margin-top:16px">${T('prof.received')}</div>
-    <div class="pj-list">
-      ${received.length?received.map(r=>`
-        <div class="pj-row">
-          ${avatarHtml(r.helperName, r.helperAvatar, 34, r.helperId)}
-          <div class="pj-t" style="flex:1">${esc(r.helperName)}${r.helperRating?' '+ratingHtml(r.helperRating):''} <span style="color:var(--c-ink4);font-weight:400">· ${esc(r.jobTitle)}</span><div style="font-size:12px;color:var(--c-ink3);font-weight:400;margin-top:2px">${esc((r.message||'').slice(0,60))}${(r.message||'').length>60?'…':''}</div></div>
-          <button class="pj-pay-now" style="background:var(--c-ink3)" onclick="openThreadOrList('${r.jobId}::${r.helperId}')">💬</button>
-        </div>`).join(''):`<div class="pj-empty">${T('prof.noreceived')}</div>`}
-    </div>`;
+  /* ── Aktivität: Helfer = eigene Bewerbungen ── */
+  const helperActivity = `
+    <button class="btn btn-outline btn-full" style="margin-bottom:16px" onclick="closeModal('modal-profile');scrollToJobs()">${T('prof.available')}</button>
+    <div class="pf-lab">${T('prof.apps')}</div>
+    ${apps.length?apps.map(a=>`
+      <div class="pf-item">
+        <div class="pf-item-t">${esc(a.title||'–')}</div>
+        <div class="pf-item-p">${a.price||0} €</div>
+        ${a.chatKey?`<button class="pf-mini" onclick="openThreadOrList('${a.chatKey}')">${I('message-square',14)} ${de?'Chat':'Chat'}</button>`:''}
+      </div>`).join(''):`<div class="pf-empty">${T('prof.nojobs')}</div>`}`;
+
+  /* ── Aktivität: Auftraggeber = eigene Aufträge + Anfragen ── */
+  const clientActivity = `
+    <button class="btn btn-dark btn-full" style="margin-bottom:16px" onclick="closeModal('modal-profile');openPostJob()">${T('prof.create')}</button>
+    <div class="pf-lab">${T('prof.tasks')}</div>
+    ${ownedJobs.length?ownedJobs.map(j=>{
+      const status=j.status||'active', isPending=status==='pending', isFlagged=status==='flagged', isClosed=status==='closed';
+      const badge=isPending?`<span class="pj-status pending">${T('prof.status.pending')}</span>`
+        :isFlagged?`<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">${T('prof.status.flagged')}</span>`
+        :isClosed?`<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">${T('prof.status.closed')}</span>`
+        :`<span class="pj-status active">${T('prof.status.active')}</span>`;
+      const id=esc(String(j.id));
+      const acts=[];
+      if(isPending) acts.push(`<button class="pf-mini" onclick="closeModal('modal-profile');resumePayment('${id}')">${I('credit-card',13)} ${T('prof.paynow')}</button>`);
+      if(status==='active'){
+        acts.push(`<button class="pf-mini" onclick="openEditJob('${id}')">${I('pencil',13)} ${T('job.edit')}</button>`);
+        acts.push(`<button class="pf-mini" onclick="closeJobConfirm('${id}')">${I('check',13)} ${T('job.complete')}</button>`);
+      }
+      acts.push(`<button class="pf-mini danger" onclick="deleteJobConfirm('${id}')">${I('trash-2',13)} ${T('job.delete')}</button>`);
+      return `<div class="pf-item${isPending?' pj-row-pending':''}">
+        <div class="pf-item-t" style="cursor:pointer" onclick="openJobDetail('${id}')">${esc(jobTitle(j))}</div>${badge}<div class="pf-item-p">${j.price} €</div>
+        <div class="pf-acts">${acts.join('')}</div>
+      </div>`;
+    }).join(''):`<div class="pf-empty">${T('prof.nojobs')}</div>`}
+
+    <div class="pf-lab" style="margin-top:18px">${T('prof.received')}</div>
+    ${received.length?received.map(r=>`
+      <div class="pf-item">
+        ${avatarHtml(r.helperName, r.helperAvatar, 34, r.helperId)}
+        <div class="pf-item-t">${esc(r.helperName)}${r.helperRating?' '+ratingHtml(r.helperRating):''} <span style="color:var(--c-ink4);font-weight:400">· ${esc(r.jobTitle)}</span><div class="pf-item-sub">${esc((r.message||'').slice(0,60))}${(r.message||'').length>60?'…':''}</div></div>
+        <button class="pf-mini" onclick="openThreadOrList('${r.jobId}::${r.helperId}')">${I('message-square',14)} ${de?'Chat':'Chat'}</button>
+      </div>`).join(''):`<div class="pf-empty">${T('prof.noreceived')}</div>`}`;
+
+  /* aktiver Tab bleibt über Re-Renders erhalten */
+  const tab = APP._profTab || 'over';
+  const on = (t)=> tab===t ? ' on' : '';
+  let unread = 0; try{ unread = totalUnread()||0; }catch(e){ unread = 0; }
 
   document.getElementById('profile-content').innerHTML=`
-    <h3 style="font-size:19px;font-weight:800;margin-bottom:14px">${T('prof.title')}</h3>
+    ${banned ? `<div class="warn-box" style="margin-bottom:14px"><strong>${T('prof.banned')}</strong> ${T('prof.banned.contact')} <a href="mailto:info@service-radar.com">info@service-radar.com</a></div>` : ''}
+    ${warnings.length>0 && !banned ? `<div class="warn-box" style="margin-bottom:14px"><strong>${warnings.length} ${de?'Verwarnung'+(warnings.length>1?'en':''):'Warning'+(warnings.length>1?'s':'')}</strong> – ${T('prof.warn.text')}</div>` : ''}
 
-    <div class="mtabs" style="margin-bottom:18px" role="group" data-i18n-aria="vm.toggle">
-      <button class="mtab ${mode==='helper'?'on':''}" onclick="setViewMode('helper')" data-i18n="vm.helper">🙋 Helfer-Modus</button>
-      <button class="mtab ${mode==='client'?'on':''}" onclick="setViewMode('client')" data-i18n="vm.client">📋 Auftraggeber-Modus</button>
-    </div>
-
-    ${banned ? `<div class="warn-box" style="margin-bottom:16px"><strong>${T('prof.banned')}</strong> ${T('prof.banned.contact')} <a href="mailto:info@service-radar.com">info@service-radar.com</a></div>` : ''}
-    ${warnings.length>0 && !banned ? `<div class="warn-box" style="margin-bottom:16px">⚠️ <strong>${warnings.length} ${LANG==='de'?'Verwarnung'+(warnings.length>1?'en':''):'Warning'+(warnings.length>1?'s':'')}</strong> – ${T('prof.warn.text')}</div>` : ''}
-
-    <div class="prof-header">
-      <div style="position:relative;flex-shrink:0">${avatarHtml(u.name, u.avatar_url, 64)}<button onclick="document.getElementById('avatar-file').click()" title="${LANG==='de'?'Profilbild ändern':'Change photo'}" style="position:absolute;right:-2px;bottom:-2px;width:26px;height:26px;border-radius:50%;border:2px solid var(--c-bg);background:var(--c-blue);color:#fff;cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0">✎</button></div>
+    <div class="pf-head">
+      <div class="pf-ava">
+        ${avatarHtml(u.name, u.avatar_url, 60)}
+        <button class="pf-ava-edit" onclick="document.getElementById('avatar-file').click()" title="${de?'Profilbild ändern':'Change photo'}">${I('pencil',12)}</button>
+      </div>
       <input type="file" id="avatar-file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="handleAvatarFile(this.files&&this.files[0])">
-      <div class="prof-av-info">
-        <div class="pn">${esc(u.name)}</div>
-        <div class="pr">${esc(u.email)}</div>
-        <div style="margin-top:3px"><a onclick="openPublicProfile('${esc(String(u.id))}')" style="font-size:12px;color:var(--c-blue);cursor:pointer;font-weight:600">${LANG==='de'?'Mein öffentliches Profil ansehen →':'View my public profile →'}</a></div>
-        <div class="pm" style="display:flex;align-items:center;gap:6px;margin-top:6px">
+      <div class="pf-id">
+        <div class="pf-name">${esc(u.name)}</div>
+        <div class="pf-mail">${esc(u.email)}</div>
+        <div class="pf-meta">
           <span class="trust-badge ${trustInfo.cls}">${trustInfo.label}</span>
-          ${avgRating ? `<span style="font-size:12px;color:#bf8700;font-weight:700">★ ${avgRating}</span>` : ''}
+          ${avgRating ? `<span class="pf-star">★ ${avgRating}</span>` : ''}
         </div>
+        <a class="pf-link" onclick="openPublicProfile('${esc(String(u.id))}')">${de?'Öffentliches Profil ansehen':'View public profile'} ${I('arrow-right',13)}</a>
       </div>
     </div>
 
-    <div class="trust-score" style="margin-bottom:16px">
-      <span style="font-size:12px;color:var(--c-ink3);min-width:80px">${T('prof.trust')}</span>
-      <div class="ts-bar"><div class="ts-fill" style="width:${trustScore}%"></div></div>
-      <span style="font-size:12px;font-weight:700;color:var(--c-ink2);min-width:32px;text-align:right">${trustScore}%</span>
+    <div class="pf-seg" role="group" data-i18n-aria="vm.toggle">
+      <button class="${mode==='helper'?'on':''}" onclick="setViewMode('helper')">${I('handshake',15)} ${de?'Helfer':'Helper'}</button>
+      <button class="${mode==='client'?'on':''}" onclick="setViewMode('client')">${I('clipboard-list',15)} ${de?'Auftraggeber':'Client'}</button>
     </div>
 
-    <div class="verif-bar">
-      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-ink4);margin-bottom:8px">${T('prof.verifstand')}</div>
-      <div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">${T('prof.v.email')}</span></div>
-      <div class="verif-item"><div class="verif-dot ${u.consentAGB?'done':'open'}">${u.consentAGB?'✓':'○'}</div><span style="font-size:13px">${T('prof.v.agb')}</span></div>
-      <div class="verif-item"><div class="verif-dot open">○</div><span style="font-size:13px;color:var(--c-ink3)">${T('prof.v.id')} <span style="background:var(--c-alt);color:var(--c-amber);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:4px">${T('prof.soon')}</span></span></div>
+    <button class="pf-row" onclick="closeModal('modal-profile');openChats()">
+      <span class="pf-row-ic">${I('message-square',17)}</span>
+      <span class="pf-row-t">${T('nav.messages')}<span class="pf-row-s">${chats} ${de?(chats===1?'Unterhaltung':'Unterhaltungen'):(chats===1?'conversation':'conversations')}</span></span>
+      ${unread>0?`<span class="pf-count">${unread}</span>`:''}
+      <span class="pf-ic">${I('chevron-right',18)}</span>
+    </button>
+
+    ${statsBlock}
+
+    <div class="pf-tabs" role="tablist">
+      <button class="${on('over')}"  onclick="setProfTab('over')">${de?'Übersicht':'Overview'}</button>
+      <button class="${on('act')}"   onclick="setProfTab('act')">${de?'Aktivität':'Activity'}</button>
+      <button class="${on('save')}"  onclick="setProfTab('save')">${de?'Gemerkt':'Saved'}</button>
+      <button class="${on('acc')}"   onclick="setProfTab('acc')">${de?'Konto':'Account'}</button>
     </div>
 
-    ${mode==='client' ? clientBlock : helperBlock}
+    <div class="pf-panel${on('over')}" id="pf-p-over">
+      <div class="pf-card">
+        <div class="trust-score">
+          <span style="font-size:12px;color:var(--c-ink3);min-width:80px">${T('prof.trust')}</span>
+          <div class="ts-bar"><div class="ts-fill" style="width:${trustScore}%"></div></div>
+          <span style="font-size:12px;font-weight:700;color:var(--c-ink2);min-width:32px;text-align:right">${trustScore}%</span>
+        </div>
+      </div>
+      <div class="verif-bar">
+        <div class="pf-lab">${T('prof.verifstand')}</div>
+        <div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">${T('prof.v.email')}</span></div>
+        <div class="verif-item"><div class="verif-dot ${u.consentAGB?'done':'open'}">${u.consentAGB?'✓':'○'}</div><span style="font-size:13px">${T('prof.v.agb')}</span></div>
+        <div class="verif-item"><div class="verif-dot open">○</div><span style="font-size:13px;color:var(--c-ink3)">${T('prof.v.id')} <span style="background:var(--c-alt);color:var(--c-amber);font-size:10px;padding:2px 6px;border-radius:4px;margin-left:4px">${T('prof.soon')}</span></span></div>
+      </div>
+      ${pushStatusHtml()}
+    </div>
 
-    <div class="prof-sec-title" style="margin-top:18px">❤️ ${LANG==='de'?'Gemerkte Aufträge':'Saved jobs'}</div>
-    <div class="pj-list">
+    <div class="pf-panel${on('act')}" id="pf-p-act">
+      ${mode==='client' ? clientActivity : helperActivity}
+    </div>
+
+    <div class="pf-panel${on('save')}" id="pf-p-save">
+      <div class="pf-lab">${de?'Gemerkte Aufträge':'Saved jobs'}</div>
       ${(STATE.savedJobs && STATE.savedJobs.length) ? STATE.savedJobs.map(j=>`
-        <div class="pj-row" style="cursor:pointer" onclick="closeModal('modal-profile');openJobDetail('${esc(String(j.id))}')">
-          <div class="pj-t">${esc(jobTitle(j))} <span style="color:var(--c-ink4);font-weight:400">· ${esc(j.posterName||'')}</span></div>
-          <div class="pj-p" style="margin-left:auto">${j.price} €</div>
-          <button class="pj-pay-now" style="background:none;color:#cf222e;padding:4px 8px" title="${LANG==='de'?'Entfernen':'Remove'}" onclick="toggleSaveJob('${esc(String(j.id))}',event)">❤️</button>
-        </div>`).join('') : `<div class="pj-empty">${LANG==='de'?'Noch keine gemerkten Aufträge.':'No saved jobs yet.'}</div>`}
+        <div class="pf-item">
+          <div class="pf-item-t" style="cursor:pointer" onclick="closeModal('modal-profile');openJobDetail('${esc(String(j.id))}')">${esc(jobTitle(j))}<div class="pf-item-sub">${esc(j.posterName||'')}</div></div>
+          <div class="pf-item-p">${j.price} €</div>
+          <button class="pf-mini danger" title="${de?'Entfernen':'Remove'}" onclick="toggleSaveJob('${esc(String(j.id))}',event)">${I('x',13)}</button>
+        </div>`).join('') : `<div class="pf-empty">${de?'Noch keine gemerkten Aufträge.':'No saved jobs yet.'}</div>`}
     </div>
 
-    ${pushStatusHtml()}
-
-    <div style="display:flex;gap:10px;margin-top:16px">
-      <button class="btn btn-outline btn-full" onclick="closeModal('modal-profile');openChats()">💬 ${T('nav.messages')}</button>
-      <button class="btn btn-danger btn-sm" onclick="logout();closeModal('modal-profile')">${T('nav.logout')}</button>
-    </div>
-    <hr style="border:none;border-top:1px solid var(--c-bds);margin:16px 0">
-    <div style="text-align:center">
-      <button class="btn btn-sm" style="color:#cf222e;background:none;border:1px solid #cf222e;font-size:12px;cursor:pointer" onclick="confirmDeleteAccount()">${T('prof.del')}</button>
-      <p style="font-size:11px;color:var(--c-ink4);margin-top:6px">${T('prof.del.hint')}</p>
+    <div class="pf-panel${on('acc')}" id="pf-p-acc">
+      <button class="pf-row" onclick="logout();closeModal('modal-profile')">
+        <span class="pf-row-ic">${I('log-out',17)}</span>
+        <span class="pf-row-t">${T('nav.logout')}</span>
+        <span class="pf-ic">${I('chevron-right',18)}</span>
+      </button>
+      <div class="pf-card" style="text-align:center;margin-top:4px">
+        <button class="pf-mini danger" onclick="confirmDeleteAccount()">${I('trash-2',13)} ${T('prof.del')}</button>
+        <p style="font-size:11px;color:var(--c-ink4);margin-top:8px;line-height:1.5">${T('prof.del.hint')}</p>
+      </div>
     </div>`;
+
+  try{ if(window.lucide) lucide.createIcons(); }catch(e){}
+}
+
+/* Profil-Tabs: reines Umschalten der Sichtbarkeit – kein Re-Render, kein Datenverlust */
+function setProfTab(t){
+  APP._profTab = t;
+  var root = document.getElementById('profile-content');
+  if(!root) return;
+  var order = ['over','act','save','acc'];
+  var btns = root.querySelectorAll('.pf-tabs button');
+  order.forEach(function(k,i){
+    var p = document.getElementById('pf-p-'+k);
+    if(p) p.classList.toggle('on', k===t);
+    if(btns[i]) btns[i].classList.toggle('on', k===t);
+  });
 }
 
 /* ── Konto löschen (Self-Service) ───────────────────────── */

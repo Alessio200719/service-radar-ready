@@ -5116,7 +5116,13 @@ function urlBase64ToUint8Array(base64){
 function pushSupported(){ return ('serviceWorker' in navigator) && ('PushManager' in window) && ('Notification' in window); }
 async function registerServiceWorker(){
   if(!('serviceWorker' in navigator)) return null;
-  try { return await navigator.serviceWorker.register('/sw.js'); }
+  try {
+    // updateViaCache:'none' -> der Browser holt sw.js IMMER frisch vom Server
+    // (Safari lieferte sonst eine gecachte Version und damit alte Dateien aus).
+    var reg = await navigator.serviceWorker.register('/sw.js', { updateViaCache: 'none' });
+    try { reg.update(); } catch(e){}
+    return reg;
+  }
   catch(e){ console.error('Push subscription error:', e); return null; }
 }
 // "aktiv" NUR wenn ALLE 3 Bedingungen erfüllt sind:

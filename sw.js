@@ -8,7 +8,16 @@ self.addEventListener('install', function (event) {
   self.skipWaiting();
 });
 self.addEventListener('activate', function (event) {
-  event.waitUntil(self.clients.claim());
+  /* Cache-Kill-Switch: entfernt ALLE vom Browser fuer diese Origin gehaltenen
+     Cache-Storage-Eintraege. Noetig, weil eine fruehere Service-Worker-Version
+     Dateien zwischengespeichert haben kann – Safari lieferte dadurch weiterhin
+     eine alte index.html aus. Dieser SW cached selbst nichts (kein fetch-Handler). */
+  event.waitUntil(
+    caches.keys()
+      .then(function (names) { return Promise.all(names.map(function (n) { return caches.delete(n); })); })
+      .catch(function () {})
+      .then(function () { return self.clients.claim(); })
+  );
 });
 
 self.addEventListener('push', function (event) {

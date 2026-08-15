@@ -793,7 +793,10 @@ html[lang="en"] #legal-de-note{display:block}
    Innerhalb des Accounts gibt es KEIN overflow/max-height/height:100vh, also
    keine verschachtelten Scrollflaechen (Safari-/iOS-sicher).
    Desktop = kompaktes Panel . Mobile = vollflaechiger Account-Screen (100dvh). */
-.acct-overlay{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0}
+.acct-overlay{display:block;overflow:hidden;padding:0}
+/* Der fixierte Layer scrollt NICHT selbst. Gescrollt wird dieser normale
+   Block – Safari/iOS behandelt das zuverlaessig (Bootstrap-Muster). */
+.acct-scroll{height:100%;overflow-y:auto}
 .acct{position:relative;width:100%;max-width:440px;margin:34px auto;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:14px}
 .acct-bar{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid var(--c-bds);background:var(--c-bg);border-radius:14px 14px 0 0}
 .acct-ib{width:32px;height:32px;border-radius:8px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
@@ -2605,7 +2608,9 @@ html[lang="en"] #legal-de-note{display:block}
 
 <!-- MODAL: PROFILE -->
 <div class="moverlay acct-overlay" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
-  <div class="acct" id="acct-root"></div>
+  <div class="acct-scroll" onclick="overlayClose(event,'modal-profile')">
+    <div class="acct" id="acct-root"></div>
+  </div>
 </div>
 
 <!-- MODAL: RESUME PAYMENT (für ausstehende Jobs aus dem Profil) -->
@@ -4690,7 +4695,7 @@ function _acctIcon(n,s){ return '<i data-lucide="'+n+'" width="'+(s||18)+'" heig
 function acctGo(view){
   APP._acctView = (ACCT_VIEWS.indexOf(view)>=0) ? view : 'home';
   renderAccount();
-  var ov=document.getElementById('modal-profile'); if(ov) ov.scrollTop=0;
+  var sc=document.querySelector('#modal-profile .acct-scroll'); if(sc) sc.scrollTop=0;
   if(APP._acctView==='reviews') _acctLoadReviews();
 }
 function acctBack(){ acctGo('home'); }
@@ -5696,8 +5701,14 @@ function openLegalDocument(type) {
   if (!cfg) { showToast(T('toast.doc.notfound'),'err'); return; }
   const doc = { title: (cfg.title && (cfg.title[LANG]||cfg.title.de)) || '', pdf: cfg.pdf, htmlBox: cfg.htmlBox };
 
-  // Kein PDF vorhanden → direkt HTML-Version zeigen
-  showLegalHtml(type); return;   // Rechtstexte sind vollständig inline (HTML) eingebettet – keine externe PDF nötig (funktioniert offline / ohne assets-Ordner)
+  // PDF direkt in einem neuen Tab oeffnen (zuverlaessigster Weg, auch auf iOS).
+  // Klappt das nicht (Popup-Blocker), wird die eingebettete HTML-Fassung gezeigt.
+  if (doc.pdf) {
+    var w = null;
+    try { w = window.open(doc.pdf, '_blank', 'noopener'); } catch(e) { w = null; }
+    if (w) return;
+  }
+  showLegalHtml(type); return;
 
   // PDF-Modal
   const titleEl  = document.getElementById('pdf-modal-title');

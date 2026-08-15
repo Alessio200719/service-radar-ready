@@ -802,9 +802,33 @@ html[lang="en"] #legal-de-note{display:block}
    jedem Browser (auch Safari/iOS) funktioniert. Der Rest der Seite wird
    ausgeblendet, damit die Dokumenthoehe exakt der Account-Hoehe entspricht. */
 body.acct-open > *:not(.moverlay):not(script):not(style):not(#toast){display:none}
-body.acct-open{background:var(--c-bg1)}
-.acct-overlay.open{position:static;display:block;opacity:1;pointer-events:auto;overflow:visible;padding:0;background:transparent;backdrop-filter:none;transition:none}
-.acct-overlay.open .acct-scroll{height:auto;overflow:visible}
+.page-modal.open{position:static;display:block;opacity:1;pointer-events:auto;overflow:visible;padding:0;background:transparent;backdrop-filter:none;transition:none}
+.page-modal.open .acct-scroll{height:auto;overflow:visible}
+.page-modal.page-hidden{display:none}
+/* Hintergrund des Seiten-Screens: weicher Verlauf in den Markenfarben statt Weiss */
+body.acct-open{
+  background:
+    radial-gradient(900px 520px at 50% -8%, rgba(9,105,218,.10), transparent 62%),
+    radial-gradient(760px 460px at 88% 8%, rgba(26,127,55,.07), transparent 60%),
+    linear-gradient(180deg, var(--c-bg) 0%, var(--c-bg1) 46%, #eaeef3 100%);
+  background-attachment:fixed;
+}
+/* Desktop: Karte als echtes Glas ueber dem Verlauf */
+@media(min-width:601px){
+  .acct{background:rgba(255,255,255,.72);backdrop-filter:saturate(180%) blur(14px);-webkit-backdrop-filter:saturate(180%) blur(14px);
+        border-color:rgba(255,255,255,.65);box-shadow:0 14px 44px rgba(13,17,23,.10),0 2px 8px rgba(13,17,23,.05)}
+  .acct-bar{background:rgba(255,255,255,.55)}
+}
+/* Rechtstext-Ansicht: breiter, angenehme Lesetypografie */
+.legal-acct{max-width:760px}
+.legal-view-body{padding:22px 22px 34px;font-size:14.5px;line-height:1.7;color:var(--c-ink2)}
+.legal-view-body h2{font-size:18px;font-weight:700;color:var(--c-ink);margin:22px 0 8px;letter-spacing:-.01em}
+.legal-view-body h3{font-size:15px;font-weight:700;color:var(--c-ink);margin:18px 0 6px}
+.legal-view-body p{margin:0 0 12px}
+.legal-view-body ul,.legal-view-body ol{margin:0 0 12px 20px}
+.legal-view-body li{margin-bottom:5px}
+.legal-view-body a{color:var(--c-blue)}
+@media(max-width:600px){ .legal-view-body{padding:18px 16px 30px} }
 .acct{position:relative;width:100%;max-width:440px;margin:34px auto;background:var(--c-bg);border:1px solid var(--c-bd);border-radius:14px}
 .acct-bar{display:flex;align-items:center;gap:10px;padding:13px 14px;border-bottom:1px solid var(--c-bds);background:var(--c-bg);border-radius:14px 14px 0 0}
 .acct-ib{width:32px;height:32px;border-radius:8px;border:1px solid var(--c-bd);background:var(--c-bg);color:var(--c-ink2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0}
@@ -2615,7 +2639,21 @@ body.acct-open{background:var(--c-bg1)}
 </div>
 
 <!-- MODAL: PROFILE -->
-<div class="moverlay acct-overlay" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
+<!-- RECHTSTEXTE: eigener Seiten-Screen (gleiche Scroll-Technik wie der Account) -->
+<div class="moverlay page-modal legal-view" id="modal-legal-view" onclick="overlayClose(event,'modal-legal-view')">
+  <div class="acct-scroll" onclick="overlayClose(event,'modal-legal-view')">
+    <div class="acct legal-acct">
+      <div class="acct-bar">
+        <button class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Zurück"><i data-lucide="arrow-left" width="17" height="17"></i></button>
+        <div class="acct-bt" id="legal-view-title"></div>
+        <button class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Schließen"><i data-lucide="x" width="17" height="17"></i></button>
+      </div>
+      <div class="acct-body legal-view-body" id="legal-view-body"></div>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay acct-overlay page-modal" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
   <div class="acct-scroll" onclick="overlayClose(event,'modal-profile')">
     <div class="acct" id="acct-root"></div>
   </div>
@@ -3700,7 +3738,7 @@ function updateBadge(){
   if(mb){ mb.textContent = n>0?String(n):''; mb.style.display = (APP.user && n>0) ? 'flex' : 'none'; }
 }
 /* ── Mobile Bottom-Nav Aktionen (greifen bestehende Funktionen ab) ── */
-function _closeAllModals(){ try{ var any=document.querySelector('.moverlay.open'); document.querySelectorAll('.moverlay.open').forEach(function(m){ m.classList.remove('open'); }); _openModals=0; document.body.classList.remove('acct-open'); if(any) unlockScroll(); }catch(e){} }
+function _closeAllModals(){ try{ var any=document.querySelector('.moverlay.open'); document.querySelectorAll('.moverlay.open').forEach(function(m){ m.classList.remove('open'); }); _openModals=0; document.body.classList.remove('acct-open'); APP._pageStack=[]; document.querySelectorAll('.page-modal').forEach(function(m){ m.classList.remove('page-hidden'); }); if(any) unlockScroll(); }catch(e){} }
 /* Footer-Newsletter (Double-Opt-in via /api/newsletter-subscribe) */
 function srNewsletter(e){
   if(e&&e.preventDefault) e.preventDefault();
@@ -4133,10 +4171,17 @@ function unlockScroll(){
 function openModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  // Account: kein Body-Lock, kein Overlay-Scroll -> die Seite selbst scrollt.
-  if (id === 'modal-profile') {
+  // Seiten-Screens (Account, Rechtstexte): kein Body-Lock, kein Overlay-Scroll –
+  // die SEITE selbst scrollt. Mehrere Screens werden gestapelt (Zurueck moeglich).
+  if (el.classList.contains('page-modal')) {
     if (!el.classList.contains('open')) {
-      APP._acctPrevScroll = window.scrollY || window.pageYOffset || 0;
+      var cur = document.querySelector('.page-modal.open:not(.page-hidden)');
+      if (cur && cur !== el) {
+        cur.classList.add('page-hidden');
+        (APP._pageStack = APP._pageStack || []).push(cur.id);
+      } else if (!cur) {
+        APP._acctPrevScroll = window.scrollY || window.pageYOffset || 0;
+      }
       document.body.classList.add('acct-open');
       el.classList.add('open');
       window.scrollTo(0, 0);
@@ -4152,10 +4197,19 @@ function openModal(id) {
 function closeModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
-  if (id === 'modal-profile') {
+  if (el.classList.contains('page-modal')) {
     el.classList.remove('open');
-    document.body.classList.remove('acct-open');
-    try { window.scrollTo(0, APP._acctPrevScroll || 0); } catch(e){}
+    el.classList.remove('page-hidden');
+    var st = APP._pageStack || [];
+    var prev = null;
+    while (st.length && !prev) { var pid = st.pop(); prev = pid ? document.getElementById(pid) : null; }
+    if (prev) {                       // zurueck zum darunterliegenden Screen
+      prev.classList.remove('page-hidden');
+      window.scrollTo(0, 0);
+    } else {                          // letzter Screen -> zurueck zur Seite
+      document.body.classList.remove('acct-open');
+      try { window.scrollTo(0, APP._acctPrevScroll || 0); } catch(e){}
+    }
     return;
   }
   if (el.classList.contains('open')) _openModals = Math.max(0, _openModals - 1);
@@ -5724,25 +5778,8 @@ function openLegalDocument(type) {
   currentLegalType = type;
   const cfg = LEGAL_DOCS[type];
   if (!cfg) { showToast(T('toast.doc.notfound'),'err'); return; }
-  const doc = { title: (cfg.title && (cfg.title[LANG]||cfg.title.de)) || '', pdf: cfg.pdf, htmlBox: cfg.htmlBox };
-
-  // PDF direkt in einem neuen Tab oeffnen. Wichtig: ABSOLUTER Pfad, damit die Datei
-  // auch von Unterseiten (/leistungen/..., /jobs/...) korrekt aufgeloest wird.
-  // Fehlt die PDF auf dem Server (404) oder blockt ein Popup-Blocker, wird der Tab
-  // geschlossen und automatisch die eingebettete HTML-Fassung angezeigt.
-  if (doc.pdf) {
-    var rel = (doc.pdf.charAt(0) === '/') ? doc.pdf : ('/' + doc.pdf);
-    var abs = location.origin + rel;
-    var w = null;
-    try { w = window.open(abs, '_blank'); } catch(e) { w = null; }
-    if (w) { try { w.opener = null; } catch(e){} }
-    try {
-      fetch(abs, { method:'HEAD', cache:'no-store' })
-        .then(function(r){ if(!r || !r.ok){ try{ if(w) w.close(); }catch(e){} showLegalHtml(type); } })
-        .catch(function(){ try{ if(w) w.close(); }catch(e){} showLegalHtml(type); });
-    } catch(e){}
-    if (w) return;
-  }
+  // Rechtstext wird IN der App angezeigt (funktioniert immer, auch offline).
+  // Die PDF ist zusaetzlich ueber den Knopf in der Ansicht erreichbar.
   showLegalHtml(type); return;
 
   // PDF-Modal
@@ -5832,8 +5869,37 @@ function showPdfFallback(doc) {
 
 function showLegalHtml(type) {
   closeModal('modal-pdf');
-  const htmlBox = LEGAL_DOCS[type]?.htmlBox || (type + '-box');
-  showLegal(htmlBox);
+  var cfg = LEGAL_DOCS[type] || {};
+  var boxId = cfg.htmlBox || (type + '-box');
+  var src   = document.getElementById(boxId);
+  var body  = document.getElementById('legal-view-body');
+  var ttl   = document.getElementById('legal-view-title');
+  // Eigener Rechtstext-Screen: funktioniert auch, wenn der Account geoeffnet ist
+  // (die Seitenabschnitte sind dann ausgeblendet und waeren nicht sichtbar).
+  if (src && body) {
+    if (ttl) ttl.textContent = (cfg.title && (cfg.title[LANG] || cfg.title.de)) || '';
+    var pdfBtn = '';
+    if (cfg.pdf) {
+      var rel = (cfg.pdf.charAt(0) === '/') ? cfg.pdf : ('/' + cfg.pdf);
+      pdfBtn = '<a class="acct-mini" id="legal-pdf-link" href="' + rel + '" target="_blank" rel="noopener" style="margin-bottom:16px">' +
+               '<i data-lucide="file-text" width="13" height="13"></i> ' +
+               (LANG === 'de' ? 'Als PDF öffnen' : 'Open as PDF') + '</a>';
+    }
+    body.innerHTML = pdfBtn + src.innerHTML;
+    openModal('modal-legal-view');
+    try { if (window.lucide) lucide.createIcons(); } catch(e){}
+    // PDF-Knopf nur zeigen, wenn die Datei wirklich auf dem Server liegt
+    if (cfg.pdf) {
+      var href = (cfg.pdf.charAt(0) === '/') ? cfg.pdf : ('/' + cfg.pdf);
+      try {
+        fetch(href, { method:'HEAD', cache:'no-store' })
+          .then(function(r){ if(!r || !r.ok){ var b=document.getElementById('legal-pdf-link'); if(b) b.style.display='none'; } })
+          .catch(function(){ var b=document.getElementById('legal-pdf-link'); if(b) b.style.display='none'; });
+      } catch(e){}
+    }
+    return;
+  }
+  showLegal(boxId);   // Fallback: alter Weg ueber den Seitenabschnitt
 }
 
 /* ── Legal Versioning ────────────────────────────── */

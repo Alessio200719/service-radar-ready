@@ -4323,15 +4323,22 @@ function openAuth(tab) {
 }
 
 function authTab(tab){
-  // Sync tab buttons
-  document.getElementById('tab-login')?.classList.toggle('on', tab==='login');
+  // Reiter oben: "Anmelden" bleibt aktiv, solange man sich nicht registriert
+  // (auch in den Unteransichten Passwort-vergessen / neues Passwort).
+  document.getElementById('tab-login')?.classList.toggle('on', tab!=='register');
   document.getElementById('tab-register')?.classList.toggle('on', tab==='register');
-  // Show correct pane
-  document.getElementById('pane-login').style.display = tab==='login' ? 'block' : 'none';
-  document.getElementById('pane-register').style.display = tab==='register' ? 'block' : 'none';
-  document.getElementById('pane-success').style.display = 'none';
-  // Clear errors when switching tabs
-  ['l-err','r-err'].forEach(id => document.getElementById(id)?.classList.remove('show'));
+  // Genau EINEN Bereich anzeigen
+  var pane = tab==='register' ? 'pane-register'
+           : tab==='forgot'   ? 'pane-forgot'
+           : tab==='newpw'    ? 'pane-newpw'
+           : tab==='success'  ? 'pane-success'
+           : 'pane-login';
+  ['pane-login','pane-register','pane-success','pane-forgot','pane-newpw'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.style.display = (id === pane) ? 'block' : 'none';
+  });
+  // Fehlermeldungen beim Wechsel zuruecksetzen
+  ['l-err','r-err','f-err','np-err'].forEach(id => document.getElementById(id)?.classList.remove('show'));
 }
 
 let selectedRole='jobber';

@@ -4388,6 +4388,10 @@ async function handleLogin(e) {
 }
 
 /* ── Passwort vergessen / neu setzen ───────────────────────── */
+/* Supabase entfernt den Token aus der Adresszeile, sobald es ihn eingelöst hat.
+   Deshalb merken wir uns den ursprünglichen Hash sofort beim Laden. */
+var _srInitialHash = '';
+try { _srInitialHash = window.location.hash || ''; } catch(e){}
 function authForgot(){
   try{
     var le=document.getElementById('l-email'), fe=document.getElementById('f-email');
@@ -4407,7 +4411,7 @@ async function handleForgot(e){
   await whenSRReady();
   try{
     if(!window.SR) throw new Error(T('auth.err.backend'));
-    await SR.resetPassword(email, location.origin + '/#recovery');
+    await SR.resetPassword(email, location.origin + '/');
   }catch(ex){
     console.error('[SR] resetPassword', ex);
     // Bewusst keine Unterscheidung: sonst liesse sich pruefen, welche Adressen existieren.
@@ -4446,10 +4450,25 @@ async function handleNewPassword(e){
   return false;
 }
 
-/* Kommt der Nutzer über den Rücksetz-Link, öffnet sich direkt das Passwort-Formular. */
+/* Kommt der Nutzer über den Rücksetz-Link, öffnet sich direkt das Passwort-Formular.
+   Geprüft wird der gemerkte Hash UND der aktuelle – je nachdem, was noch vorhanden ist. */
 function handleRecoveryLink(){
-  var h = location.hash || '';
+  var h = (_srInitialHash || '') + ' ' + (location.hash || '');
+
+  // Abgelaufener oder bereits benutzter Link -> klare Rückmeldung statt Stille
+  if(h.indexOf('otp_expired')>=0 || h.indexOf('access_denied')>=0){
+    try{ history.replaceState(null,'', location.pathname + location.search); }catch(e){}
+    _srInitialHash = '';
+    showToast(LANG==='de'
+      ? 'Der Link ist abgelaufen oder wurde schon verwendet. Bitte fordere einen neuen an.'
+      : 'This link has expired or was already used. Please request a new one.', 'err');
+    try{ openAuth('login'); }catch(e){}
+    try{ authTab('forgot'); }catch(e){}
+    return;
+  }
+
   if(h.indexOf('type=recovery')<0 && h.indexOf('#recovery')<0) return;
+  _srInitialHash = '';
   try{ openAuth('login'); }catch(e){}
   try{ authTab('newpw'); }catch(e){}
 }
@@ -6601,6 +6620,13 @@ async function initApp() {
       }
     } catch (e) { console.error('[SR] session restore', e); }
     SR.onAuthChange(async (event, session) => {
+      // Supabase meldet den eingelösten Rücksetz-Link hierüber – unabhängig davon,
+      // ob der Token noch in der Adresszeile steht.
+      if (event === 'PASSWORD_RECOVERY') {
+        try { openAuth('login'); } catch (e) {}
+        try { authTab('newpw'); } catch (e) {}
+        return;
+      }
       if (event === 'SIGNED_OUT') {
         APP.user = null;
         STATE.apps = []; STATE.ownerJobs = []; STATE.threads = []; STATE.threadMap = {};

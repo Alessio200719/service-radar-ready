@@ -73,6 +73,18 @@
       return res.data;
     },
     async signOut() { var res = await sb.auth.signOut(); if (res.error) throw res.error; },
+    // Passwort-Rücksetzmail anfordern (Link führt zurück auf die Seite).
+    async resetPassword(email, redirectTo) {
+      var res = await sb.auth.resetPasswordForEmail(email, redirectTo ? { redirectTo: redirectTo } : undefined);
+      if (res.error) throw res.error;
+      return true;
+    },
+    // Neues Passwort setzen (erfordert aktive Sitzung, z. B. aus dem Reset-Link).
+    async updatePassword(newPassword) {
+      var res = await sb.auth.updateUser({ password: newPassword });
+      if (res.error) throw res.error;
+      return res.data;
+    },
     async getSession() { var res = await sb.auth.getSession(); return (res.data && res.data.session) || null; },
     async getUser() { var res = await sb.auth.getUser(); return (res.data && res.data.user) || null; },
     onAuthChange(cb) { return sb.auth.onAuthStateChange(function (event, session) { cb(event, session); }); },

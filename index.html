@@ -2337,7 +2337,30 @@ body.acct-open{
  <div class="ferr" id="l-err" data-i18n="auth.login.err">E-Mail oder Passwort falsch.</div>
  <button type="submit" id="l-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.login.btn">Anmelden</button>
  </form>
+ <p class="muted-link"><a onclick="authForgot()" data-i18n="auth.forgot">Passwort vergessen?</a></p>
  <p class="muted-link"><span data-i18n="auth.noacc">Noch kein Konto?</span> <a onclick="authTab('register')" data-i18n="auth.toregister">Jetzt registrieren →</a></p>
+ </div>
+ <!-- PASSWORT VERGESSEN -->
+ <div id="pane-forgot" style="display:none">
+ <h3 style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.forgot.title">Passwort zurücksetzen</h3>
+ <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="auth.forgot.sub">Wir senden dir einen Link, mit dem du ein neues Passwort vergeben kannst.</p>
+ <form id="form-forgot" onsubmit="return handleForgot(event)">
+ <div class="field"><label data-i18n="auth.email">E-Mail Adresse</label><input type="email" id="f-email" placeholder="deine@email.de" required></div>
+ <div class="ferr" id="f-err"></div>
+ <button type="submit" id="f-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.forgot.btn">Link senden</button>
+ </form>
+ <p class="muted-link"><a onclick="authTab('login')" data-i18n="auth.backtologin">Zurück zur Anmeldung</a></p>
+ </div>
+ <!-- NEUES PASSWORT (aus dem Reset-Link) -->
+ <div id="pane-newpw" style="display:none">
+ <h3 style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.newpw.title">Neues Passwort</h3>
+ <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="auth.newpw.sub">Vergib jetzt ein neues Passwort für dein Konto.</p>
+ <form id="form-newpw" onsubmit="return handleNewPassword(event)">
+ <div class="field"><label data-i18n="auth.newpw.label">Neues Passwort</label><div class="pw-wrap"><input type="password" id="np-pw" placeholder="Min. 8 Zeichen" required minlength="8"><button type="button" class="pw-eye" onclick="togglePw('np-pw')"></button></div></div>
+ <div class="field"><label data-i18n="auth.newpw.repeat">Passwort wiederholen</label><input type="password" id="np-pw2" placeholder="Min. 8 Zeichen" required minlength="8"></div>
+ <div class="ferr" id="np-err"></div>
+ <button type="submit" id="np-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.newpw.btn">Passwort speichern</button>
+ </form>
  </div>
  <!-- REGISTER -->
  <div id="pane-register" style="display:none">
@@ -3266,6 +3289,20 @@ const I18N = {
   'auth.login.btn':   {de:'Anmelden', en:'Sign in'},
   'auth.or':          {de:'oder', en:'or'},
   'auth.noacc':       {de:'Noch kein Konto?', en:'No account yet?'},
+  'auth.forgot':      {de:'Passwort vergessen?', en:'Forgot your password?'},
+  'auth.forgot.title':{de:'Passwort zurücksetzen', en:'Reset password'},
+  'auth.forgot.sub':  {de:'Wir senden dir einen Link, mit dem du ein neues Passwort vergeben kannst.', en:'We will send you a link to set a new password.'},
+  'auth.forgot.btn':  {de:'Link senden', en:'Send link'},
+  'auth.forgot.sent': {de:'Falls ein Konto mit dieser Adresse existiert, ist die E-Mail unterwegs.', en:'If an account exists for this address, the email is on its way.'},
+  'auth.backtologin': {de:'Zurück zur Anmeldung', en:'Back to sign in'},
+  'auth.newpw.title': {de:'Neues Passwort', en:'New password'},
+  'auth.newpw.sub':   {de:'Vergib jetzt ein neues Passwort für dein Konto.', en:'Choose a new password for your account.'},
+  'auth.newpw.label': {de:'Neues Passwort', en:'New password'},
+  'auth.newpw.repeat':{de:'Passwort wiederholen', en:'Repeat password'},
+  'auth.newpw.btn':   {de:'Passwort speichern', en:'Save password'},
+  'auth.newpw.short': {de:'Das Passwort muss mindestens 8 Zeichen haben.', en:'Password must be at least 8 characters.'},
+  'auth.newpw.match': {de:'Die Passwörter stimmen nicht überein.', en:'Passwords do not match.'},
+  'auth.newpw.ok':    {de:'Passwort geändert. Du bist jetzt angemeldet.', en:'Password changed. You are signed in.'},
   'auth.toregister':  {de:'Jetzt registrieren →', en:'Register now →'},
   'auth.reg.title':   {de:'Konto erstellen', en:'Create account'},
   'auth.reg.sub':     {de:'Kostenlos registrieren und sofort loslegen.', en:'Register for free and get started right away.'},
@@ -3926,6 +3963,17 @@ function submitReport() {
     status: 'open',
   };
   saveReport(report);
+  // Zusaetzlich an den Betreiber melden (lokale Ablage bleibt fuer die Sperr-Logik erhalten).
+  try {
+    fetch('/api/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        type: report.type, targetId: report.targetId, targetLabel: report.targetLabel,
+        reason: report.reason, detail: report.detail, reporterEmail: report.reporterEmail,
+      }),
+    }).catch(function(){});
+  } catch (e) {}
   // Auto-check: if job has 3+ reports, flag it
   if (_reportContext?.type === 'job') {
     const jobReports = getReports().filter(r => r.targetId === _reportContext.targetId && r.type === 'job');
@@ -4254,8 +4302,11 @@ function openAuth(tab) {
   if (rBtn) { rBtn.innerHTML = T('auth.reg.btn'); rBtn.disabled = false; }
 
   // 6. Show correct pane
-  const pane = tab === 'register' ? 'pane-register' : 'pane-login';
-  ['pane-login','pane-register','pane-success'].forEach(id => {
+  const pane = tab === 'register' ? 'pane-register'
+             : tab === 'forgot'   ? 'pane-forgot'
+             : tab === 'newpw'    ? 'pane-newpw'
+             : 'pane-login';
+  ['pane-login','pane-register','pane-success','pane-forgot','pane-newpw'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = id === pane ? 'block' : 'none';
   });
@@ -4327,6 +4378,80 @@ async function handleLogin(e) {
     const raw = (err && (err.message || err.error_description || err.msg)) || '';
     showErr(raw ? String(raw) : T('auth.login.err'));
   }
+}
+
+/* ── Passwort vergessen / neu setzen ───────────────────────── */
+function authForgot(){
+  try{
+    var le=document.getElementById('l-email'), fe=document.getElementById('f-email');
+    if(le && fe && le.value) fe.value = le.value;
+  }catch(e){}
+  authTab('forgot');
+}
+
+async function handleForgot(e){
+  if(e && e.preventDefault) e.preventDefault();
+  var de = LANG==='de';
+  var el=document.getElementById('f-email'), btn=document.getElementById('f-btn'), err=document.getElementById('f-err');
+  var email=(el?el.value:'').trim().toLowerCase();
+  if(err) err.classList.remove('show');
+  if(!email){ if(err){ err.textContent=T('auth.reg.err'); err.classList.add('show'); } return false; }
+  if(btn){ btn.innerHTML='<span class="spin"></span>'; btn.disabled=true; }
+  await whenSRReady();
+  try{
+    if(!window.SR) throw new Error(T('auth.err.backend'));
+    await SR.resetPassword(email, location.origin + '/#recovery');
+  }catch(ex){
+    console.error('[SR] resetPassword', ex);
+    // Bewusst keine Unterscheidung: sonst liesse sich pruefen, welche Adressen existieren.
+  }
+  if(btn){ btn.innerHTML=T('auth.forgot.btn'); btn.disabled=false; }
+  showToast(T('auth.forgot.sent'),'ok');
+  authTab('login');
+  return false;
+}
+
+async function handleNewPassword(e){
+  if(e && e.preventDefault) e.preventDefault();
+  var de = LANG==='de';
+  var p1=document.getElementById('np-pw'), p2=document.getElementById('np-pw2');
+  var btn=document.getElementById('np-btn'), err=document.getElementById('np-err');
+  var a=(p1?p1.value:''), b=(p2?p2.value:'');
+  var fail=function(m){ if(err){ err.textContent=m; err.classList.add('show'); } if(btn){ btn.innerHTML=T('auth.newpw.btn'); btn.disabled=false; } };
+  if(err) err.classList.remove('show');
+  if(a.length<8) return fail(T('auth.newpw.short')), false;
+  if(a!==b)      return fail(T('auth.newpw.match')), false;
+  if(btn){ btn.innerHTML='<span class="spin"></span>'; btn.disabled=true; }
+  await whenSRReady();
+  try{
+    if(!window.SR) throw new Error(T('auth.err.backend'));
+    await SR.updatePassword(a);
+    try{ history.replaceState(null,'', location.pathname + location.search); }catch(ex){}
+    showToast(T('auth.newpw.ok'),'ok');
+    closeModal('modal-auth');
+    var u=await SR.getUser();
+    if(u){ var prof=await SR.ensureProfile(u); await loginOk(buildAppUser(prof)); }
+  }catch(ex){
+    console.error('[SR] updatePassword', ex);
+    return fail(((ex && ex.message) || T('auth.login.err'))), false;
+  }
+  if(btn){ btn.innerHTML=T('auth.newpw.btn'); btn.disabled=false; }
+  return false;
+}
+
+/* Kommt der Nutzer über den Rücksetz-Link, öffnet sich direkt das Passwort-Formular. */
+function handleRecoveryLink(){
+  var h = location.hash || '';
+  if(h.indexOf('type=recovery')<0 && h.indexOf('#recovery')<0) return;
+  try{ openAuth('login'); }catch(e){}
+  try{ authTab('newpw'); }catch(e){}
+}
+
+/* Passwort im Account ändern (nutzt dieselbe Ansicht wie der Rücksetz-Link). */
+function acctChangePassword(){
+  closeModal('modal-profile');
+  try{ openAuth('login'); }catch(e){}
+  try{ authTab('newpw'); }catch(e){}
 }
 
 async function handleRegister(e) {
@@ -5064,6 +5189,9 @@ function _acctSettings(){
     '<div class="acct-lab">'+(de?'Konto':'Account')+'</div>'+
     '<div class="acct-item"><span class="acct-item-t">'+(de?'E-Mail':'Email')+
       '<span class="acct-item-s">'+esc(APP.user.email)+'</span></span></div>'+
+    '<div class="acct-item"><span class="acct-item-t">'+(de?'Passwort':'Password')+
+      '<span class="acct-item-s">'+(de?'Regelmäßig ändern erhöht die Sicherheit':'Changing it regularly improves security')+'</span></span>'+
+      '<button class="acct-mini" onclick="acctChangePassword()">'+(de?'Ändern':'Change')+'</button></div>'+
     '<div style="margin-top:16px">'+
       '<button class="acct-mini danger" onclick="confirmDeleteAccount()">'+_acctIcon('trash-2',13)+' '+T('prof.del')+'</button>'+
       '<div class="acct-hint">'+T('prof.del.hint')+'</div>'+
@@ -5129,18 +5257,33 @@ async function doDeleteAccount() {
     showToast(T('toast.email.mismatch'), 'err');
     return;
   }
-  // Remove the user's own jobs (RLS permits deleting own rows), then sign out.
-  // Full removal of the auth account requires a server-side admin call and is
-  // handled on request via info@service-radar.com.
+  // Vollstaendige Loeschung (DSGVO Art. 17) ueber die Serverfunktion /api/delete-account:
+  // sie entfernt Auftraege, Bewerbungen, Nachrichten, Bewertungen, Profil UND das Auth-Konto.
+  const de = LANG === 'de';
   try {
     if (window.SR) {
-      try { await loadOwnerJobs(); } catch(e){}
-      for (const j of (STATE.ownerJobs || [])) {
-        try { await window.sb.from('jobs').delete().eq('id', j.id); } catch(e){}
+      let token = '';
+      try { const sess = await SR.getSession(); token = (sess && sess.access_token) || ''; } catch(e){}
+      if (token) {
+        const r = await fetch('/api/delete-account', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ access_token: token }),
+        });
+        const out = await r.json().catch(() => ({}));
+        if (!r.ok) {
+          console.error('[SR] deleteAccount', out);
+          showToast((de ? 'Löschen fehlgeschlagen' : 'Deletion failed') + (out.error ? ': ' + out.error : '.'), 'err');
+          return;
+        }
       }
-      await SR.signOut();
+      try { await SR.signOut(); } catch(e){}
     }
-  } catch (e) { console.error('[SR] deleteAccount', e); }
+  } catch (e) {
+    console.error('[SR] deleteAccount', e);
+    showToast(de ? 'Löschen fehlgeschlagen.' : 'Deletion failed.', 'err');
+    return;
+  }
   APP.user = null; APP.activeChatId = null;
   STATE.apps = []; STATE.ownerJobs = []; STATE.threads = []; STATE.threadMap = {};
   closeModal('modal-delete-account');
@@ -6582,6 +6725,8 @@ function bindEventListeners() {
 document.addEventListener('DOMContentLoaded', initApp);
 document.addEventListener('DOMContentLoaded', function(){ try{ registerServiceWorker(); }catch(e){} });
 window.addEventListener('hashchange', handleProfileHash);
+document.addEventListener('DOMContentLoaded', function(){ try{ handleRecoveryLink(); }catch(e){} });
+window.addEventListener('hashchange', function(){ try{ handleRecoveryLink(); }catch(e){} });
 document.addEventListener('DOMContentLoaded', bindAuthForms);
 try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind right away
 // EIN einmaliger Settle-Aufruf nachdem alle Ressourcen (Fonts/Bilder) geladen sind.

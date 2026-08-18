@@ -1369,7 +1369,7 @@ body.acct-open{
  <div class="cp-rate" style="color:#9a6700;font-weight:600">8–12 €/h</div>
  </div>
  <div class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#f8f0ff,#fbefff);border-color:#d8b4fe">
- <div class="cp-icon" style="background:rgba(102,57,186,.1);font-size:26px"><i data-lucide="screwdriver" width="26" height="26"></i></div>
+ <div class="cp-icon" style="background:rgba(102,57,186,.1);font-size:26px"><i data-lucide="wrench" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.furniture">Möbel aufbauen</div>
  <div class="cp-rate" style="color:#6639ba;font-weight:600">12–18 €/h</div>
  </div>
@@ -4808,15 +4808,30 @@ async function acctSaveProfile(){
   if(!name){ showToast(de?'Bitte gib deinen Namen an.':'Please enter your name.','err'); return; }
   var btn=document.getElementById('acct-save');
   if(btn){ btn.disabled=true; btn.textContent = de?'Wird gespeichert…':'Saving…'; }
+  var bioSaved = true;
   try{
-    await SR.updateProfile(APP.user.id, { full_name:name, city:city, bio:bio });
-    APP.user.name=name; APP.user.city=city; APP.user.bio=bio;
+    try{
+      await SR.updateProfile(APP.user.id, { full_name:name, city:city, bio:bio });
+    }catch(inner){
+      // Aeltere Datenbankschemas haben keine Spalte "bio" -> dann ohne sie speichern,
+      // damit Name und Ort trotzdem gesichert werden.
+      var im = ((inner && (inner.message || inner.details || inner.hint)) || '') + '';
+      if(/bio/i.test(im) || /column/i.test(im) || /schema cache/i.test(im)){
+        await SR.updateProfile(APP.user.id, { full_name:name, city:city });
+        bioSaved = false;
+      } else { throw inner; }
+    }
+    APP.user.name=name; APP.user.city=city; if(bioSaved) APP.user.bio=bio;
     try{ updateNav(); }catch(e){}
-    showToast(de?'Profil gespeichert.':'Profile saved.','ok');
+    showToast(bioSaved
+      ? (de?'Profil gespeichert.':'Profile saved.')
+      : (de?'Gespeichert – „Über mich" konnte nicht gesichert werden.':'Saved – "About me" could not be stored.'),
+      bioSaved ? 'ok' : 'err');
     acctGo('home');
   }catch(e){
     console.error('[SR] updateProfile', e);
-    showToast(de?'Speichern fehlgeschlagen.':'Saving failed.','err');
+    var em = ((e && (e.message || e.details || e.hint)) || '') + '';
+    showToast((de?'Speichern fehlgeschlagen':'Saving failed') + (em ? ': ' + em : '.'), 'err');
     if(btn){ btn.disabled=false; btn.textContent = de?'Speichern':'Save'; }
   }
 }
@@ -4920,7 +4935,6 @@ function _acctProfile(){
     '<div class="acct-lab">'+T('prof.verifstand')+'</div>'+
     '<div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">'+T('prof.v.email')+'</span></div>'+
     '<div class="verif-item"><div class="verif-dot '+(u.consentAGB?'done':'open')+'">'+(u.consentAGB?'✓':'○')+'</div><span style="font-size:13px">'+T('prof.v.agb')+'</span></div>'+
-    '<div class="verif-item"><div class="verif-dot open">○</div><span style="font-size:13px;color:var(--c-ink3)">'+T('prof.v.id')+' <span class="acct-tag">'+T('prof.soon')+'</span></span></div>'+
 
     '<button class="acct-mini" style="margin-top:16px" onclick="openPublicProfile(\''+esc(String(u.id))+'\')">'+_acctIcon('external-link',13)+' '+(de?'Öffentliches Profil ansehen':'View public profile')+'</button>'+
   '</div>';

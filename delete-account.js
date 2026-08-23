@@ -57,7 +57,7 @@ module.exports = async function handler(req, res) {
   await del('reviews',      'reviewed_user_id=eq.' + userId);
   await del('saved_jobs',   'user_id=eq.' + userId);
   await del('push_subscriptions', 'user_id=eq.' + userId);
-  await del('jobs',         'owner_id=eq.' + userId);
+  await del('jobs',         'user_id=eq.' + userId);
   await del('profiles',     'id=eq.' + userId);
 
   // 3) Auth-Konto endgültig löschen

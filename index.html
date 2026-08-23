@@ -2237,11 +2237,11 @@ body.acct-open{
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">messages (Supabase)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Chat-Nachrichten – serverseitig in Supabase gespeichert</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">90 Tage nach Auftragsende</td></tr>
  <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_cookie_consent</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Gespeicherte Cookie-Entscheidung mit Zeitstempel</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">12 Monate</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_safety_acked</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bestätigung Sicherheitshinweise</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">§ 25 Abs. 2 Nr. 2 TTDSG</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Dauerhaft</td></tr>
- <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_bans / sr_warns_*</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Sperr- und Verwarndaten (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
+ <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">user_bans / user_warnings (Server)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Sperr- und Verwarndaten (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">__stripe_*</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Betrugsschutz bei Stripe-Zahlungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Session</td></tr>
  <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">applications (Supabase)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bewerbungen – serverseitig in Supabase gespeichert</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_ratings</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Nutzerbewertungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">90 Tage nach Auftragsende</td></tr>
- <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_reports</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Gemeldete Inhalte/Nutzer (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
+ <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">reports (Server)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Gemeldete Inhalte/Nutzer (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">rl_* (Rate-Limit-Keys)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Missbrauchsprävention (Rate Limiting)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">1–24 Stunden</td></tr>
  </tbody>
  </table>
@@ -3881,7 +3881,7 @@ function calcTrustScore(user) {
   if (user.newsletter !== undefined) score += 5;
   const apps = getUserApps(user.email);
   score += Math.min(apps.length * 5, 20); // up to 20 from activity
-  const warns = getWarnings(user.email);
+  const warns = getWarnings();
   score -= warns.length * 15;
   score = Math.max(0, Math.min(100, score));
   return score;
@@ -3894,32 +3894,32 @@ function getTrustLabel(score) {
   return { label: T('ts.limited'), cls: 'trust-warned' };
 }
 
-/* ── Warnings / Strikes ──────────────────────────── */
-function getWarnings(email) {
-  try { return JSON.parse(localStorage.getItem('sr_warns_' + email) || '[]'); } catch { return []; }
-}
-function addWarning(email, reason) {
-  const warns = getWarnings(email);
-  warns.push({ reason, ts: Date.now() });
-  localStorage.setItem('sr_warns_' + email, JSON.stringify(warns));
-  // Auto-ban after 3 warnings
-  if (warns.length >= 3) banUser(email, 'Automatische Sperre: 3 Verwarnungen');
+/* ── Verwarnungen & Sperren (serverseitig) ─────────
+   Diese Angaben lagen frueher im localStorage. Damit galten sie nur auf einem
+   Geraet und liessen sich durch Loeschen der Websitedaten umgehen. Jetzt kommen
+   sie aus der Datenbank (Tabellen user_warnings / user_bans, per RLS liest jeder
+   nur seine eigenen Eintraege; setzen darf sie ausschliesslich der Server). */
+STATE.warnings = [];
+STATE.ban = null;
+
+async function loadModeration(){
+  STATE.warnings = []; STATE.ban = null;
+  if(!window.SR || !APP.user || !window.sb) return;
+  try{
+    var w = await window.sb.from('user_warnings').select('reason, created_at')
+      .eq('user_id', APP.user.id).order('created_at', { ascending:false });
+    STATE.warnings = (w && w.data) || [];
+  }catch(e){}
+  try{
+    var b = await window.sb.from('user_bans').select('reason, until')
+      .eq('user_id', APP.user.id).maybeSingle();
+    var row = b && b.data;
+    if(row && (!row.until || new Date(row.until) > new Date())) STATE.ban = row;
+  }catch(e){}
 }
 
-/* ── Ban System ──────────────────────────────────── */
-function getBans() {
-  try { return JSON.parse(localStorage.getItem('sr_bans') || '[]'); } catch { return []; }
-}
-function banUser(email, reason) {
-  const bans = getBans();
-  if (!bans.find(b => b.email === email)) {
-    bans.push({ email, reason, ts: Date.now() });
-    localStorage.setItem('sr_bans', JSON.stringify(bans));
-  }
-}
-function isBanned(email) {
-  return getBans().some(b => b.email === email);
-}
+function getWarnings(){ return STATE.warnings || []; }
+function isBanned(){ return !!STATE.ban; }
 
 /* ── Reports ─────────────────────────────────────── */
 function getReports() {
@@ -3964,16 +3964,21 @@ function submitReport() {
   };
   saveReport(report);
   // Zusaetzlich an den Betreiber melden (lokale Ablage bleibt fuer die Sperr-Logik erhalten).
-  try {
-    fetch('/api/report', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: report.type, targetId: report.targetId, targetLabel: report.targetLabel,
-        reason: report.reason, detail: report.detail, reporterEmail: report.reporterEmail,
-      }),
-    }).catch(function(){});
-  } catch (e) {}
+  (async function(){
+    try{
+      var token=''; try{ var sess=await SR.getSession(); token=(sess&&sess.access_token)||''; }catch(e){}
+      if(!token) return;
+      var r = await fetch('/api/report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({
+          type: report.type, targetId: report.targetId,
+          targetLabel: report.targetLabel, reason: report.reason, detail: report.detail,
+        }),
+      });
+      if(r.status===429) showToast(T('toast.report.limit'),'err');
+    }catch(e){}
+  })();
   // Auto-check: if job has 3+ reports, flag it
   if (_reportContext?.type === 'job') {
     const jobReports = getReports().filter(r => r.targetId === _reportContext.targetId && r.type === 'job');
@@ -4035,7 +4040,7 @@ async function submitRating() {
   if (APP._pendingRatingRevieweeId && window.SR && APP.user) {
     try {
       await SR.createReview({ job_id: APP._pendingRatingJobId || null, reviewer_id: APP.user.id, reviewee_id: APP._pendingRatingRevieweeId, rating: _currentRating, comment: text.slice(0,300) });
-      try { notifyUser(APP._pendingRatingRevieweeId, (LANG==='de'?'Neue Bewertung':'New review'), (LANG==='de'?'Du hast eine neue Bewertung erhalten.':'You received a new review.'), location.origin+'/'); } catch(e){}
+      try { notifyUser(APP._pendingRatingRevieweeId, 'review'); } catch(e){}
       APP._pendingRatingRevieweeId = null; APP._pendingRatingJobId = null;
       closeModal('modal-rating');
       showToast(T('toast.rating.saved'), 'ok');
@@ -4759,7 +4764,7 @@ async function sendMsg(){
     const row=await SR.sendMessage({ job_id:t.jobId, sender_id:APP.user.id, receiver_id:t.otherId, message:txt });
     (t.msgs=t.msgs||[]).push(row);
     t.lastTs=Date.parse(row.created_at); t.lastMsg=txt;
-    try { notifyUser(t.otherId, (APP.user.name||'Service Radar'), txt, location.origin+'/'); } catch(e){}
+    try { notifyUser(t.otherId, 'message'); } catch(e){}
     localStorage.setItem('sr_seen_'+t.key, String(Date.now()));
     renderMsgs(t.key);
   } catch(e){ console.error('[SR] sendMessage', e); showToast(T('toast.chat.sendfail'),'err'); if(inp) inp.value=txt; }
@@ -4785,6 +4790,7 @@ async function openProfile(){
   await loadReceivedApplications();
   await loadSavedJobs();
   await refreshPushStatus();
+  await loadModeration();
   if(_acctIsOpen()) renderAccount();
 }
 
@@ -5022,8 +5028,18 @@ function _acctHome(){
   if(u.city) meta.push(esc(u.city));
   meta.push(isClient?(de?'Auftraggeber':'Client'):(de?'Helfer':'Helper'));
 
+  var modBox = '';
+  if(isBanned()){
+    modBox = '<div class="warn-box" style="margin-bottom:14px"><strong>'+T('prof.banned')+'</strong> '+
+             T('prof.banned.contact')+' <a href="mailto:info@service-radar.com">info@service-radar.com</a></div>';
+  } else if(getWarnings().length){
+    var wn = getWarnings().length;
+    modBox = '<div class="warn-box" style="margin-bottom:14px"><strong>'+wn+' '+
+             (de ? ('Verwarnung'+(wn>1?'en':'')) : ('Warning'+(wn>1?'s':'')))+'</strong> – '+T('prof.warn.text')+'</div>';
+  }
+
   return _acctBar(de?'Account':'Account', false)+
-  '<div class="acct-body">'+
+  '<div class="acct-body">'+ modBox +
     '<div class="acct-hero">'+
       '<div class="acct-ava">'+avatarHtml(u.name,u.avatar_url,58)+'</div>'+
       '<div class="acct-hid">'+
@@ -5474,13 +5490,21 @@ function pushStatusHtml(){
     '<div style="font-size:12.5px;color:var(--c-ink3);margin-bottom:10px">'+(LANG==='de'?'Erhalte sofort Hinweise zu neuen Nachrichten, Bewerbungen und Bewertungen.':'Get instant alerts for new messages, applications and reviews.')+'</div>'+
     '<button class="btn btn-dark btn-sm" onclick="enablePushNotifications()"> '+(LANG==='de'?'Aktivieren':'Enable')+'</button></div>';
 }
-// Best-effort Push an einen Nutzer (Server prüft Subscriptions; Fehler nur geloggt)
-function notifyUser(userId, title, body, url){
-  if(!userId) return;
+// Best-effort Push an einen Nutzer.
+// Titel und Text kommen bewusst NICHT mehr von hier, sondern aus festen Vorlagen
+// auf dem Server – sonst koennte jemand fremde Push-Nachrichten in deinem Namen
+// verschicken. Uebergeben wird nur die Art der Benachrichtigung.
+async function notifyUser(userId, kind, jobTitleText){
+  if(!userId || !kind) return;
   try{
-    fetch('/api/send-push-notification', { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ user_id:userId, title:title, body:body, url:url||(location.origin+'/') }) })
-      .catch(function(e){ console.error('Push send error:', e); });
+    var token = '';
+    try { var sess = await SR.getSession(); token = (sess && sess.access_token) || ''; } catch(e){}
+    if(!token) return;
+    fetch('/api/send-push-notification', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+      body: JSON.stringify({ user_id:userId, kind:kind, jobTitle:jobTitleText||'', lang:LANG })
+    }).catch(function(e){ console.error('Push send error:', e); });
   }catch(e){ console.error('Push send error:', e); }
 }
 
@@ -5584,7 +5608,7 @@ async function doCloseJob(id){
   if(STATE.jobMap && STATE.jobMap[sid]) STATE.jobMap[sid].status='closed';
   STATE.ownerJobs=(STATE.ownerJobs||[]).map(function(j){ return String(j.id)===sid?Object.assign({},j,{status:'closed'}):j; });
   _afterJobChange();
-  try { (STATE.threads||[]).filter(function(t){return String(t.jobId)===String(id);}).forEach(function(t){ notifyUser(t.otherId, (LANG==='de'?'Auftrag abgeschlossen':'Job completed'), (LANG==='de'?'Ein Auftrag wurde als abgeschlossen markiert.':'A job was marked as completed.'), location.origin+'/'); }); } catch(e){}
+  try { (STATE.threads||[]).filter(function(t){return String(t.jobId)===String(id);}).forEach(function(t){ notifyUser(t.otherId, 'job_done'); }); } catch(e){}
   showToast(LANG==='de'?'Auftrag abgeschlossen. Du kannst deinen Helfer jetzt im Chat bewerten.':'Job completed. You can now rate your helper in the chat.','ok');
 }
 
@@ -5671,7 +5695,7 @@ function openJobDetail(id){
 ══════════════════════════════════════════════════════ */
 function openApply(jobId){
   if(!APP.user){APP._resumeJobId=jobId;closeModal('modal-job');openAuth('login');showToast(T('toast.needlogin'));return}
-  if(isBanned(APP.user.email)){showToast(T('toast.banned'),'err');return}
+  if(isBanned()){showToast(T('toast.banned'),'err');return}
   // Rate limit: max 15 applications per day
   if(!checkRateLimit('apply')){
     showToast(T('toast.apply.limit'),'err');return;
@@ -5701,7 +5725,7 @@ async function submitApply(){
   try {
     await SR.createApplication({ job_id: job.id, helper_id: APP.user.id, message: msg });
     await SR.sendMessage({ job_id: job.id, sender_id: APP.user.id, receiver_id: job.poster, message: msg });
-    try { notifyUser(job.poster, (LANG==='de'?'Neue Bewerbung':'New application'), (LANG==='de'?'Neue Bewerbung auf „':'New application for "')+jobTitle(job)+'"', location.origin+'/'); } catch(e){}
+    try { notifyUser(job.poster, 'application', jobTitle(job)); } catch(e){}
   } catch(e){
     console.error('[SR] submitApply', e);
     if(btn){ btn.disabled = false; }
@@ -6657,7 +6681,7 @@ async function initApp() {
     });
     updateNav();
     await loadJobs();
-    if (APP.user) { await loadThreads(); updateBadge(); try{ await loadSavedJobs(); renderJobCards(); addMarkers(); }catch(e){} }
+    if (APP.user) { await loadThreads(); updateBadge(); try{ await loadSavedJobs(); renderJobCards(); addMarkers(); }catch(e){} try{ await loadModeration(); }catch(e){} }
     try { await handlePaymentReturn(); } catch (e) { console.error('[SR] payment return', e); }
     try { handleProfileHash(); } catch (e) {}
   } else {

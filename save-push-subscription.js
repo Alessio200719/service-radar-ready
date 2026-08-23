@@ -6,6 +6,7 @@
 // Body: { user_id, subscription }  (subscription = das PushSubscription-Objekt)
 // ============================================================
 const { createClient } = require('@supabase/supabase-js');
+const { verifyUser, readBody } = require('./_auth');
 
 module.exports = async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
@@ -17,11 +18,17 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
-    const user_id = body.user_id;
+    // Der Aufrufer muss angemeldet sein. Die Nutzer-ID kommt AUS DEM TOKEN –
+    // sonst koennte jemand eine eigene Push-Adresse unter fremder ID eintragen
+    // und dadurch fremde Benachrichtigungen mitlesen.
+    const caller = await verifyUser(req);
+    if (!caller) return res.status(401).json({ error: 'Nicht angemeldet.' });
+
+    const body = readBody(req);
+    const user_id = caller.id;
     const subscription = body.subscription;
-    if (!user_id || !subscription || !subscription.endpoint) {
-      return res.status(400).json({ error: 'user_id und subscription (mit endpoint) erforderlich.' });
+    if (!subscription || !subscription.endpoint) {
+      return res.status(400).json({ error: 'subscription (mit endpoint) erforderlich.' });
     }
 
     const sb = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });

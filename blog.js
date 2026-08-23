@@ -11,7 +11,7 @@ function nlSub(e){
     body:JSON.stringify({email:email})
   }).then(function(r){return r.json();}).then(function(d){
     m.style.color=d.ok?'#1a7f37':'#cf222e';
-    m.textContent=d.ok?'✅ Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.':(d.error||'Es ist ein Fehler aufgetreten.');
+    m.textContent=d.ok?' Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.':(d.error||'Es ist ein Fehler aufgetreten.');
     if(d.ok){var f=document.getElementById('nlf'); if(f) f.reset();}
   }).catch(function(){ m.style.color='#cf222e'; m.textContent='Netzwerkfehler – bitte später erneut versuchen.'; });
   return false;

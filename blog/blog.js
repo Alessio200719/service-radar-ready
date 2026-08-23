@@ -9,10 +9,18 @@ function nlSub(e){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email})
-  }).then(function(r){return r.json();}).then(function(d){
+  }).then(function(r){
+    // Antwort kann bei einem Serverfehler auch HTML sein -> nicht blind als JSON lesen
+    return r.text().then(function(t){
+      var d={}; try{ d=JSON.parse(t); }catch(e){ d={ error:'Serverfehler (HTTP '+r.status+')' }; }
+      if(!r.ok && !d.error) d.error='Serverfehler (HTTP '+r.status+')';
+      if(r.status===404) d.error='Newsletter-Funktion nicht gefunden (HTTP 404).';
+      return d;
+    });
+  }).then(function(d){
     m.style.color=d.ok?'#1a7f37':'#cf222e';
-    m.textContent=d.ok?' Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.':(d.error||'Es ist ein Fehler aufgetreten.');
+    m.textContent=d.ok?'Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.':(d.error||'Es ist ein Fehler aufgetreten.');
     if(d.ok){var f=document.getElementById('nlf'); if(f) f.reset();}
-  }).catch(function(){ m.style.color='#cf222e'; m.textContent='Netzwerkfehler – bitte später erneut versuchen.'; });
+  }).catch(function(err){ m.style.color='#cf222e'; m.textContent='Keine Verbindung zum Server.'; console.error('[SR] newsletter', err); });
   return false;
 }

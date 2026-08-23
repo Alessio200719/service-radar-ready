@@ -830,6 +830,15 @@ body.acct-open{
 }
 /* Rechtstext-Ansicht: breiter, angenehme Lesetypografie */
 .legal-acct{max-width:760px}
+/* Tabellen in den Rechtstexten: auf schmalen Bildschirmen seitlich scrollbar.
+   Ohne das ragen die Spalten unsichtbar aus dem Bild heraus. */
+.imp-box table,.legal-view-body table{width:100%;border-collapse:collapse}
+@media(max-width:700px){
+  .imp-box table,.legal-view-body table{display:block;overflow-x:auto;white-space:nowrap;
+    -webkit-overflow-scrolling:touch;border:1px solid var(--c-bds);border-radius:8px}
+  .imp-box table td,.imp-box table th,
+  .legal-view-body table td,.legal-view-body table th{white-space:normal;min-width:150px}
+}
 .legal-view-body{padding:22px 22px 34px;font-size:14.5px;line-height:1.7;color:var(--c-ink2)}
 .legal-view-body h2{font-size:18px;font-weight:700;color:var(--c-ink);margin:22px 0 8px;letter-spacing:-.01em}
 .legal-view-body h3{font-size:15px;font-weight:700;color:var(--c-ink);margin:18px 0 6px}

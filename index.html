@@ -3946,6 +3946,17 @@ function saveReport(report) {
 let _reportContext = null;
 function openReport(type, targetId, targetLabel) {
   if (!APP.user) { openAuth('login'); showToast(T('toast.needlogin2')); return; }
+  // Sich selbst bzw. eigene Auftraege kann niemand melden.
+  var de = LANG === 'de';
+  if (type === 'user' && String(targetId) === String(APP.user.id)) {
+    showToast(de ? 'Du kannst dich nicht selbst melden.' : 'You cannot report yourself.', 'err'); return;
+  }
+  if (type === 'job') {
+    var _j = null; try { _j = getJobById(targetId); } catch(e){}
+    if (_j && String(_j.poster) === String(APP.user.id)) {
+      showToast(de ? 'Du kannst deinen eigenen Auftrag nicht melden.' : 'You cannot report your own job.', 'err'); return;
+    }
+  }
   if (!checkRateLimit('report')) {
     showToast(T('toast.report.limit'), 'err'); return;
   }
@@ -4926,7 +4937,13 @@ function renderPublicProfile(p, reviews){
       stat(p.review_count||0, LANG==='de'?'Bewertungen':'Reviews')+
     '</div>'+
     '<div class="prof-sec-title">'+(LANG==='de'?'Bewertungen':'Reviews')+'</div>'+
-    '<div class="pj-list">'+(rv||('<div class="pj-empty">'+(LANG==='de'?'Noch keine Bewertungen.':'No reviews yet.')+'</div>'))+'</div>';
+    '<div class="pj-list">'+(rv||('<div class="pj-empty">'+(LANG==='de'?'Noch keine Bewertungen.':'No reviews yet.')+'</div>'))+'</div>'+
+    // Melden nur anzeigen, wenn es nicht das eigene Profil ist
+    ((APP.user && String(p.id)!==String(APP.user.id))
+      ? ('<div style="text-align:center;margin-top:18px;padding-top:16px;border-top:1px solid var(--c-bds)">'+
+         '<button class="acct-mini danger" onclick="closeModal(\'modal-pubprofile\');openReport(\'user\',\''+esc(String(p.id))+'\',\''+esc(name.replace(/'/g,""))+'\')">'+
+         (LANG==='de'?'Diesen Nutzer melden':'Report this user')+'</button></div>')
+      : '');
 }
 function rateChatPartner(){
   var t=APP.activeThread; if(!t || !APP.user) return;

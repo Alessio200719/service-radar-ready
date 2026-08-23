@@ -12,7 +12,39 @@
 //     serverseitig auf 'flagged' gesetzt (nicht mehr nur im Browser).
 // ============================================================
 const { createClient } = require('@supabase/supabase-js');
-const { verifyUser, readBody } = require('./_auth');
+// ── Hilfsfunktionen (bewusst hier eingebettet statt in einer eigenen Datei,
+//    damit keine Datei mit Unterstrich noetig ist) ──────────────────────────
+const _SB_URL = process.env.SUPABASE_URL || '';
+const _SB_ANON = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+/** Prueft das Zugangs-Token des Aufrufers und liefert { id, email } oder null. */
+async function verifyUser(req) {
+  if (!_SB_URL || !_SB_ANON) return null;
+  let token = '';
+  const h = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+  if (h && /^Bearer\s+/i.test(h)) token = h.replace(/^Bearer\s+/i, '').trim();
+  if (!token) {
+    let b = req.body;
+    if (typeof b === 'string') { try { b = JSON.parse(b); } catch (e) { b = {}; } }
+    token = (b && b.access_token) || '';
+  }
+  if (!token) return null;
+  try {
+    const r = await fetch(_SB_URL + '/auth/v1/user', {
+      headers: { apikey: _SB_ANON, Authorization: 'Bearer ' + token },
+    });
+    if (!r.ok) return null;
+    const u = await r.json();
+    return u && u.id ? { id: u.id, email: u.email || '' } : null;
+  } catch (e) { return null; }
+}
+
+/** Body zuverlaessig als Objekt lesen. */
+function readBody(req) {
+  let b = req.body;
+  if (typeof b === 'string') { try { b = JSON.parse(b); } catch (e) { b = {}; } }
+  return b || {};
+}
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const FROM = process.env.NEWSLETTER_FROM || 'Service Radar <noreply@service-radar.com>';
@@ -37,11 +69,26 @@ module.exports = async function handler(req, res) {
   if (!reason) return res.status(400).json({ error: 'reason fehlt.' });
   if (type !== 'job' && type !== 'user') return res.status(400).json({ error: 'Ungültiger Typ.' });
 
+  // Selbstmeldung auch serverseitig ausschliessen (das Frontend allein reicht nicht)
+  if (type === 'user' && tid === caller.id) {
+    return res.status(400).json({ error: 'Selbstmeldung ist nicht möglich.' });
+  }
+
   const SUPABASE_URL = process.env.SUPABASE_URL || '';
   const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   let sb = null;
   if (SUPABASE_URL && SERVICE_KEY) {
     sb = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  }
+
+  // Bei Auftrags-Meldungen pruefen, ob der Auftrag dem Melder selbst gehoert
+  if (sb && type === 'job') {
+    try {
+      const j = await sb.from('jobs').select('user_id').eq('id', tid).maybeSingle();
+      if (j.data && j.data.user_id === caller.id) {
+        return res.status(400).json({ error: 'Eigene Aufträge können nicht gemeldet werden.' });
+      }
+    } catch (e) {}
   }
 
   // 1) Bremse: wie viele Meldungen hat dieser Nutzer in der letzten Stunde abgesetzt?

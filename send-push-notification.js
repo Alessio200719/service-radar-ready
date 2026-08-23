@@ -16,7 +16,39 @@
 // ============================================================
 const webpush = require('web-push');
 const { createClient } = require('@supabase/supabase-js');
-const { verifyUser, readBody } = require('./_auth');
+// ── Hilfsfunktionen (bewusst hier eingebettet statt in einer eigenen Datei,
+//    damit keine Datei mit Unterstrich noetig ist) ──────────────────────────
+const _SB_URL = process.env.SUPABASE_URL || '';
+const _SB_ANON = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+
+/** Prueft das Zugangs-Token des Aufrufers und liefert { id, email } oder null. */
+async function verifyUser(req) {
+  if (!_SB_URL || !_SB_ANON) return null;
+  let token = '';
+  const h = (req.headers && (req.headers.authorization || req.headers.Authorization)) || '';
+  if (h && /^Bearer\s+/i.test(h)) token = h.replace(/^Bearer\s+/i, '').trim();
+  if (!token) {
+    let b = req.body;
+    if (typeof b === 'string') { try { b = JSON.parse(b); } catch (e) { b = {}; } }
+    token = (b && b.access_token) || '';
+  }
+  if (!token) return null;
+  try {
+    const r = await fetch(_SB_URL + '/auth/v1/user', {
+      headers: { apikey: _SB_ANON, Authorization: 'Bearer ' + token },
+    });
+    if (!r.ok) return null;
+    const u = await r.json();
+    return u && u.id ? { id: u.id, email: u.email || '' } : null;
+  } catch (e) { return null; }
+}
+
+/** Body zuverlaessig als Objekt lesen. */
+function readBody(req) {
+  let b = req.body;
+  if (typeof b === 'string') { try { b = JSON.parse(b); } catch (e) { b = {}; } }
+  return b || {};
+}
 
 const RATE_MAX = 20;          // Benachrichtigungen
 const RATE_WINDOW_MS = 3600e3; // pro Stunde

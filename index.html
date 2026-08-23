@@ -3807,9 +3807,17 @@ function srNewsletter(e){
   var email=inp?inp.value:'';
   if(m){ m.style.color='var(--c-ink4)'; m.textContent=T('nl.sending'); }
   fetch('/api/newsletter-subscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'footer'})})
-    .then(function(r){return r.json();})
+    .then(function(r){
+      // Bei einem Serverfehler kommt evtl. HTML zurueck -> nicht blind als JSON lesen
+      return r.text().then(function(t){
+        var d={}; try{ d=JSON.parse(t); }catch(e){ d={ error:'Serverfehler (HTTP '+r.status+')' }; }
+        if(r.status===404) d.error='Newsletter-Funktion nicht gefunden (HTTP 404).';
+        else if(!r.ok && !d.error) d.error='Serverfehler (HTTP '+r.status+')';
+        return d;
+      });
+    })
     .then(function(d){ if(!m) return; m.style.color=d.ok?'var(--c-green)':'var(--c-red)'; m.textContent=d.ok?T('nl.ok'):(d.error||T('nl.err')); if(d.ok){var f=document.getElementById('srNlForm'); if(f) f.reset();} })
-    .catch(function(){ if(m){ m.style.color='var(--c-red)'; m.textContent=T('nl.err'); } });
+    .catch(function(err){ console.error('[SR] newsletter', err); if(m){ m.style.color='var(--c-red)'; m.textContent='Keine Verbindung zum Server.'; } });
   return false;
 }
 function mobileHome(){ _closeAllModals(); try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }

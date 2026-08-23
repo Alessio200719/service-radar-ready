@@ -69,11 +69,26 @@ module.exports = async function handler(req, res) {
   if (!reason) return res.status(400).json({ error: 'reason fehlt.' });
   if (type !== 'job' && type !== 'user') return res.status(400).json({ error: 'Ungültiger Typ.' });
 
+  // Selbstmeldung auch serverseitig ausschliessen (das Frontend allein reicht nicht)
+  if (type === 'user' && tid === caller.id) {
+    return res.status(400).json({ error: 'Selbstmeldung ist nicht möglich.' });
+  }
+
   const SUPABASE_URL = process.env.SUPABASE_URL || '';
   const SERVICE_KEY  = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
   let sb = null;
   if (SUPABASE_URL && SERVICE_KEY) {
     sb = createClient(SUPABASE_URL, SERVICE_KEY, { auth: { persistSession: false } });
+  }
+
+  // Bei Auftrags-Meldungen pruefen, ob der Auftrag dem Melder selbst gehoert
+  if (sb && type === 'job') {
+    try {
+      const j = await sb.from('jobs').select('user_id').eq('id', tid).maybeSingle();
+      if (j.data && j.data.user_id === caller.id) {
+        return res.status(400).json({ error: 'Eigene Aufträge können nicht gemeldet werden.' });
+      }
+    } catch (e) {}
   }
 
   // 1) Bremse: wie viele Meldungen hat dieser Nutzer in der letzten Stunde abgesetzt?

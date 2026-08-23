@@ -8,16 +8,17 @@ const { createClient } = require('@supabase/supabase-js');
 
 const SITE = (process.env.SITE_URL || 'https://service-radar.com').replace(/\/$/, '');
 
-function htmlPage(title, msg, ok) {
+function htmlPage(title, msg, ok, extra) {
   return '<!DOCTYPE html><html lang="de"><head><meta charset="utf-8">'
     + '<meta name="viewport" content="width=device-width, initial-scale=1">'
     + '<meta name="robots" content="noindex,nofollow"><title>' + title + ' | Service Radar</title>'
     + '<style>body{font-family:system-ui,-apple-system,sans-serif;background:#f6f8fa;color:#0f1117;display:flex;min-height:100vh;align-items:center;justify-content:center;margin:0;padding:20px}'
     + '.c{background:#fff;border:1px solid #d0d7de;border-radius:16px;padding:32px;max-width:440px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.06)}'
-    + '.e{font-size:40px}h1{font-size:21px;margin:10px 0 8px}p{color:#586069;line-height:1.6;margin:0 0 18px}'
+    + 'h1{font-size:21px;margin:10px 0 8px}p{color:#586069;line-height:1.6;margin:0 0 18px}'
     + 'a{display:inline-block;background:#0f1117;color:#fff;padding:11px 20px;border-radius:10px;text-decoration:none;font-weight:700}</style></head>'
-    + '<body><div class="c"><div class="e">' + (ok ? '✅' : '⚠️') + '</div><h1>' + title + '</h1><p>' + msg + '</p>'
-    + '<a href="' + SITE + '/">Zur Startseite</a></div></body></html>';
+    + '<body><div class="c"><h1>' + title + '</h1><p>' + msg + '</p>'
+    + '<a href="' + SITE + '/">Zur Startseite</a>'
+    + (extra || '') + '</div></body></html>';
 }
 
 module.exports = async function handler(req, res) {
@@ -36,7 +37,10 @@ module.exports = async function handler(req, res) {
     if (!found.data.confirmed) {
       await sb.from('newsletter_subscribers').update({ confirmed: true, confirmed_at: new Date().toISOString() }).eq('id', found.data.id);
     }
-    return res.status(200).send(htmlPage('Anmeldung bestätigt', 'Danke! Deine Newsletter-Anmeldung ist jetzt aktiv. Du kannst dich jederzeit wieder abmelden.', true));
+    return res.status(200).send(htmlPage('Anmeldung bestätigt',
+      'Danke! Deine Newsletter-Anmeldung ist jetzt aktiv.', true,
+      '<p style="font-size:12.5px;color:#8b949e;margin-top:18px">Du kannst dich jederzeit wieder abmelden: '
+      + '<a href="' + SITE + '/api/newsletter-unsubscribe?token=' + encodeURIComponent(tok) + '" style="background:none;color:#586069;padding:0;text-decoration:underline;font-weight:400">Newsletter abbestellen</a></p>'));
   } catch (e) {
     console.error('Newsletter confirm error:', e);
     return res.status(500).send(htmlPage('Fehler', 'Es ist ein Fehler aufgetreten. Bitte versuche es später erneut.', false));

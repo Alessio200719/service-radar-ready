@@ -120,6 +120,9 @@ button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:tr
 .foot-nl-form input{flex:1;min-width:180px;border:1px solid var(--c-bd);border-radius:var(--r1);padding:11px 14px;font-size:16px;font-family:inherit;background:var(--c-bg);color:var(--c-ink)}
 .foot-nl-msg{font-size:13px;color:var(--c-ink4)}
 .foot-nl-msg:empty{display:none}
+.foot-nl-off{font-size:12.5px;margin-top:6px}
+.foot-nl-off a{color:var(--c-ink4);cursor:pointer;text-decoration:underline}
+.foot-nl-off a:hover{color:var(--c-ink2)}
 @media(max-width:600px){.foot-nl{flex-direction:column;align-items:flex-start}.foot-nl-form{max-width:none;width:100%}}
 h1,h2,h3,h4{font-family:var(--f);line-height:1.15;letter-spacing:-.025em;font-weight:800}
 img,canvas{max-width:100%}
@@ -2333,6 +2336,7 @@ body.acct-open{
  </form>
  </div>
  <div class="foot-nl-msg" id="srNlMsg" role="status"></div>
+ <div class="foot-nl-off"><a onclick="srNewsletterOff()" data-i18n="nl.off">Newsletter abbestellen</a></div>
  <div class="foot-bot">
  <span data-i18n="foot.copy">© 2026 Service Radar – Alessio Cicatello. Alle Rechte vorbehalten.</span>
  </div>
@@ -3142,6 +3146,9 @@ const I18N = {
   'foot.blog':{de:'Blog', en:'Blog'},
   'nl.title':{de:'Newsletter', en:'Newsletter'},
   'nl.sub':{de:'Neue Aufträge & Tipps aus deiner Region – kostenlos, jederzeit abbestellbar.', en:'New tasks & tips from your region – free, unsubscribe anytime.'},
+  'nl.off':          {de:'Newsletter abbestellen', en:'Unsubscribe from newsletter'},
+  'nl.off.ask':      {de:'Bitte trage oben deine E-Mail-Adresse ein und klicke dann erneut auf „Newsletter abbestellen“.', en:'Please enter your email above, then click “Unsubscribe” again.'},
+  'nl.off.ok':       {de:'Du wurdest abgemeldet. Falls die Adresse angemeldet war, erhältst du keine E-Mails mehr.', en:'You have been unsubscribed. If the address was subscribed, you will receive no further emails.'},
   'nl.ph':{de:'Deine E-Mail-Adresse', en:'Your email address'},
   'nl.btn':{de:'Abonnieren', en:'Subscribe'},
   'nl.sending':{de:'Senden…', en:'Sending…'},
@@ -3820,6 +3827,35 @@ function srNewsletter(e){
     .catch(function(err){ console.error('[SR] newsletter', err); if(m){ m.style.color='var(--c-red)'; m.textContent='Keine Verbindung zum Server.'; } });
   return false;
 }
+/* Newsletter abbestellen – nutzt dasselbe Eingabefeld wie die Anmeldung */
+function srNewsletterOff(){
+  var m=document.getElementById('srNlMsg'), inp=document.getElementById('srNlEmail');
+  var email=(inp?inp.value:'').trim();
+  if(!email){
+    if(m){ m.style.color='var(--c-ink4)'; m.textContent=T('nl.off.ask'); }
+    if(inp){ try{ inp.focus(); }catch(e){} }
+    return false;
+  }
+  if(m){ m.style.color='var(--c-ink4)'; m.textContent=T('nl.sending'); }
+  fetch('/api/newsletter-unsubscribe',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})})
+    .then(function(r){
+      return r.text().then(function(t){
+        var d={}; try{ d=JSON.parse(t); }catch(e){ d={ error:'Serverfehler (HTTP '+r.status+')' }; }
+        if(r.status===404) d.error='Abmelde-Funktion nicht gefunden (HTTP 404).';
+        else if(!r.ok && !d.error) d.error='Serverfehler (HTTP '+r.status+')';
+        return d;
+      });
+    })
+    .then(function(d){
+      if(!m) return;
+      m.style.color = d.ok ? 'var(--c-green)' : 'var(--c-red)';
+      m.textContent = d.ok ? T('nl.off.ok') : (d.error || T('nl.err'));
+      if(d.ok){ var f=document.getElementById('srNlForm'); if(f) f.reset(); }
+    })
+    .catch(function(err){ console.error('[SR] unsubscribe', err); if(m){ m.style.color='var(--c-red)'; m.textContent='Keine Verbindung zum Server.'; } });
+  return false;
+}
+
 function mobileHome(){ _closeAllModals(); try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }
 function mobileMap(){ _closeAllModals(); try{ scrollToJobs(); }catch(e){} }
 function mobileChats(){ _closeAllModals(); try{ openChats(); }catch(e){} }

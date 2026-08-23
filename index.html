@@ -2778,7 +2778,7 @@ body.acct-open{
  <div class="warn-box" style="font-size:12.5px">
  <span data-i18n="rep.warn">Falsche oder missbräuchliche Meldungen können zur Sperrung deines Kontos führen.</span>
  </div>
- <button class="btn btn-danger btn-full btn-lg" onclick="submitReport()" style="font-size:15px" data-i18n="rep.submit">Meldung absenden</button>
+ <button class="btn btn-danger btn-full btn-lg" id="report-submit" onclick="submitReport()" style="font-size:15px" data-i18n="rep.submit">Meldung absenden</button>
  </div>
  </div>
 </div>
@@ -3986,29 +3986,49 @@ function submitReport() {
     status: 'open',
   };
   saveReport(report);
-  // Zusaetzlich an den Betreiber melden (lokale Ablage bleibt fuer die Sperr-Logik erhalten).
-  (async function(){
-    try{
-      var token=''; try{ var sess=await SR.getSession(); token=(sess&&sess.access_token)||''; }catch(e){}
-      if(!token) return;
-      var r = await fetch('/api/report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-        body: JSON.stringify({
-          type: report.type, targetId: report.targetId,
-          targetLabel: report.targetLabel, reason: report.reason, detail: report.detail,
-        }),
-      });
-      if(r.status===429) showToast(T('toast.report.limit'),'err');
-    }catch(e){}
-  })();
-  // Auto-check: if job has 3+ reports, flag it
-  if (_reportContext?.type === 'job') {
-    const jobReports = getReports().filter(r => r.targetId === _reportContext.targetId && r.type === 'job');
-    if (jobReports.length >= 3) flagJob(_reportContext.targetId);
+  _sendReport(report);
+}
+
+/* Meldung an den Server schicken. Die Rueckmeldung ist ehrlich: Erfolg wird erst
+   gemeldet, wenn der Server sie wirklich angenommen hat – frueher erschien
+   "Meldung gesendet" auch dann, wenn gar nichts uebertragen wurde. */
+async function _sendReport(report){
+  var de = LANG === 'de';
+  var btn = document.getElementById('report-submit');
+  if (btn) { btn.disabled = true; }
+  try{
+    var token = '';
+    try { var sess = await SR.getSession(); token = (sess && sess.access_token) || ''; } catch(e){}
+    if(!token){
+      closeModal('modal-report');
+      showToast(de ? 'Bitte melde dich neu an – die Sitzung ist abgelaufen.' : 'Please sign in again – your session expired.', 'err');
+      return;
+    }
+    var r = await fetch('/api/report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({
+        type: report.type, targetId: report.targetId,
+        targetLabel: report.targetLabel, reason: report.reason, detail: report.detail,
+      }),
+    });
+    var d = {}; try { d = await r.json(); } catch(e){}
+    closeModal('modal-report');
+    if (r.ok) {
+      showToast(T('toast.report.sent'), 'ok');
+    } else if (r.status === 429) {
+      showToast(T('toast.report.limit'), 'err');
+    } else {
+      console.error('[SR] report', r.status, d);
+      showToast((de ? 'Meldung fehlgeschlagen' : 'Report failed') + (d.error ? ': ' + d.error : ' (HTTP ' + r.status + ')'), 'err');
+    }
+  }catch(e){
+    console.error('[SR] report', e);
+    closeModal('modal-report');
+    showToast(de ? 'Meldung fehlgeschlagen – keine Verbindung.' : 'Report failed – no connection.', 'err');
+  }finally{
+    if (btn) btn.disabled = false;
   }
-  closeModal('modal-report');
-  showToast(T('toast.report.sent'), 'ok');
 }
 
 /* ── Job flagging (auto-hide after 3 reports) ───── */

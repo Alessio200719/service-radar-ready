@@ -100,15 +100,23 @@ module.exports = async function handler(req, res) {
       if (typeof cnt.count === 'number' && cnt.count >= REPORTS_PER_HOUR) {
         return res.status(429).json({ error: 'Zu viele Meldungen. Bitte warte eine Stunde.' });
       }
-    } catch (e) { /* Tabelle evtl. noch nicht angelegt -> nicht blockieren */ }
+    } catch (e) { /* Tabelle evtl. noch nicht angelegt -> Zaehlung ueberspringen */ }
 
-    // 2) Meldung speichern
+    // 2) Meldung speichern – Fehler hier NICHT verschlucken, sonst meldet die
+    //    Seite Erfolg, obwohl nichts in der Datenbank gelandet ist.
     try {
-      await sb.from('reports').insert({
+      const ins = await sb.from('reports').insert({
         reporter_id: caller.id, target_type: type, target_id: tid,
         target_label: label, reason: reason, detail: detail,
       });
-    } catch (e) { console.error('[SR] report insert', e && e.message); }
+      if (ins.error) {
+        console.error('[SR] report insert', ins.error);
+        return res.status(500).json({ error: 'Speichern fehlgeschlagen: ' + (ins.error.message || 'unbekannt') });
+      }
+    } catch (e) {
+      console.error('[SR] report insert', e && e.message);
+      return res.status(500).json({ error: 'Speichern fehlgeschlagen.' });
+    }
 
     // 3) Ab 3 Meldungen: Auftrag serverseitig markieren
     if (type === 'job' && tid) {

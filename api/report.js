@@ -91,8 +91,14 @@ module.exports = async function handler(req, res) {
     } catch (e) {}
   }
 
-  // 1) Bremse: wie viele Meldungen hat dieser Nutzer in der letzten Stunde abgesetzt?
-  if (sb) {
+  // Betreiber (ADMIN_EMAILS) sind von der Bremse ausgenommen – sonst blockiert
+  // sich der Betreiber beim Testen selbst.
+  const _adminList = (process.env.ADMIN_EMAILS || 'info@service-radar.com')
+    .split(',').map((x) => x.trim().toLowerCase()).filter(Boolean);
+  const isAdmin = _adminList.indexOf((caller.email || '').toLowerCase()) >= 0;
+
+  // 1) Bremse – gilt nicht für Betreiber, damit du beim Testen nicht ausgesperrt wirst
+  if (sb && !isAdmin) {
     try {
       const since = new Date(Date.now() - 3600e3).toISOString();
       const cnt = await sb.from('reports').select('id', { count: 'exact', head: true })
@@ -101,7 +107,10 @@ module.exports = async function handler(req, res) {
         return res.status(429).json({ error: 'Zu viele Meldungen. Bitte warte eine Stunde.' });
       }
     } catch (e) { /* Tabelle evtl. noch nicht angelegt -> Zaehlung ueberspringen */ }
+  }
 
+  // Speichern und Auto-Markierung gelten für ALLE, auch für Betreiber
+  if (sb) {
     // 2) Meldung speichern – Fehler hier NICHT verschlucken, sonst meldet die
     //    Seite Erfolg, obwohl nichts in der Datenbank gelandet ist.
     try {

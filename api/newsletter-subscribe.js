@@ -14,7 +14,7 @@ function token() {
   return (Date.now().toString(36) + Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 40);
 }
 
-async function sendConfirmation(email, confirmUrl) {
+async function sendConfirmation(email, confirmUrl, unsubUrl) {
   const key = process.env.RESEND_API_KEY;
   const from = process.env.NEWSLETTER_FROM || 'Service Radar <newsletter@service-radar.com>';
   if (!key) return { sent: false, reason: 'no_provider' };
@@ -25,10 +25,12 @@ async function sendConfirmation(email, confirmUrl) {
       body: JSON.stringify({
         from: from, to: [email], subject: 'Bitte bestätige deinen Service-Radar-Newsletter',
         html: '<div style="font-family:system-ui,sans-serif;max-width:480px;margin:auto">'
-          + '<h2 style="color:#0f1117">Fast geschafft 👋</h2>'
+          + '<h2 style="color:#0f1117">Fast geschafft</h2>'
           + '<p style="color:#586069;line-height:1.6">Bitte bestätige deine Anmeldung zum Service-Radar-Newsletter mit einem Klick:</p>'
-          + '<p><a href="' + confirmUrl + '" style="display:inline-block;background:#0f1117;color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:700">Anmeldung bestätigen</a></p>'
-          + '<p style="color:#8b949e;font-size:12px">Wenn du das nicht warst, ignoriere diese E-Mail einfach.</p></div>'
+          + '<p><a href="' + confirmUrl + '" style="display:inline-block;background:#0f1117;color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:600">Anmeldung bestätigen</a></p>'
+          + '<p style="color:#8b949e;font-size:12px">Wenn du das nicht warst, ignoriere diese E-Mail einfach.</p>'
+          + '<p style="color:#8b949e;font-size:12px;border-top:1px solid #d0d7de;padding-top:12px;margin-top:18px">'
+          + 'Du willst doch keine E-Mails? <a href="' + unsubUrl + '" style="color:#586069">Hier abmelden</a>.</p></div>'
       })
     });
     return { sent: r.ok };
@@ -61,7 +63,8 @@ module.exports = async function handler(req, res) {
       if (ins.error) { console.error('Newsletter insert error:', ins.error); return res.status(500).json({ ok: false, error: ins.error.message }); }
     }
     const confirmUrl = SITE + '/api/newsletter-confirm?token=' + encodeURIComponent(tok);
-    const mail = await sendConfirmation(email, confirmUrl);
+    const unsubUrl   = SITE + '/api/newsletter-unsubscribe?token=' + encodeURIComponent(tok);
+    const mail = await sendConfirmation(email, confirmUrl, unsubUrl);
     return res.status(200).json({ ok: true, emailed: mail.sent });
   } catch (e) {
     console.error('Newsletter subscribe error:', e);

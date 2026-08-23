@@ -901,6 +901,18 @@ body.acct-open{
 .acct-btn{width:100%;padding:11px;border-radius:9px;background:var(--c-ink);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px}
 .acct-btn:hover{opacity:.9}
 .acct-btn:disabled{opacity:.55;cursor:not-allowed}
+/* Moderation (nur Betreiber) */
+.mod-card{background:var(--c-bg);border:1px solid var(--c-bd);border-radius:12px;padding:14px;margin-bottom:12px}
+.mod-card.open{border-color:#f2c6c6}
+.mod-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.mod-kind{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;padding:2px 8px;border-radius:20px;background:var(--c-bg1);border:1px solid var(--c-bds);color:var(--c-ink3)}
+.mod-kind.alarm{background:#fff1e5;border-color:#ffb77c;color:#9a6700}
+.mod-date{font-size:12px;color:var(--c-ink4);margin-left:auto}
+.mod-reason{font-size:14.5px;font-weight:600;margin-bottom:4px}
+.mod-meta{font-size:12.5px;color:var(--c-ink3);line-height:1.6}
+.mod-quote{font-size:13px;color:var(--c-ink2);background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:8px;padding:9px 11px;margin-top:9px;white-space:pre-wrap;line-height:1.55}
+.mod-acts{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid var(--c-bds)}
+.mod-done{opacity:.55}
 @media(max-width:600px){
   .acct{margin:0;max-width:none;min-height:100dvh;border:none;border-radius:0}
   .acct-bar{position:sticky;top:0;z-index:2;border-radius:0}
@@ -4457,6 +4469,15 @@ async function handleNewPassword(e){
 
 /* Kommt der Nutzer über den Rücksetz-Link, öffnet sich direkt das Passwort-Formular.
    Geprüft wird der gemerkte Hash UND der aktuelle – je nachdem, was noch vorhanden ist. */
+function handleModerationLink(){
+  try{
+    if((location.hash||'').indexOf('moderation')<0) return;
+    if(!_isAdmin()) return;
+    history.replaceState(null,'', location.pathname + location.search);
+    openProfile().then(function(){ acctGo('mod'); }).catch(function(){});
+  }catch(e){}
+}
+
 function handleRecoveryLink(){
   var h = (_srInitialHash || '') + ' ' + (location.hash || '');
 
@@ -4924,7 +4945,7 @@ function handleProfileHash(){
    Ebene 1: kompakte Uebersicht · Ebene 2: Detailansicht.
    Alle Daten/Loader/Supabase-Aufrufe werden wiederverwendet.
 ══════════════════════════════════════════════════════ */
-var ACCT_VIEWS = ['home','profile','activity','reviews','settings','legal'];
+var ACCT_VIEWS = ['home','profile','activity','reviews','settings','legal','mod'];
 
 function _acctIsOpen(){ var m=document.getElementById('modal-profile'); return !!(m && m.classList.contains('open')); }
 function _acctIcon(n,s){ return '<i data-lucide="'+n+'" width="'+(s||18)+'" height="'+(s||18)+'"></i>'; }
@@ -4935,6 +4956,7 @@ function acctGo(view){
   renderAccount();
   var sc=document.querySelector('#modal-profile .acct-scroll'); if(sc) sc.scrollTop=0;
   if(APP._acctView==='reviews') _acctLoadReviews();
+  if(APP._acctView==='mod') _modLoad();
 }
 function acctBack(){ acctGo('home'); }
 
@@ -5063,6 +5085,7 @@ function _acctHome(){
       _acctRow('message-square', T('nav.messages'),             chats+' '+(de?(chats===1?'Unterhaltung':'Unterhaltungen'):(chats===1?'conversation':'conversations')), "closeModal('modal-profile');openChats()", unread>0?unread:0)+
       _acctRow('settings',       de?'Einstellungen':'Settings',  de?'Sprache, Benachrichtigungen, Konto':'Language, notifications, account', "acctGo('settings')")+
       _acctRow('life-buoy',      de?'Hilfe & Rechtliches':'Help & legal', de?'AGB, Datenschutz, Impressum':'Terms, privacy, imprint', "acctGo('legal')")+
+      (_isAdmin() ? _acctRow('shield-check', de?'Moderation':'Moderation', de?'Gemeldete Aufträge und Nutzer prüfen':'Review reported jobs and users', "acctGo('mod')") : '')+
     '</div>'+
 
     '<button class="acct-out" onclick="logout();closeModal(\'modal-profile\')">'+_acctIcon('log-out',16)+' '+T('nav.logout')+'</button>'+
@@ -5260,6 +5283,137 @@ function _acctLegal(){
       lrow(de?'Cookie-Richtlinie':'Cookie policy','cookie')+
       lrow(de?'Impressum':'Imprint','impressum')+
     '</div>'+
+  '</div>';
+}
+
+/* ── Moderation (nur Betreiber) ─────────────────────────────
+   Zeigt alle Meldungen mit vollem Kontext und erlaubt direktes Handeln.
+   Die eigentliche Berechtigung prüft der Server (ADMIN_EMAILS); die Liste
+   hier steuert nur, ob der Menüpunkt sichtbar ist. */
+var ADMIN_EMAILS = ['info@service-radar.com','alessiocicatello@icloud.com'];
+function _isAdmin(){
+  try{ return !!APP.user && ADMIN_EMAILS.indexOf((APP.user.email||'').toLowerCase())>=0; }catch(e){ return false; }
+}
+
+async function _modLoad(force){
+  if(!_isAdmin()) return;
+  if(APP._modLoading) return;
+  if(Array.isArray(APP._modReports) && !force) return;
+  APP._modLoading = true;
+  try{
+    var token=''; try{ var sess=await SR.getSession(); token=(sess&&sess.access_token)||''; }catch(e){}
+    var r = await fetch('/api/admin-reports', { headers:{ 'Authorization':'Bearer '+token } });
+    var d = await r.json().catch(function(){ return {}; });
+    APP._modReports = r.ok ? (d.reports||[]) : [];
+    APP._modError = r.ok ? '' : (d.error || ('HTTP '+r.status));
+  }catch(e){
+    console.error('[SR] Moderation laden', e);
+    APP._modReports = []; APP._modError = (e && e.message) || 'Fehler';
+  }
+  APP._modLoading = false;
+  if(_acctIsOpen() && APP._acctView==='mod') renderAccount();
+}
+
+async function modAction(reportId, action, label){
+  if(!reportId || !action) return;
+  var de = LANG==='de';
+  if(action==='ban_user' || action==='delete_job'){
+    if(!confirm(de ? ('Wirklich ausführen: '+label+'?') : ('Really perform: '+label+'?'))) return;
+  }
+  try{
+    var token=''; try{ var sess=await SR.getSession(); token=(sess&&sess.access_token)||''; }catch(e){}
+    var r = await fetch('/api/admin-reports', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer '+token },
+      body: JSON.stringify({ report_id:reportId, action:action })
+    });
+    var d = await r.json().catch(function(){ return {}; });
+    if(!r.ok){ showToast((de?'Fehlgeschlagen':'Failed')+(d.error?': '+d.error:''),'err'); return; }
+    showToast(de?'Erledigt.':'Done.','ok');
+    await _modLoad(true);
+    try{ await loadJobs(); renderJobCards(); addMarkers(); }catch(e){}
+  }catch(e){
+    console.error('[SR] modAction', e);
+    showToast(LANG==='de'?'Fehlgeschlagen.':'Failed.','err');
+  }
+}
+
+function _acctMod(){
+  var de = LANG==='de';
+  var list = APP._modReports;
+  var body = '';
+
+  if(!Array.isArray(list)){
+    body = '<div class="acct-empty">'+(de?'Meldungen werden geladen…':'Loading reports…')+'</div>';
+  } else if(APP._modError){
+    body = '<div class="acct-empty">'+(de?'Zugriff nicht möglich: ':'Access failed: ')+esc(APP._modError)+'</div>';
+  } else if(!list.length){
+    body = '<div class="acct-empty">'+(de?'Keine Meldungen vorhanden.':'No reports.')+'</div>';
+  } else {
+    var open = list.filter(function(r){ return r.status==='open'; });
+    var done = list.filter(function(r){ return r.status!=='open'; });
+
+    var card = function(r){
+      var isJob = r.target_type==='job';
+      var t = r.job || r.user || null;
+      var subject = isJob
+        ? (r.job ? esc(r.job.title) : esc(r.target_label||r.target_id))
+        : (r.user ? esc(r.user.full_name) : esc(r.target_label||r.target_id));
+      var who = isJob
+        ? (r.jobOwner ? (esc(r.jobOwner.full_name)+' · '+esc(r.jobOwner.email)) : '–')
+        : (r.user ? (esc(r.user.email)+' · ★ '+esc(r.user.rating||0)+' aus '+esc(r.user.review_count||0)) : '–');
+      var when = r.created_at ? new Date(r.created_at).toLocaleString(de?'de-DE':'en-GB') : '';
+      var many = (r.totalForTarget||1) >= 3;
+
+      var acts = [];
+      if(r.status==='open'){
+        if(isJob){
+          if(r.job && r.job.status==='flagged')
+            acts.push('<button class="acct-mini" onclick="modAction(\''+r.id+'\',\'unflag_job\')">'+(de?'Wieder freigeben':'Unflag')+'</button>');
+          else
+            acts.push('<button class="acct-mini" onclick="modAction(\''+r.id+'\',\'flag_job\')">'+(de?'Ausblenden':'Hide')+'</button>');
+          acts.push('<button class="acct-mini danger" onclick="modAction(\''+r.id+'\',\'delete_job\',\''+(de?'Auftrag löschen':'Delete job')+'\')">'+(de?'Auftrag löschen':'Delete job')+'</button>');
+        }
+        acts.push('<button class="acct-mini" onclick="modAction(\''+r.id+'\',\'warn_user\')">'+(de?'Verwarnen':'Warn')+'</button>');
+        if(r.banned)
+          acts.push('<button class="acct-mini" onclick="modAction(\''+r.id+'\',\'unban_user\')">'+(de?'Sperre aufheben':'Unban')+'</button>');
+        else
+          acts.push('<button class="acct-mini danger" onclick="modAction(\''+r.id+'\',\'ban_user\',\''+(de?'Nutzer sperren':'Ban user')+'\')">'+(de?'Sperren':'Ban')+'</button>');
+        acts.push('<button class="acct-mini" onclick="modAction(\''+r.id+'\',\'mark_reviewed\')">'+(de?'Erledigt':'Mark done')+'</button>');
+      } else {
+        acts.push('<span class="acct-tag">'+(r.status==='reviewed'?(de?'geprüft':'reviewed'):(de?'geschlossen':'closed'))+'</span>');
+      }
+
+      return '<div class="mod-card'+(r.status==='open'?' open':' mod-done')+'">'+
+        '<div class="mod-top">'+
+          '<span class="mod-kind'+(many?' alarm':'')+'">'+(isJob?(de?'Auftrag':'Job'):(de?'Nutzer':'User'))+
+            (many ? (' · '+r.totalForTarget+'×') : '')+'</span>'+
+          (r.banned ? '<span class="mod-kind alarm">'+(de?'gesperrt':'banned')+'</span>' : '')+
+          '<span class="mod-date">'+when+'</span>'+
+        '</div>'+
+        '<div class="mod-reason">'+esc(r.reason)+'</div>'+
+        '<div class="mod-meta">'+
+          '<b>'+subject+'</b><br>'+
+          (isJob ? (de?'Ersteller: ':'Owner: ') : (de?'Konto: ':'Account: '))+who+
+          (isJob && r.job ? ('<br>'+esc(r.job.price)+' € · '+esc(r.job.city||'–')+' · '+(de?'Status: ':'Status: ')+esc(r.job.status)) : '')+
+          '<br>'+(de?'Gemeldet von: ':'Reported by: ')+(r.reporter ? esc(r.reporter.email) : '–')+
+        '</div>'+
+        (r.detail ? '<div class="mod-quote">'+esc(r.detail)+'</div>' : '')+
+        (isJob && r.job && r.job.description ? '<div class="mod-quote">'+esc(String(r.job.description).slice(0,400))+'</div>' : '')+
+        '<div class="mod-acts">'+acts.join('')+'</div>'+
+      '</div>';
+    };
+
+    body =
+      '<div class="acct-lab first">'+(de?'Offen':'Open')+' ('+open.length+')</div>'+
+      (open.length ? open.map(card).join('') : '<div class="acct-empty">'+(de?'Nichts Offenes.':'Nothing open.')+'</div>')+
+      (done.length ? ('<div class="acct-lab">'+(de?'Erledigt':'Handled')+' ('+done.length+')</div>'+done.slice(0,30).map(card).join('')) : '');
+  }
+
+  return _acctBar(de?'Moderation':'Moderation', true)+
+  '<div class="acct-body">'+
+    '<button class="acct-mini" style="margin-bottom:14px" onclick="_modLoad(true)">'+(de?'Aktualisieren':'Refresh')+'</button>'+
+    body+
   '</div>';
 }
 
@@ -6783,6 +6937,7 @@ document.addEventListener('DOMContentLoaded', initApp);
 document.addEventListener('DOMContentLoaded', function(){ try{ registerServiceWorker(); }catch(e){} });
 window.addEventListener('hashchange', handleProfileHash);
 document.addEventListener('DOMContentLoaded', function(){ try{ handleRecoveryLink(); }catch(e){} });
+window.addEventListener('load', function(){ setTimeout(function(){ try{ handleModerationLink(); }catch(e){} }, 1200); });
 window.addEventListener('hashchange', function(){ try{ handleRecoveryLink(); }catch(e){} });
 document.addEventListener('DOMContentLoaded', bindAuthForms);
 try { bindAuthForms(); } catch (e) {}  // forms exist above this script; bind right away

@@ -3957,9 +3957,9 @@ function openReport(type, targetId, targetLabel) {
       showToast(de ? 'Du kannst deinen eigenen Auftrag nicht melden.' : 'You cannot report your own job.', 'err'); return;
     }
   }
-  if (!checkRateLimit('report')) {
-    showToast(T('toast.report.limit'), 'err'); return;
-  }
+  // Die Begrenzung prueft jetzt der Server (5 Meldungen pro Stunde, Betreiber
+  // ausgenommen). Die frueher hier genutzte Zaehlung lag im localStorage, war
+  // umgehbar und zaehlte auch fehlgeschlagene Versuche mit.
   _reportContext = { type, targetId, targetLabel };
   const info = document.getElementById('report-target-info');
   if (info) info.textContent = `${type === 'job' ? T('rep.target.job') : T('rep.target.user')}: ${targetLabel}`;

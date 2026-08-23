@@ -1,88 +1,63 @@
+// ============================================================
+// Service Radar – SSR /jobs/[stadt]
+// (Vercel rewrite: /jobs/:city -> /api/jobs-city?city=:city)
+// Standort-SEO aus ECHTEN Daten: nur Städte mit genug aktiven Jobs
+// werden indexiert (sonst noindex,follow -> kein Thin-Content-Spam).
+// ============================================================
 'use strict';
-
 const S = require('./_ssr');
 
 module.exports = async function handler(req, res) {
-  const city = (req.query && req.query.city ? String(req.query.city) : 'stuttgart')
-    .toLowerCase()
-    .replace(/[^a-zäöüß-]/gi, '');
+  const raw = (req.query && req.query.city ? String(req.query.city) : '').toLowerCase();
+  const slug = S.slugify(raw);
+  if (!slug) { res.setHeader('Location', S.SITE + '/#jobs'); return res.status(302).end(); }
 
-  const cityName = city
-    .split('-')
-    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(' ');
+  const phrase = slug.replace(/-/g, ' ');           // "esslingen am neckar"
+  const cityName = phrase.replace(/\b\w/g, c => c.toUpperCase());
 
-  const title = `Jobs und Aufträge in ${cityName}`;
-  const desc = `Finde lokale Aufträge, Helfer und Dienstleistungen in ${cityName} über Service Radar.`;
+  let jobs = [], cities = [];
+  try { jobs = await S.fetchJobs({ cityIlike: phrase, limit: 30 }); } catch (e) {}
+  try { cities = await S.topCities(); } catch (e) {}
+
+  const enough = jobs.length >= S.CITY_MIN_JOBS;
+  const robots = enough ? 'index,follow,max-image-preview:large' : 'noindex,follow';
+
+  const jobsHtml = jobs.length
+    ? '<div class="grid">' + jobs.map(S.jobCardHtml).join('') + '</div>'
+    : '<div class="empty">Aktuell keine offenen Aufträge in ' + S.esc(cityName) + '. <a href="' + S.SITE + '/#jobs">Auftrag einstellen</a> oder <a href="' + S.SITE + '/leistungen">Leistungen ansehen →</a></div>';
+
+  const svcChips = S.SERVICE_ORDER.map(s =>
+    '<a class="chip" href="' + S.SITE + '/leistungen/' + s + '">' + S.SERVICES[s].emoji + ' ' + S.esc(S.SERVICES[s].title) + '</a>').join('');
+  const otherCities = (cities || []).filter(c => c.slug !== slug).slice(0, 10)
+    .map(c => '<a class="chip" href="' + S.SITE + '/jobs/' + c.slug + '">📍 ' + S.esc(c.name) + '</a>').join('')
+    || '<a class="chip" href="' + S.SITE + '/#jobs">Aufträge in deiner Nähe</a>';
+
+  const bc = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Start', item: S.SITE + '/' },
+    { '@type': 'ListItem', position: 2, name: 'Aufträge', item: S.SITE + '/#jobs' },
+    { '@type': 'ListItem', position: 3, name: cityName, item: S.SITE + '/jobs/' + slug }
+  ]};
+  const ld = [bc];
+  if (enough) {
+    ld.push({ '@context': 'https://schema.org', '@type': 'CollectionPage',
+      name: 'Aufträge in ' + cityName, url: S.SITE + '/jobs/' + slug,
+      about: { '@type': 'Place', name: cityName }, inLanguage: 'de-DE' });
+  }
+
+  const body = '<section class="hero"><div class="bc"><a href="' + S.SITE + '/">Start</a> › <a href="' + S.SITE + '/#jobs">Aufträge</a> › ' + S.esc(cityName) + '</div>'
+    + '<h1>Aufträge & Helfer in ' + S.esc(cityName) + '</h1>'
+    + '<p class="lead">Finde aktuelle lokale Aufgaben in ' + S.esc(cityName) + ' und Umgebung – Gartenarbeit, Reinigung, Haushaltshilfe, Umzug und mehr. Oder stelle selbst einen Auftrag ein.</p></section>'
+    + '<section class="sec"><h2 class="h">Aktuelle Aufträge in ' + S.esc(cityName) + '</h2>' + jobsHtml + '</section>'
+    + '<section class="sec"><h2 class="h">Beliebte Leistungen</h2><div class="chips">' + svcChips + '</div></section>'
+    + '<section class="sec"><h2 class="h">Weitere Regionen</h2><div class="chips">' + otherCities + '</div></section>'
+    + '<section class="sec">' + S.newsletterBlock() + '</section>';
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=3600');
-
-  const html = `<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>${S.esc(title)} | Service Radar</title>
-<meta name="description" content="${S.esc(desc)}">
-<link rel="canonical" href="${S.SITE}/jobs/${S.esc(city)}">
-
-<meta name="robots" content="index,follow,max-image-preview:large">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="${S.esc(title)}">
-<meta property="og:description" content="${S.esc(desc)}">
-<meta property="og:url" content="${S.SITE}/jobs/${S.esc(city)}">
-<meta property="og:site_name" content="Service Radar">
-
-<style>
-body{font-family:Inter,Arial,sans-serif;margin:0;background:#fff;color:#101418}
-header{border-bottom:1px solid #eef0f3;padding:18px 24px}
-main{max-width:980px;margin:0 auto;padding:56px 24px}
-a{color:#0b66d8;text-decoration:none}
-h1{font-size:44px;line-height:1.08;margin:0 0 18px}
-p{font-size:18px;line-height:1.65;color:#586069}
-.card{border:1px solid #d8dee4;border-radius:16px;padding:22px;background:#fff;margin-top:20px}
-.btn{display:inline-block;background:#101418;color:#fff;padding:12px 18px;border-radius:10px;margin-top:16px}
-footer{border-top:1px solid #eef0f3;margin-top:60px;padding:24px;color:#586069}
-</style>
-</head>
-<body>
-
-<header>
-<strong>Service Radar</strong>
-</header>
-
-<main>
-<h1>${S.esc(title)}</h1>
-
-<p>${S.esc(desc)}</p>
-
-<div class="card">
-  <h2>Lokale Hilfe in ${S.esc(cityName)} finden</h2>
-  <p>
-    Über Service Radar kannst du Aufträge in deiner Nähe entdecken oder selbst einen Auftrag einstellen.
-    Geeignet für Gartenarbeit, Reinigung, Haushaltshilfe, Umzugshilfe, Nachhilfe, Handwerk und weitere lokale Aufgaben.
-  </p>
-  <a class="btn" href="/">Aufträge ansehen</a>
-</div>
-
-<div class="card">
-  <h2>Auftrag einstellen</h2>
-  <p>
-    Beschreibe kurz, wobei du Hilfe brauchst, lege Ort und Vergütung fest und finde passende Helfer in deiner Umgebung.
-  </p>
-  <a class="btn" href="/">Jetzt starten</a>
-</div>
-</main>
-
-<footer>
-service-radar.com
-</footer>
-
-</body>
-</html>`;
-
-  return res.status(200).send(html);
+  res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=1800');
+  return res.status(200).send(S.page({
+    title: 'Aufträge & Helfer in ' + cityName + ' | Service Radar',
+    desc: 'Lokale Aufträge in ' + cityName + ' finden oder Helfer beauftragen: Gartenarbeit, Reinigung, Haushaltshilfe, Umzug u. v. m. – schnell, fair und sicher.',
+    canonical: S.SITE + '/jobs/' + slug, robots: robots,
+    bodyHtml: body, jsonld: ld, topCities: cities
+  }));
 };

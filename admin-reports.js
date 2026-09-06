@@ -131,7 +131,9 @@ module.exports = async function handler(req, res) {
       }
 
       if (action === 'flag_job')    await sb.from('jobs').update({ status: 'flagged' }).eq('id', rep.target_id);
-      if (action === 'unflag_job')  await sb.from('jobs').update({ status: 'active'  }).eq('id', rep.target_id);
+      // eq('status','flagged'): nur eine Markierung aufheben. Ohne den Filter
+      // wuerde ein unbezahlter Entwurf (status='pending') live geschaltet.
+      if (action === 'unflag_job')  await sb.from('jobs').update({ status: 'active'  }).eq('id', rep.target_id).eq('status', 'flagged');
       if (action === 'delete_job')  await sb.from('jobs').delete().eq('id', rep.target_id);
 
       if (action === 'warn_user' && targetUser) {

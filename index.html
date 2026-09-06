@@ -112,6 +112,36 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 /* App-Feeling auf Touch: kein graues Tap-Highlight, keine Textauswahl auf Bedienelementen */
 button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
 .btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
+
+/* ── A11y: Bedienelemente sind echte <button> ───────────────────
+   Diese Controls waren früher <div onclick> und damit per Tastatur nicht
+   erreichbar. Als <button> erben sie Fokus, Enter/Space und die richtige
+   Rolle für Screenreader. Der Reset stellt exakt die vorherige Optik wieder
+   her – Browser-Defaults für Schrift, Farbe und Breite werden neutralisiert. */
+.cat-pill,.cpick,.role-card,.pay-method,.user-pill{
+  font:inherit;color:inherit;margin:0;
+  -webkit-appearance:none;appearance:none;
+}
+/* Grid-/Spalten-Elemente fuellen ihre Zelle wie zuvor als <div> */
+.cat-pill,.cpick,.role-card,.pay-method{width:100%}
+.cat-pill,.cpick,.role-card{display:block}
+/* Das Nutzer-Pill in der Kopfzeile behaelt seine inhaltsabhaengige Breite */
+.user-pill{width:auto}
+
+/* ── A11y: sichtbarer Tastatur-Fokus ────────────────────────────
+   :focus-visible greift nur bei Tastaturbedienung – Mausklicks erzeugen
+   weiterhin keinen Fokusring, die Optik ändert sich für Maus-Nutzer nicht.
+   Farbe und Radius folgen den vorhandenen Tokens. */
+:where(a,button,input,select,textarea,summary,[tabindex]):focus-visible{
+  outline:2px solid var(--c-blue);
+  outline-offset:2px;
+  border-radius:var(--r0);
+}
+/* Elemente mit eigenem Radius behalten ihn im Fokusring */
+.cat-pill:focus-visible{border-radius:var(--r3)}
+.cpick:focus-visible,.role-card:focus-visible,.pay-method:focus-visible{border-radius:var(--r2)}
+.user-pill:focus-visible,.pill:focus-visible{border-radius:100px}
+.mcard:focus{outline:none}   /* Container erhält Fokus nur programmatisch */
 /* Footer-Newsletter */
 .foot-nl{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:22px 0;border-top:1px solid var(--c-bds);margin-top:8px}
 .foot-nl-h{font-weight:700;font-size:15px;color:var(--c-ink)}
@@ -716,6 +746,8 @@ html[lang="en"] #legal-de-note{display:block}
 .muted-link a{color:var(--c-blue);cursor:pointer}
 .mt-12{margin-top:12px}.mt-16{margin-top:16px}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+/* Dunkle Spinner-Variante fuer helle Flaechen – ersetzt frueher genutzte Emoji-Ladeanzeigen */
+.spin-dark{width:26px;height:26px;border-color:var(--c-bg2);border-top-color:var(--c-ink3)}
 
 /* ══ TOAST ═══════════════════════════════════════ */
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--c-ink);color:#fff;padding:12px 20px;border-radius:var(--r2);font-size:13.5px;font-weight:500;box-shadow:var(--sh4);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;display:flex;align-items:center;gap:8px}
@@ -1068,11 +1100,11 @@ body.acct-open{
  <button class="btn btn-dark btn-sm" onclick="openAuth('register')" data-i18n="nav.start">Kostenlos starten</button>
  </div>
  <div id="nav-user" class="user-area" style="display:none">
- <div class="user-pill" onclick="toggleDrop()">
+ <button type="button" class="user-pill" onclick="toggleDrop()">
  <div class="u-av" id="uAv">A</div>
  <span class="u-name" id="uName">User</span>
  <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>
- </div>
+ </button>
  <div class="udrop" id="udrop">
  <div class="udrop-head" style="display:flex;align-items:center;gap:10px"><div class="u-av" id="dropAv" style="width:38px;height:38px;font-size:14px">A</div><div style="min-width:0"><div class="udrop-name" id="dropName"></div><div class="udrop-role" id="dropRole"></div></div></div>
  <a onclick="openProfile();closeDrop()" data-i18n="drop.profile">Mein Profil</a>
@@ -1142,7 +1174,7 @@ body.acct-open{
  <div class="proof-sep"></div>
  <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof2">Faire Bezahlung</span></div>
  <div class="proof-sep"></div>
- <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof3">Verifizierte Nutzer</span></div>
+ <div class="proof-item"><div class="proof-ck"><i data-lucide="check" width="12" height="12" stroke-width="3"></i></div><span data-i18n="hero.proof3">E-Mail-bestätigte Nutzer</span></div>
  </div>
  <!-- Mini stats strip -->
  <div style="display:flex;gap:24px;margin-top:28px;flex-wrap:wrap;animation:fadeUp .55s ease-out .4s both">
@@ -1258,7 +1290,7 @@ body.acct-open{
  <path d="M14 38c0-6.627 5.373-10 12-10s12 3.373 12 10" stroke="#9a6700" stroke-width="2.5" stroke-linecap="round"/>
  <path d="M31 20l2 2 4-4" stroke="#9a6700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
  </svg>
- <div class="tc-title" data-i18n="trust.c3.t">Verifizierte Nutzer</div>
+ <div class="tc-title" data-i18n="trust.c3.t">E-Mail-bestätigte Nutzer</div>
  <div class="tc-desc" data-i18n="trust.c3.d">Registrierung per E-Mail-Bestätigung. Bewertungssystem nach jedem Auftrag.</div>
  </div>
  <div class="trust-card">
@@ -1340,7 +1372,7 @@ body.acct-open{
  <input type="text" id="locInput" data-i18n-ph="map.ph" placeholder="Stadt oder PLZ eingeben…" onkeydown="if(event.key==='Enter')filterJobs()">
  </div>
  <div class="rgrp">
- <label data-i18n="map.radius">Umkreis:</label>
+ <label for="rSlider" data-i18n="map.radius">Umkreis:</label>
  <input type="range" min="1" max="20" value="5" id="rSlider" oninput="updateRadius(this.value)">
  <span class="rv" id="rVal">5 km</span>
  </div>
@@ -1377,46 +1409,46 @@ body.acct-open{
  <p class="sec-desc" data-i18n="cat.desc">Vielfältige Aufgaben in deiner Umgebung – von Gartenarbeit bis Nachhilfe.</p>
  </div>
  <div class="cat-grid">
- <div class="cat-pill" onclick="setFilter('g');scrollToJobs()" style="background:linear-gradient(135deg,#eafbf0,#d1f7c4);border-color:#aceebb">
+ <button type="button" class="cat-pill" onclick="setFilter('g');scrollToJobs()" style="background:linear-gradient(135deg,#eafbf0,#d1f7c4);border-color:#aceebb">
  <div class="cp-icon" style="background:rgba(45,164,78,.15);font-size:26px"><i data-lucide="sprout" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.g">Gartenarbeit</div>
  <div class="cp-rate" style="color:#1a7f37;font-weight:600">10–15 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('h');scrollToJobs()" style="background:linear-gradient(135deg,#eef6ff,#ddf4ff);border-color:#b6e3ff">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('h');scrollToJobs()" style="background:linear-gradient(135deg,#eef6ff,#ddf4ff);border-color:#b6e3ff">
  <div class="cp-icon" style="background:rgba(9,105,218,.1);font-size:26px"><i data-lucide="house" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.h">Haushalt</div>
  <div class="cp-rate" style="color:#0969da;font-weight:600">10–14 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('s');scrollToJobs()" style="background:linear-gradient(135deg,#fffdf0,#fff8c5);border-color:#e3c84a">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('s');scrollToJobs()" style="background:linear-gradient(135deg,#fffdf0,#fff8c5);border-color:#e3c84a">
  <div class="cp-icon" style="background:rgba(154,103,0,.1);font-size:26px"><i data-lucide="shopping-cart" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.s">Einkaufen</div>
  <div class="cp-rate" style="color:#9a6700;font-weight:600">8–12 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#f8f0ff,#fbefff);border-color:#d8b4fe">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#f8f0ff,#fbefff);border-color:#d8b4fe">
  <div class="cp-icon" style="background:rgba(102,57,186,.1);font-size:26px"><i data-lucide="wrench" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.furniture">Möbel aufbauen</div>
  <div class="cp-rate" style="color:#6639ba;font-weight:600">12–18 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#fff5f0,#ffebe9);border-color:#ffb0a0">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('m');scrollToJobs()" style="background:linear-gradient(135deg,#fff5f0,#ffebe9);border-color:#ffb0a0">
  <div class="cp-icon" style="background:rgba(207,34,46,.08);font-size:26px"><i data-lucide="package" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.moving">Umzugshilfe</div>
  <div class="cp-rate" style="color:#cf222e;font-weight:600">12–16 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f0fdf9,#d1f7c4);border-color:#6ee7b7">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f0fdf9,#d1f7c4);border-color:#6ee7b7">
  <div class="cp-icon" style="background:rgba(5,150,105,.1);font-size:26px"><i data-lucide="dog" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.dog">Hundesitting</div>
  <div class="cp-rate" style="color:#047857;font-weight:600">8–14 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#eff8ff,#dbeafe);border-color:#93c5fd">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#eff8ff,#dbeafe);border-color:#93c5fd">
  <div class="cp-icon" style="background:rgba(37,99,235,.1);font-size:26px"><i data-lucide="book-open" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.tutor">Nachhilfe</div>
  <div class="cp-rate" style="color:#1d4ed8;font-weight:600">12–20 €/h</div>
- </div>
- <div class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f9f9f9,#f3f4f6);border-color:#d1d5db">
+ </button>
+ <button type="button" class="cat-pill" onclick="setFilter('all');scrollToJobs()" style="background:linear-gradient(135deg,#f9f9f9,#f3f4f6);border-color:#d1d5db">
  <div class="cp-icon" style="background:rgba(75,85,99,.1);font-size:26px"><i data-lucide="handshake" width="26" height="26"></i></div>
  <div class="cp-name" data-i18n="cat.card.other">Sonstige Hilfe</div>
  <div class="cp-rate" style="color:#4b5563;font-weight:600" data-i18n="cat.rate.other">Preis variiert</div>
- </div>
+ </button>
  </div>
  </div>
 </section>
@@ -1594,7 +1626,7 @@ body.acct-open{
  <p class="quote" style="font-style:normal;margin:0" data-i18n="safe.c3.p">Deine Daten werden DSGVO-konform und ausschließlich auf Servern innerhalb der EU verarbeitet.</p>
  </div>
  </div>
- <p style="text-align:center;margin-top:24px;font-size:12.5px;color:var(--c-ink4)"><span data-i18n="safe.foot">Sichere Zahlung über Stripe · DSGVO-konform · Verifizierte Konten</span></p>
+ <p style="text-align:center;margin-top:24px;font-size:12.5px;color:var(--c-ink4)"><span data-i18n="safe.foot">Sichere Zahlung über Stripe · DSGVO-konform · E-Mail-bestätigte Konten</span></p>
  </div>
 </section>
 
@@ -1712,7 +1744,7 @@ body.acct-open{
  <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0969da,#54aeff);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">LM</div>
  <div>
  <div style="font-size:13px;font-weight:700;color:#fff">Luca Müller</div>
- <div style="font-size:11px;color:rgba(255,255,255,.45)">Verifizierter Helfer</div>
+ <div style="font-size:11px;color:rgba(255,255,255,.45)" data-i18n="show.helper">Helfer</div>
  </div>
  </div>
  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
@@ -2264,7 +2296,6 @@ body.acct-open{
  <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">user_bans / user_warnings (Server)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Sperr- und Verwarndaten (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">__stripe_*</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Betrugsschutz bei Stripe-Zahlungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Session</td></tr>
  <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">applications (Supabase)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bewerbungen – serverseitig in Supabase gespeichert</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. b DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
- <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">sr_ratings</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Nutzerbewertungen</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">90 Tage nach Auftragsende</td></tr>
  <tr style="background:var(--c-bg1)"><td style="padding:8px 12px;border:1px solid var(--c-bd)">reports (Server)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Gemeldete Inhalte/Nutzer (Sicherheit)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Bis zur Kontolöschung</td></tr>
  <tr><td style="padding:8px 12px;border:1px solid var(--c-bd)">rl_* (Rate-Limit-Keys)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Missbrauchsprävention (Rate Limiting)</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">Art. 6 Abs. 1 lit. f DSGVO</td><td style="padding:8px 12px;border:1px solid var(--c-bd)">1–24 Stunden</td></tr>
  </tbody>
@@ -2344,9 +2375,9 @@ body.acct-open{
 </footer>
 
 <!-- MODAL: AUTH -->
-<div class="moverlay page-modal" id="modal-auth" onclick="overlayClose(event,'modal-auth')">
+<div class="moverlay page-modal" id="modal-auth" onclick="overlayClose(event,'modal-auth')" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-auth')" aria-label="Schließen">✕</button>
+ <button class="mclose" onclick="closeModal('modal-auth')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div class="mtabs">
  <button class="mtab on" id="tab-login" onclick="authTab('login')" data-i18n="auth.tab.login">Anmelden</button>
@@ -2354,11 +2385,11 @@ body.acct-open{
  </div>
  <!-- LOGIN -->
  <div id="pane-login">
- <h3 style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.login.title">Willkommen zurück </h3>
+ <h3 id="modal-auth-title" style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.login.title">Willkommen zurück </h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="auth.login.sub">Melde dich an, um Aufgaben zu finden oder inserieren.</p>
  <form id="form-login">
- <div class="field"><label data-i18n="auth.email">E-Mail Adresse</label><input type="email" id="l-email" data-i18n-ph="auth.email.ph" placeholder="deine@email.de" required></div>
- <div class="field"><label data-i18n="auth.pw">Passwort</label><div class="pw-wrap"><input type="password" id="l-pw" placeholder="••••••••" required><button type="button" class="pw-eye" onclick="togglePw('l-pw')"></button></div></div>
+ <div class="field"><label for="l-email" data-i18n="auth.email">E-Mail Adresse</label><input type="email" id="l-email" data-i18n-ph="auth.email.ph" placeholder="deine@email.de" required></div>
+ <div class="field"><label for="l-pw" data-i18n="auth.pw">Passwort</label><div class="pw-wrap"><input type="password" id="l-pw" placeholder="••••••••" required><button type="button" class="pw-eye" onclick="togglePw('l-pw')" data-i18n-aria="a11y.pw" aria-label="Passwort anzeigen"></button></div></div>
  <div class="ferr" id="l-err" data-i18n="auth.login.err">E-Mail oder Passwort falsch.</div>
  <button type="submit" id="l-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.login.btn">Anmelden</button>
  </form>
@@ -2370,7 +2401,7 @@ body.acct-open{
  <h3 style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.forgot.title">Passwort zurücksetzen</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="auth.forgot.sub">Wir senden dir einen Link, mit dem du ein neues Passwort vergeben kannst.</p>
  <form id="form-forgot" onsubmit="return handleForgot(event)">
- <div class="field"><label data-i18n="auth.email">E-Mail Adresse</label><input type="email" id="f-email" placeholder="deine@email.de" required></div>
+ <div class="field"><label for="f-email" data-i18n="auth.email">E-Mail Adresse</label><input type="email" id="f-email" placeholder="deine@email.de" required></div>
  <div class="ferr" id="f-err"></div>
  <button type="submit" id="f-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.forgot.btn">Link senden</button>
  </form>
@@ -2381,8 +2412,8 @@ body.acct-open{
  <h3 style="font-size:21px;font-weight:800;margin-bottom:4px" data-i18n="auth.newpw.title">Neues Passwort</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="auth.newpw.sub">Vergib jetzt ein neues Passwort für dein Konto.</p>
  <form id="form-newpw" onsubmit="return handleNewPassword(event)">
- <div class="field"><label data-i18n="auth.newpw.label">Neues Passwort</label><div class="pw-wrap"><input type="password" id="np-pw" placeholder="Min. 8 Zeichen" required minlength="8"><button type="button" class="pw-eye" onclick="togglePw('np-pw')"></button></div></div>
- <div class="field"><label data-i18n="auth.newpw.repeat">Passwort wiederholen</label><input type="password" id="np-pw2" placeholder="Min. 8 Zeichen" required minlength="8"></div>
+ <div class="field"><label for="np-pw" data-i18n="auth.newpw.label">Neues Passwort</label><div class="pw-wrap"><input type="password" id="np-pw" placeholder="Min. 8 Zeichen" required minlength="8"><button type="button" class="pw-eye" onclick="togglePw('np-pw')" data-i18n-aria="a11y.pw" aria-label="Passwort anzeigen"></button></div></div>
+ <div class="field"><label for="np-pw2" data-i18n="auth.newpw.repeat">Passwort wiederholen</label><input type="password" id="np-pw2" placeholder="Min. 8 Zeichen" required minlength="8"></div>
  <div class="ferr" id="np-err"></div>
  <button type="submit" id="np-btn" class="btn btn-dark btn-full mt-12" style="font-size:15px;padding:13px" data-i18n="auth.newpw.btn">Passwort speichern</button>
  </form>
@@ -2394,19 +2425,19 @@ body.acct-open{
  <form id="form-register">
  <p style="font-size:12.5px;font-weight:600;margin-bottom:9px;color:var(--c-ink2)" data-i18n="auth.iwant">Ich möchte…</p>
  <div class="role-grid">
- <div class="role-card on" id="role-jobber" onclick="selectRole('jobber')"><div class="rico"></div><div class="rname" data-i18n="auth.role.find">Jobs finden</div><div class="rsub" data-i18n="auth.role.find.s">Als Helfer</div></div>
- <div class="role-card" id="role-auftr" onclick="selectRole('auftraggeber')"><div class="rico"></div><div class="rname" data-i18n="auth.role.post">Job inserieren</div><div class="rsub" data-i18n="auth.role.post.s">Als Auftraggeber</div></div>
+ <button type="button" class="role-card on" id="role-jobber" onclick="selectRole('jobber')"><div class="rico"></div><div class="rname" data-i18n="auth.role.find">Jobs finden</div><div class="rsub" data-i18n="auth.role.find.s">Als Helfer</div></button>
+ <button type="button" class="role-card" id="role-auftr" onclick="selectRole('auftraggeber')"><div class="rico"></div><div class="rname" data-i18n="auth.role.post">Job inserieren</div><div class="rsub" data-i18n="auth.role.post.s">Als Auftraggeber</div></button>
  </div>
  <div class="frow2">
- <div class="field"><label data-i18n="auth.firstname">Vorname</label><input type="text" id="r-fn" data-i18n-ph="auth.fn.ph" placeholder="Max" required></div>
- <div class="field"><label data-i18n="auth.lastname">Nachname</label><input type="text" id="r-ln" data-i18n-ph="auth.ln.ph" placeholder="Muster" required></div>
+ <div class="field"><label for="r-fn" data-i18n="auth.firstname">Vorname</label><input type="text" id="r-fn" data-i18n-ph="auth.fn.ph" placeholder="Max" required></div>
+ <div class="field"><label for="r-ln" data-i18n="auth.lastname">Nachname</label><input type="text" id="r-ln" data-i18n-ph="auth.ln.ph" placeholder="Muster" required></div>
  </div>
- <div class="field"><label data-i18n="auth.email">E-Mail-Adresse</label><input type="email" id="r-email" data-i18n-ph="auth.email.ph" placeholder="deine@email.de" required></div>
- <div class="field"><label data-i18n="auth.pw">Passwort</label><div class="pw-wrap"><input type="password" id="r-pw" data-i18n-ph="auth.pw.ph" placeholder="Min. 8 Zeichen" required minlength="8"><button type="button" class="pw-eye" onclick="togglePw('r-pw')" aria-label="Passwort anzeigen"></button></div></div>
+ <div class="field"><label for="r-email" data-i18n="auth.email">E-Mail-Adresse</label><input type="email" id="r-email" data-i18n-ph="auth.email.ph" placeholder="deine@email.de" required></div>
+ <div class="field"><label for="r-pw" data-i18n="auth.pw">Passwort</label><div class="pw-wrap"><input type="password" id="r-pw" data-i18n-ph="auth.pw.ph" placeholder="Min. 8 Zeichen" required minlength="8"><button type="button" class="pw-eye" onclick="togglePw('r-pw')" data-i18n-aria="a11y.pw" aria-label="Passwort anzeigen"></button></div></div>
 
  <!-- Geburtsdatum -->
  <div class="field">
- <label>
+ <label for="r-dob">
  <span data-i18n="auth.dob">Geburtsdatum</span>
  <span style="color:var(--c-red)"> *</span>
  <span style="font-weight:400;color:var(--c-ink4);font-size:12px"> <span data-i18n="auth.dob.hint">(Mindestalter: 16 Jahre)</span></span>
@@ -2483,21 +2514,21 @@ body.acct-open{
 </div>
 
 <!-- MODAL: JOB DETAIL -->
-<div class="moverlay" id="modal-job" onclick="overlayClose(event,'modal-job')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-job')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-job" onclick="overlayClose(event,'modal-job')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.job" aria-label="Auftragsdetails">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner" style="padding:28px" id="jd-content"></div>
  </div>
 </div>
 
 <!-- MODAL: APPLY -->
-<div class="moverlay" id="modal-apply" onclick="overlayClose(event,'modal-apply')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-apply')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-apply" onclick="overlayClose(event,'modal-apply')" role="dialog" aria-modal="true" aria-labelledby="apply-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-apply')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div id="apply-form">
  <h3 id="apply-title" style="font-size:19px;font-weight:800;margin-bottom:16px"></h3>
  <div id="apply-minor" style="display:none" class="warn-box" data-i18n="apply.minor">Du bist minderjährig. Bitte informiere deine Eltern, bevor du dich bewirbst.</div>
  <div class="field">
- <label data-i18n="apply.msg.lbl">Deine Nachricht an den Auftraggeber</label>
+ <label for="apply-msg" data-i18n="apply.msg.lbl">Deine Nachricht an den Auftraggeber</label>
  <textarea id="apply-msg" rows="4" data-i18n-ph="apply.msg.ph" placeholder="Hallo! Ich würde diese Aufgabe gerne übernehmen. Ich bin verfügbar am…"></textarea>
  </div>
  <button class="btn btn-dark btn-full btn-lg" onclick="submitApply()" style="font-size:15px" data-i18n="apply.btn">Ich bin dabei!</button>
@@ -2519,32 +2550,32 @@ body.acct-open{
 </div>
 
 <!-- MODAL: POST JOB -->
-<div class="moverlay" id="modal-post" onclick="overlayClose(event,'modal-post')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-post')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-post" onclick="overlayClose(event,'modal-post')" role="dialog" aria-modal="true" aria-labelledby="modal-post-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-post')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div class="stepbar"><div class="sdot active" id="sd1"></div><div class="sdot" id="sd2"></div><div class="sdot" id="sd3"></div><div class="sdot" id="sd4"></div></div>
  <div id="ps1">
  <div class="step-lbl" data-i18n="post.s1.lbl">SCHRITT 1 / 4 – KATEGORIE</div>
- <h3 style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="post.s1.h">Welche Art von Aufgabe?</h3>
+ <h3 id="modal-post-title" style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="post.s1.h">Welche Art von Aufgabe?</h3>
  <div class="cat-pick">
- <div class="cpick on" id="cp-g" onclick="pickCat('g')"><div class="ci"><i data-lucide="sprout" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.g">Gartenarbeit</div><div class="cs">10–15 €/h</div></div>
- <div class="cpick" id="cp-h" onclick="pickCat('h')"><div class="ci"><i data-lucide="house" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.h">Haushalt</div><div class="cs">10–14 €/h</div></div>
- <div class="cpick" id="cp-s" onclick="pickCat('s')"><div class="ci"><i data-lucide="shopping-cart" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.s">Einkaufen</div><div class="cs">8–12 €/h</div></div>
- <div class="cpick" id="cp-m" onclick="pickCat('m')"><div class="ci"><i data-lucide="package" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.m">Umzug/Möbel</div><div class="cs">12–18 €/h</div></div>
+ <button type="button" class="cpick on" id="cp-g" onclick="pickCat('g')"><div class="ci"><i data-lucide="sprout" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.g">Gartenarbeit</div><div class="cs">10–15 €/h</div></button>
+ <button type="button" class="cpick" id="cp-h" onclick="pickCat('h')"><div class="ci"><i data-lucide="house" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.h">Haushalt</div><div class="cs">10–14 €/h</div></button>
+ <button type="button" class="cpick" id="cp-s" onclick="pickCat('s')"><div class="ci"><i data-lucide="shopping-cart" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.s">Einkaufen</div><div class="cs">8–12 €/h</div></button>
+ <button type="button" class="cpick" id="cp-m" onclick="pickCat('m')"><div class="ci"><i data-lucide="package" width="24" height="24"></i></div><div class="cn" data-i18n="post.cat.m">Umzug/Möbel</div><div class="cs">12–18 €/h</div></button>
  </div>
  <button class="btn btn-dark btn-full mt-16" onclick="goPostStep(2)" data-i18n="post.next">Weiter →</button>
  </div>
  <div id="ps2" style="display:none">
  <div class="step-lbl" data-i18n="post.s2.lbl">SCHRITT 2 / 4 – DETAILS</div>
  <h3 style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="post.s2.h">Beschreibe die Aufgabe</h3>
- <div class="field"><label data-i18n="post.title">Titel *</label><input type="text" id="p-title" data-i18n-ph="post.title.ph" placeholder="z.B. Rasen mähen – ca. 200m²" required></div>
- <div class="field"><label data-i18n="post.desc">Beschreibung *</label><textarea id="p-desc" data-i18n-ph="post.desc.ph" placeholder="Details zur Aufgabe, Dauer, was wird benötigt…" required></textarea></div>
- <div class="field"><label data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="p-loc" data-i18n-ph="post.loc.ph" placeholder="z.B. Musterstraße 10, 73734 Esslingen" required></div>
+ <div class="field"><label for="p-title" data-i18n="post.title">Titel *</label><input type="text" id="p-title" data-i18n-ph="post.title.ph" placeholder="z.B. Rasen mähen – ca. 200m²" required></div>
+ <div class="field"><label for="p-desc" data-i18n="post.desc">Beschreibung *</label><textarea id="p-desc" data-i18n-ph="post.desc.ph" placeholder="Details zur Aufgabe, Dauer, was wird benötigt…" required></textarea></div>
+ <div class="field"><label for="p-loc" data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="p-loc" data-i18n-ph="post.loc.ph" placeholder="z.B. Musterstraße 10, 73734 Esslingen" required></div>
  <div class="frow2">
- <div class="field"><label data-i18n="post.payeur">Vergütung in € *</label><input type="number" id="p-pay" placeholder="25" min="5" required></div>
- <div class="field"><label data-i18n="post.dur">Dauer (Std.)</label><input type="number" id="p-dur" placeholder="2" min="0.5" step="0.5"></div>
+ <div class="field"><label for="p-pay" data-i18n="post.payeur">Vergütung in € *</label><input type="number" id="p-pay" placeholder="25" min="5" required></div>
+ <div class="field"><label for="p-dur" data-i18n="post.dur">Dauer (Std.)</label><input type="number" id="p-dur" placeholder="2" min="0.5" step="0.5"></div>
  </div>
- <div class="field"><label data-i18n="post.date">Wunschdatum</label><input type="date" id="p-date"></div>
+ <div class="field"><label for="p-date" data-i18n="post.date">Wunschdatum</label><input type="date" id="p-date"></div>
  <div style="display:flex;gap:10px">
  <button class="btn btn-outline" style="flex:1" onclick="goPostStep(1)" data-i18n="post.back">← Zurück</button>
  <button class="btn btn-dark" style="flex:2" onclick="goPostStep(3)" data-i18n="post.next">Weiter →</button>
@@ -2577,30 +2608,30 @@ body.acct-open{
  </div>
  <!-- Payment method selection -->
  <div class="pay-methods">
- <div class="pay-method selected" id="pm-card" onclick="selectPayMethod('card')">
+ <button type="button" class="pay-method selected" id="pm-card" onclick="selectPayMethod('card')">
  <div class="pay-method-icon"><i data-lucide="credit-card" width="24" height="24"></i></div>
  <div class="pay-method-body">
  <div class="pay-method-name" data-i18n="pay.m.card">Kreditkarte / Debitkarte</div>
  <div class="pay-method-sub" data-i18n="pay.m.card.s">Visa, Mastercard, American Express</div>
  </div>
  <div class="pay-method-check">✓</div>
- </div>
- <div class="pay-method" id="pm-paypal" onclick="selectPayMethod('paypal')">
+ </button>
+ <button type="button" class="pay-method" id="pm-paypal" onclick="selectPayMethod('paypal')">
  <div class="pay-method-icon"><i data-lucide="wallet" width="24" height="24"></i></div>
  <div class="pay-method-body">
  <div class="pay-method-name">PayPal</div>
  <div class="pay-method-sub" data-i18n="pay.m.paypal.s">Schnell und sicher mit deinem PayPal-Konto</div>
  </div>
  <div class="pay-method-check"></div>
- </div>
- <div class="pay-method" id="pm-sepa" onclick="selectPayMethod('sepa')">
+ </button>
+ <button type="button" class="pay-method" id="pm-sepa" onclick="selectPayMethod('sepa')">
  <div class="pay-method-icon"><i data-lucide="landmark" width="24" height="24"></i></div>
  <div class="pay-method-body">
  <div class="pay-method-name" data-i18n="pay.m.sepa">SEPA-Lastschrift</div>
  <div class="pay-method-sub" data-i18n="pay.m.sepa.s">Bankeinzug (Deutschland / EU)</div>
  </div>
  <div class="pay-method-check"></div>
- </div>
+ </button>
  </div>
  <div class="pay-trust-row">
  <div class="pay-trust-item" data-i18n="pay.trust.ssl">SSL-verschlüsselt</div>
@@ -2631,7 +2662,7 @@ body.acct-open{
 
  <!-- Processing state (shown after click) -->
  <div id="pay-processing" style="display:none" class="success-screen">
- <div class="success-icon" style="animation:spin 1s linear infinite;font-size:44px">⏳</div>
+ <div class="success-icon"><span class="spin spin-dark" aria-hidden="true"></span></div>
  <h3 style="font-size:17px;font-weight:700;margin-bottom:8px" data-i18n="pay.proc.t">Zahlung wird verarbeitet…</h3>
  <p style="color:var(--c-ink3);font-size:14px" data-i18n="pay.proc.p">Bitte warte einen Moment.</p>
  </div>
@@ -2647,11 +2678,11 @@ body.acct-open{
 </div>
 
 <!-- MODAL: CHAT LIST -->
-<div class="moverlay chat-modal-list" id="modal-chats" onclick="overlayClose(event,'modal-chats')">
+<div class="moverlay chat-modal-list" id="modal-chats" onclick="overlayClose(event,'modal-chats')" role="dialog" aria-modal="true" aria-labelledby="modal-chats-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-chats')" aria-label="Schließen">✕</button>
+ <button class="mclose" onclick="closeModal('modal-chats')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="chat.title">Nachrichten</h3>
+ <h3 id="modal-chats-title" style="font-size:19px;font-weight:800;margin-bottom:16px" data-i18n="chat.title">Nachrichten</h3>
  <div class="chat-search-wrap">
  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
  <input type="text" id="chat-search-inp" data-i18n-ph="chat.search.ph" placeholder="Chats durchsuchen…" oninput="filterChatList(this.value)">
@@ -2662,15 +2693,15 @@ body.acct-open{
 </div>
 
 <!-- MODAL: ÖFFENTLICHES PROFIL -->
-<div class="moverlay" id="modal-pubprofile" onclick="overlayClose(event,'modal-pubprofile')">
+<div class="moverlay" id="modal-pubprofile" onclick="overlayClose(event,'modal-pubprofile')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.profile" aria-label="Öffentliches Profil">
  <div class="mcard prof-modal">
- <button class="mclose" onclick="closePublicProfile()" aria-label="Schließen">✕</button>
+ <button class="mclose" onclick="closePublicProfile()" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner" id="pubprofile-content"></div>
  </div>
 </div>
 
 <!-- MODAL: CHAT WINDOW -->
-<div class="moverlay chat-win" id="modal-chat-win" onclick="overlayClose(event,'modal-chat-win')">
+<div class="moverlay chat-win" id="modal-chat-win" onclick="overlayClose(event,'modal-chat-win')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.chat" aria-label="Chat">
  <div class="mcard">
  <div class="ch-header">
  <button class="ch-back" onclick="closeModal('modal-chat-win');openChats()">←</button>
@@ -2696,30 +2727,30 @@ body.acct-open{
 
 <!-- MODAL: PROFILE -->
 <!-- RECHTSTEXTE: eigener Seiten-Screen (gleiche Scroll-Technik wie der Account) -->
-<div class="moverlay page-modal legal-view" id="modal-legal-view" onclick="overlayClose(event,'modal-legal-view')">
+<div class="moverlay page-modal legal-view" id="modal-legal-view" onclick="overlayClose(event,'modal-legal-view')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.legal" aria-label="Rechtstext">
  <div class="acct-scroll" onclick="overlayClose(event,'modal-legal-view')">
  <div class="acct legal-acct">
  <div class="acct-bar">
  <button class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Zurück"><i data-lucide="arrow-left" width="17" height="17"></i></button>
  <div class="acct-bt" id="legal-view-title"></div>
- <button class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Schließen"><i data-lucide="x" width="17" height="17"></i></button>
+ <button class="acct-ib" onclick="closeModal('modal-legal-view')" data-i18n-aria="a11y.close" aria-label="Schließen"><i data-lucide="x" width="17" height="17"></i></button>
  </div>
  <div class="acct-body legal-view-body" id="legal-view-body"></div>
  </div>
  </div>
 </div>
 
-<div class="moverlay acct-overlay page-modal" id="modal-profile" onclick="overlayClose(event,'modal-profile')">
+<div class="moverlay acct-overlay page-modal" id="modal-profile" onclick="overlayClose(event,'modal-profile')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.account" aria-label="Konto">
  <div class="acct-scroll" onclick="overlayClose(event,'modal-profile')">
  <div class="acct" id="acct-root"></div>
  </div>
 </div>
 
 <!-- MODAL: RESUME PAYMENT (für ausstehende Jobs aus dem Profil) -->
-<div class="moverlay" id="modal-resume-pay" onclick="overlayClose(event,'modal-resume-pay')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-resume-pay')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-resume-pay" onclick="overlayClose(event,'modal-resume-pay')" role="dialog" aria-modal="true" aria-labelledby="modal-resume-pay-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-resume-pay')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 style="font-size:19px;font-weight:800;margin-bottom:4px" data-i18n="rp.title">Zahlung abschließen</h3>
+ <h3 id="modal-resume-pay-title" style="font-size:19px;font-weight:800;margin-bottom:4px" data-i18n="rp.title">Zahlung abschließen</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="rp.sub">Dein Auftrag wartet auf die Zahlung der Inseratsgebühr.</p>
 
  <div id="rp-screen">
@@ -2734,7 +2765,7 @@ body.acct-open{
  <div class="pa-desc" data-i18n="rp.fee.desc">Einmalig · Sofort aktiv nach Zahlung</div>
  </div>
  <div class="warn-box" style="margin-bottom:16px">
-          ⏳ <strong data-i18n="rp.warn.t">Ausstehende Zahlung:</strong> <span data-i18n="rp.warn.p">Dein Auftrag ist noch nicht öffentlich sichtbar. Schließe die Zahlung ab, um ihn zu veröffentlichen.</span>
+          <strong data-i18n="rp.warn.t">Ausstehende Zahlung:</strong> <span data-i18n="rp.warn.p">Dein Auftrag ist noch nicht öffentlich sichtbar. Schließe die Zahlung ab, um ihn zu veröffentlichen.</span>
  </div>
  <div class="pay-trust-row" style="margin-bottom:16px">
  <div class="pay-trust-item" data-i18n="pay.trust.ssl">SSL-verschlüsselt</div>
@@ -2745,7 +2776,7 @@ body.acct-open{
  </div>
 
  <div id="rp-processing" style="display:none" class="success-screen">
- <div class="success-icon" style="animation:spin 1s linear infinite;font-size:44px">⏳</div>
+ <div class="success-icon"><span class="spin spin-dark" aria-hidden="true"></span></div>
  <h3 style="font-size:17px;font-weight:700;margin-bottom:8px" data-i18n="pay.proc.t">Zahlung wird verarbeitet…</h3>
  <p style="color:var(--c-ink3);font-size:14px" data-i18n="pay.proc.p">Bitte warte einen Moment.</p>
  </div>
@@ -2754,14 +2785,14 @@ body.acct-open{
 </div>
 
 <!-- MODAL: REPORT (Job oder Nutzer melden) -->
-<div class="moverlay" id="modal-report" onclick="overlayClose(event,'modal-report')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-report')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-report" onclick="overlayClose(event,'modal-report')" role="dialog" aria-modal="true" aria-labelledby="modal-report-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-report')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 style="font-size:19px;font-weight:800;margin-bottom:6px" data-i18n="rep.title">Inhalt melden</h3>
+ <h3 id="modal-report-title" style="font-size:19px;font-weight:800;margin-bottom:6px" data-i18n="rep.title">Inhalt melden</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="rep.sub">Bitte wähle den Grund für deine Meldung. Alle Meldungen werden vom Betreiber geprüft.</p>
  <div id="report-target-info" style="background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r1);padding:10px 14px;margin-bottom:16px;font-size:13px;color:var(--c-ink3)"></div>
  <div class="field">
- <label data-i18n="rep.reason">Meldegrund</label>
+ <label for="report-reason" data-i18n="rep.reason">Meldegrund</label>
  <select id="report-reason">
  <option value="" data-i18n="rep.choose">-- Bitte wählen --</option>
  <optgroup label="Inhalt des Inserats" data-i18n-label="rep.grp.listing">
@@ -2785,7 +2816,7 @@ body.acct-open{
  </select>
  </div>
  <div class="field">
- <label data-i18n="rep.detail">Beschreibung (optional)</label>
+ <label for="report-detail" data-i18n="rep.detail">Beschreibung (optional)</label>
  <textarea id="report-detail" rows="3" data-i18n-ph="rep.detail.ph" placeholder="Beschreibe kurz, was dir aufgefallen ist…"></textarea>
  </div>
  <div class="warn-box" style="font-size:12.5px">
@@ -2797,11 +2828,11 @@ body.acct-open{
 </div>
 
 <!-- MODAL: SAFETY RULES (gezeigt vor erster Bewerbung / Inserat) -->
-<div class="moverlay" id="modal-safety-rules" onclick="overlayClose(event,'modal-safety-rules')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-safety-rules')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-safety-rules" onclick="overlayClose(event,'modal-safety-rules')" role="dialog" aria-modal="true" aria-labelledby="modal-safety-rules-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-safety-rules')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div class="safety-modal-icon"></div>
- <h3 style="font-size:19px;font-weight:800;margin-bottom:6px;text-align:center" data-i18n="sr.title">Sicherheitshinweise</h3>
+ <h3 id="modal-safety-rules-title" style="font-size:19px;font-weight:800;margin-bottom:6px;text-align:center" data-i18n="sr.title">Sicherheitshinweise</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:18px;text-align:center" data-i18n="sr.sub">Bitte lies diese Hinweise sorgfältig, bevor du fortfährst.</p>
  <div id="safety-rules-content">
  <div class="safety-rule"><span class="safety-rule-icon"></span><span data-i18n-html="sr.r1">Service Radar vermittelt ausschließlich legale, private Tätigkeiten. <strong>Schwarzarbeit und gewerbliche Leistungen ohne Gewerbe sind verboten.</strong></span></div>
@@ -2821,10 +2852,10 @@ body.acct-open{
 </div>
 
 <!-- MODAL: RATING (Bewertung nach Auftragsabschluss) -->
-<div class="moverlay" id="modal-rating" onclick="overlayClose(event,'modal-rating')">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-rating')" aria-label="Schließen">✕</button>
+<div class="moverlay" id="modal-rating" onclick="overlayClose(event,'modal-rating')" role="dialog" aria-modal="true" aria-labelledby="modal-rating-title">
+ <div class="mcard"><button class="mclose" onclick="closeModal('modal-rating')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 style="font-size:19px;font-weight:800;margin-bottom:6px" data-i18n="rate.title">★ Bewertung abgeben</h3>
+ <h3 id="modal-rating-title" style="font-size:19px;font-weight:800;margin-bottom:6px" data-i18n="rate.title">★ Bewertung abgeben</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" id="rating-target-name" data-i18n="rate.sub">Wie war deine Erfahrung?</p>
  <div style="text-align:center;margin-bottom:20px">
  <div class="rating-stars" style="justify-content:center;gap:8px" id="rating-stars-row">
@@ -2837,7 +2868,7 @@ body.acct-open{
  <div id="rating-label" style="font-size:14px;color:var(--c-ink3);margin-top:8px" data-i18n="rate.l3">Gut</div>
  </div>
  <div class="field">
- <label data-i18n="rate.comment">Kommentar (optional)</label>
+ <label for="rating-text" data-i18n="rate.comment">Kommentar (optional)</label>
  <textarea id="rating-text" rows="3" data-i18n-ph="rate.comment.ph" placeholder="Deine Erfahrung in wenigen Worten…"></textarea>
  </div>
  <button class="btn btn-dark btn-full btn-lg" onclick="submitRating()" style="font-size:15px" data-i18n="rate.btn">★ Bewertung speichern</button>
@@ -2847,12 +2878,12 @@ body.acct-open{
 
 <!-- MODAL: DELETE ACCOUNT -->
 <!-- MODAL: AUFTRAG LÖSCHEN (Bestätigung) -->
-<div class="moverlay" id="modal-delete-job" onclick="overlayClose(event,'modal-delete-job')">
+<div class="moverlay" id="modal-delete-job" onclick="overlayClose(event,'modal-delete-job')" role="dialog" aria-modal="true" aria-labelledby="modal-delete-job-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-delete-job')" aria-label="Schließen">✕</button>
+ <button class="mclose" onclick="closeModal('modal-delete-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div style="text-align:center;font-size:40px;margin-bottom:6px"><i data-lucide="trash-2" width="36" height="36"></i></div>
- <h3 style="font-size:18px;font-weight:800;text-align:center;margin-bottom:8px" data-i18n="job.del.t">Auftrag löschen?</h3>
+ <h3 id="modal-delete-job-title" style="font-size:18px;font-weight:800;text-align:center;margin-bottom:8px" data-i18n="job.del.t">Auftrag löschen?</h3>
  <p style="text-align:center;color:var(--c-ink3);font-size:14px;margin-bottom:4px" data-i18n="job.del.p">Möchtest du diesen Auftrag wirklich dauerhaft löschen?</p>
  <p id="del-job-title" style="text-align:center;font-weight:700;margin:4px 0 12px"></p>
  <p style="text-align:center;color:var(--c-ink4);font-size:12px;line-height:1.6;margin-bottom:18px" data-i18n="job.del.note">Bewerbungen und Chat-Nachrichten zu diesem Auftrag werden ebenfalls entfernt. Das kann nicht rückgängig gemacht werden.</p>
@@ -2865,19 +2896,20 @@ body.acct-open{
 </div>
 
 <!-- MODAL: AUFTRAG BEARBEITEN -->
-<div class="moverlay" id="modal-edit-job" onclick="overlayClose(event,'modal-edit-job')">
+<div class="moverlay" id="modal-edit-job" onclick="overlayClose(event,'modal-edit-job')" role="dialog" aria-modal="true" aria-labelledby="modal-edit-job-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-edit-job')" aria-label="Schließen">✕</button>
+ <button class="mclose" onclick="closeModal('modal-edit-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 style="font-size:18px;font-weight:800;margin-bottom:14px" data-i18n="job.edit.t">Auftrag bearbeiten</h3>
+ <h3 id="modal-edit-job-title" style="font-size:18px;font-weight:800;margin-bottom:14px" data-i18n="job.edit.t">Auftrag bearbeiten</h3>
  <input type="hidden" id="edit-job-id">
- <div class="field"><label data-i18n="post.title">Titel *</label><input type="text" id="edit-job-title" maxlength="100"></div>
- <div class="field"><label data-i18n="post.desc">Beschreibung *</label><textarea id="edit-job-desc" maxlength="1000"></textarea></div>
+ <div class="field"><label for="edit-job-title" data-i18n="post.title">Titel *</label><input type="text" id="edit-job-title" maxlength="100"></div>
+ <div class="field"><label for="edit-job-desc" data-i18n="post.desc">Beschreibung *</label><textarea id="edit-job-desc" maxlength="1000"></textarea></div>
  <div style="display:flex;gap:12px">
- <div class="field" style="flex:1"><label data-i18n="post.cat">Kategorie</label><select id="edit-job-cat"></select></div>
- <div class="field" style="flex:1"><label data-i18n="post.payeur">Vergütung in € *</label><input type="number" id="edit-job-price" min="1"></div>
+ <div class="field" style="flex:1"><label for="edit-job-cat" data-i18n="post.cat">Kategorie</label><select id="edit-job-cat"></select></div>
+ <div class="field" style="flex:1"><label for="edit-job-price" data-i18n="post.payeur">Vergütung in € *</label><input type="number" id="edit-job-price" min="1"></div>
  </div>
- <div class="field"><label data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="edit-job-city" maxlength="150"></div>
+ <div class="field"><label for="edit-job-city" data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="edit-job-city" maxlength="150"></div>
+ <p id="edit-job-lock" style="display:none;font-size:12.5px;color:var(--c-ink4);margin-top:-4px" data-i18n="job.edit.locked">Kategorie und Ort sind nach der Veröffentlichung fest. Für einen anderen Auftragstyp oder Ort bitte einen neuen Auftrag einstellen.</p>
  <div style="display:flex;gap:10px;margin-top:8px">
  <button class="btn btn-outline btn-full" onclick="closeModal('modal-edit-job')" data-i18n="del.cancel">Abbrechen</button>
  <button class="btn btn-dark btn-full" onclick="submitEditJob()" data-i18n="job.edit.save">Speichern</button>
@@ -2886,14 +2918,14 @@ body.acct-open{
  </div>
 </div>
 
-<div class="moverlay" id="modal-delete-account" onclick="overlayClose(event,'modal-delete-account')">
+<div class="moverlay" id="modal-delete-account" onclick="overlayClose(event,'modal-delete-account')" role="dialog" aria-modal="true" aria-labelledby="modal-delete-account-title">
  <div class="mcard"><button class="mclose" onclick="closeModal('modal-delete-account')" data-i18n-aria="del.cancel" aria-label="Abbrechen">✕</button>
  <div class="mcard-inner">
  <div style="text-align:center;font-size:44px;margin-bottom:8px"><i data-lucide="trash-2" width="40" height="40"></i></div>
- <h3 style="font-size:19px;font-weight:800;margin-bottom:10px;text-align:center" data-i18n="del.title">Konto wirklich löschen?</h3>
+ <h3 id="modal-delete-account-title" style="font-size:19px;font-weight:800;margin-bottom:10px;text-align:center" data-i18n="del.title">Konto wirklich löschen?</h3>
  <div class="warn-box" data-i18n="del.body" style="margin-bottom:12px">Dies entfernt dein Konto dauerhaft aus diesem Browser. Alle deine Inserate, Bewerbungen und Chats werden gelöscht. Daten anderer Nutzer bleiben unberührt.</div>
  <p style="font-size:12px;color:var(--c-ink4);margin-bottom:14px" data-i18n="del.gdpr">Für eine vollständige DSGVO-Löschung wende dich an info@service-radar.com.</p>
- <div class="field"><label data-i18n="del.confirm">Zur Bestätigung gib deine E-Mail-Adresse ein:</label>
+ <div class="field"><label for="del-confirm-email" data-i18n="del.confirm">Zur Bestätigung gib deine E-Mail-Adresse ein:</label>
  <input type="email" id="del-confirm-email" autocomplete="off"></div>
  <div style="display:flex;gap:10px;margin-top:4px">
  <button class="btn btn-outline btn-full" onclick="closeModal('modal-delete-account')" data-i18n="del.cancel">Abbrechen</button>
@@ -2916,11 +2948,11 @@ body.acct-open{
 </div>
 
 <!-- MODAL: LEGAL UPDATE (erneute Zustimmung bei AGB-Änderung) -->
-<div class="moverlay" id="modal-legal-update" onclick="">
+<div class="moverlay" id="modal-legal-update" onclick="" role="dialog" aria-modal="true" aria-labelledby="modal-legal-update-title">
  <div class="mcard">
  <div class="mcard-inner">
  <div style="text-align:center;font-size:44px;margin-bottom:14px"></div>
- <h3 style="font-size:19px;font-weight:800;margin-bottom:8px;text-align:center">Aktualisierte Rechtsdokumente
+ <h3 id="modal-legal-update-title" style="font-size:19px;font-weight:800;margin-bottom:8px;text-align:center">Aktualisierte Rechtsdokumente
  </h3>
  <p style="color:var(--c-ink3);font-size:13.5px;text-align:center;margin-bottom:20px;line-height:1.65">Unsere AGB und Datenschutzerklärung wurden aktualisiert. Bitte lies und akzeptiere die neuen Bedingungen, um fortzufahren.
  </p>
@@ -2946,11 +2978,11 @@ body.acct-open{
 </div>
 
 <!-- MODAL: PDF VIEWER -->
-<div class="moverlay" id="modal-pdf" onclick="overlayClose(event,'modal-pdf')">
+<div class="moverlay" id="modal-pdf" onclick="overlayClose(event,'modal-pdf')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.pdf" aria-label="Dokument">
  <div class="mcard" style="padding:0;overflow:hidden">
  <div class="pdf-header">
  <span class="pdf-title" id="pdf-modal-title" data-i18n="pdf.title">Dokument</span>
- <button class="mclose" onclick="closeModal('modal-pdf')" aria-label="Schließen" style="position:static;margin:0">✕</button>
+ <button class="mclose" onclick="closeModal('modal-pdf')" data-i18n-aria="a11y.close" aria-label="Schließen" style="position:static;margin:0">✕</button>
  </div>
  <div id="pdf-lang-note" style="display:none;background:#fff3cd;border-bottom:1px solid #ffc107;padding:8px 16px;font-size:12.5px;color:#856404">
  <span data-i18n="pdf.note">ℹ Rechtsdokumente sind derzeit nur auf Deutsch verfügbar.</span>
@@ -3048,7 +3080,7 @@ const I18N = {
   'geo.ok':{de:'Standort aktualisiert.', en:'Location updated.'},
   'geo.denied':{de:'Standort nicht freigegeben – gib oben deine Stadt ein.', en:'Location not shared – enter your city above.'},
   'geo.unsupported':{de:'Standort wird vom Browser nicht unterstützt.', en:'Geolocation is not supported by your browser.'},
-  'prof.status.pending':{de:'⏳ Ausstehend', en:'⏳ Pending'},
+  'prof.status.pending':{de:'Ausstehend', en:'Pending'},
   'prof.status.flagged':{de:'Gemeldet', en:'Reported'},
   'prof.status.active': {de:'Aktiv', en:'Active'},
   'prof.status.closed': {de:'✓ Abgeschlossen', en:'✓ Completed'},
@@ -3061,11 +3093,28 @@ const I18N = {
   'job.del.btn':  {de:'Endgültig löschen', en:'Delete permanently'},
   'job.edit.t':   {de:'Auftrag bearbeiten', en:'Edit job'},
   'job.edit.save':{de:'Speichern', en:'Save'},
+  'job.edit.locked':{de:'Kategorie und Ort sind nach der Veröffentlichung fest. Für einen anderen Auftragstyp oder Ort bitte einen neuen Auftrag einstellen.', en:'Category and location are fixed once a job is published. For a different job type or location, please post a new job.'},
   'prof.paynow':        {de:'Jetzt bezahlen', en:'Pay now'},
-  'ts.verified':{de:'Verifiziert', en:'Verified'},
-  'ts.active':  {de:'★ Aktives Mitglied', en:'★ Active member'},
-  'ts.new':     {de:'Neues Mitglied', en:'New member'},
-  'ts.limited': {de:'Eingeschränkt', en:'Limited'},
+  /* Profilstärke – bewusst beschreibend statt "Verifiziert": Service Radar
+     führt keine Identitätsprüfung durch, ein Verifikations-Label wäre ein
+     erfundenes Vertrauenssignal. */
+  /* Barrierefreiheit: Beschriftungen für Screenreader (Dialoge, Icon-Buttons) */
+  'a11y.close':       {de:'Schließen', en:'Close'},
+  'a11y.pw':          {de:'Passwort anzeigen', en:'Show password'},
+  'a11y.dlg.job':     {de:'Auftragsdetails', en:'Job details'},
+  'a11y.dlg.profile': {de:'Öffentliches Profil', en:'Public profile'},
+  'a11y.dlg.chat':    {de:'Chat', en:'Chat'},
+  'a11y.dlg.legal':   {de:'Rechtstext', en:'Legal document'},
+  'a11y.dlg.account': {de:'Konto', en:'Account'},
+  'a11y.dlg.pdf':     {de:'Dokument', en:'Document'},
+
+  'ps.title':    {de:'Profilstärke', en:'Profile strength'},
+  'ps.complete': {de:'Profil vollständig', en:'Profile complete'},
+  'ps.partial':  {de:'Profil teilweise ausgefüllt', en:'Profile partly filled'},
+  'ps.new':      {de:'Profil noch unvollständig', en:'Profile still incomplete'},
+  'ps.hint':     {de:'Ein vollständiges Profil mit Bild, Ort und Beschreibung erhöht deine Chancen. Service Radar führt keine Identitätsprüfung durch.', en:'A complete profile with photo, location and description improves your chances. Service Radar does not perform identity verification.'},
+  'prof.v.pay':  {de:'Zahlung abgeschlossen', en:'Payment completed'},
+  'prof.v.none': {de:'Ausweis-Verifikation wird derzeit nicht angeboten.', en:'ID verification is currently not offered.'},
   /* — Toasts / system messages — */
   'toast.needlogin':   {de:'Bitte anmelden.', en:'Please sign in.'},
   'toast.needlogin2':  {de:'Bitte anmelden.', en:'Please sign in.'},
@@ -3133,7 +3182,8 @@ const I18N = {
   'hero.cta2':   {de:'Aufgabe einstellen', en:'Post a task'},
   'hero.proof1': {de:'Kostenlos registrieren', en:'Free to register'},
   'hero.proof2': {de:'Faire Bezahlung', en:'Fair pay'},
-  'hero.proof3': {de:'Verifizierte Nutzer', en:'Verified users'},
+  'hero.proof3': {de:'E-Mail-bestätigte Nutzer', en:'Email-confirmed users'},
+  'show.helper': {de:'Helfer', en:'Helper'},
   'hero.stat1.l':{de:'Aktiver Standort', en:'Active location'},
   'hero.stat2.l':{de:'Inseratsgebühr', en:'Listing fee'},
   'hero.stat3.v':{de:'DSGVO', en:'GDPR'},
@@ -3164,7 +3214,7 @@ const I18N = {
   'trust.c1.d':  {de:'Nur Jobs aus deiner direkten Umgebung – kein Pendeln, kein Aufwand.', en:'Only jobs from your immediate area – no commuting, no hassle.'},
   'trust.c2.t':  {de:'Faire Bezahlung', en:'Fair pay'},
   'trust.c2.d':  {de:'Wir zeigen empfohlene Richtwerte – damit beide Seiten wissen, was fair ist.', en:'We show recommended rates – so both sides know what is fair.'},
-  'trust.c3.t':  {de:'Verifizierte Nutzer', en:'Verified users'},
+  'trust.c3.t':  {de:'E-Mail-bestätigte Nutzer', en:'Email-confirmed users'},
   'trust.c3.d':  {de:'Registrierung per E-Mail-Bestätigung. Bewertungssystem nach jedem Auftrag.', en:'Registration via email confirmation. Rating system after every job.'},
   'trust.c4.t':  {de:'Direkter Kontakt', en:'Direct contact'},
   'trust.c4.d':  {de:'Integrierter Chat – Helfer und Auftraggeber kommunizieren direkt miteinander.', en:'Built-in chat – helpers and clients communicate directly.'},
@@ -3268,7 +3318,7 @@ const I18N = {
   'safe.c2.p': {de:'Sicherheitshinweise, eine Meldefunktion und ein Sperrsystem schützen alle Nutzer auf der Plattform.', en:'Safety guidance, a report function and a blocking system protect everyone on the platform.'},
   'safe.c3.t': {de:'DSGVO-konform', en:'GDPR-compliant'},
   'safe.c3.p': {de:'Deine Daten werden DSGVO-konform und ausschließlich auf Servern innerhalb der EU verarbeitet.', en:'Your data is processed GDPR-compliant and exclusively on servers within the EU.'},
-  'safe.foot': {de:'Sichere Zahlung über Stripe · DSGVO-konform · Verifizierte Konten', en:'Secure payment via Stripe · GDPR-compliant · Verified accounts'},
+  'safe.foot': {de:'Sichere Zahlung über Stripe · DSGVO-konform · E-Mail-bestätigte Konten', en:'Secure payment via Stripe · GDPR-compliant · email-confirmed accounts'},
 
   /* — App showcase — */
   'show.pill': {de:'Plattform-Ansicht', en:'Platform preview'},
@@ -3396,6 +3446,7 @@ const I18N = {
   /* — Post job — */
   'post.s1.lbl':{de:'SCHRITT 1 / 4 – KATEGORIE', en:'STEP 1 / 4 – CATEGORY'},
   'post.s1.h':  {de:'Welche Art von Aufgabe?', en:'What kind of task?'},
+  'post.cat':   {de:'Kategorie', en:'Category'},
   'post.cat.g': {de:'Gartenarbeit', en:'Gardening'},
   'post.cat.h': {de:'Haushalt', en:'Household'},
   'post.cat.s': {de:'Einkaufen', en:'Shopping'},
@@ -3467,7 +3518,6 @@ const I18N = {
   'jd.fairg':  {de:'Gut', en:'Good'},
   'jd.fairh':  {de:'Hoch', en:'High'},
   'jd.intbtn': {de:'Ich bin dabei!', en:'I’m in!'},
-  'jd.verified':{de:'Verifiziert', en:'Verified'},
   'jd.own':    {de:'Das ist dein Inserat.', en:'This is your listing.'},
   'jd.broker': {de:'ℹ Service Radar vermittelt den Kontakt. Vertrag und Zahlung direkt zwischen den Parteien.', en:'ℹ Service Radar brokers the contact. Contract and payment are directly between the parties.'},
   'jd.report': {de:'Melden', en:'Report'},
@@ -3490,11 +3540,8 @@ const I18N = {
   'prof.activity.no':{de:'Noch keine Aktivität', en:'No activity yet'},
   'prof.warn.text':{de:'Verwarnung – Bei weiteren Verstößen wird dein Konto gesperrt.', en:'Warning – Further violations will lead to account suspension.'},
   'prof.rating':{de:'Bewertung', en:'Rating'},
-  'prof.trust':{de:'Vertrauen', en:'Trust'},
   'prof.verifstand':{de:'Verifizierungsstand', en:'Verification status'},
   'prof.v.email':{de:'E-Mail-Adresse bestätigt', en:'Email address confirmed'},
-  'prof.v.agb':{de:'AGB akzeptiert', en:'Terms accepted'},
-  'prof.v.id': {de:'Ausweis-Verifikation', en:'ID verification'},
   'prof.soon': {de:'Bald verfügbar', en:'Coming soon'},
   'prof.banned':{de:'Konto gesperrt.', en:'Account suspended.'},
   'prof.banned.contact':{de:'Bitte kontaktiere uns:', en:'Please contact us:'},
@@ -3714,6 +3761,11 @@ function getJobById(id){
       || STATE.ownerJobs.find(j => String(j.id)===key)
       || null;
 }
+/* Liefert AUSSCHLIESSLICH die Bewerbungen des aktuell angemeldeten Nutzers.
+   Bewusst ohne Parameter: eine frühere Fassung wurde als getUserApps(email)
+   aufgerufen, ignorierte das Argument aber und lieferte trotzdem die Daten des
+   eingeloggten Nutzers – dadurch flossen fremde Werte in eine Profilberechnung
+   ein. Für fremde Profile gibt es SR.getPublicProfile() / public_profile_stats. */
 function getUserApps(){ return STATE.apps.slice(); }
 
 // Async hydration from Supabase
@@ -3897,11 +3949,23 @@ function scanContent(text) {
   return { banned, warned, ok: banned.length === 0 };
 }
 
-/* ── Rate Limiter (localStorage-based, Backend-ready) ── */
-//   RATE LIMITING NOTE:
-// These limits are enforced client-side via localStorage and can be bypassed
-// by clearing localStorage. Before production, implement server-side rate limiting.
-// Backend recommendation: express-rate-limit + Redis, or Cloudflare rate limiting rules.
+/* ── UX-Bremse (KEINE Sicherheitsbarriere) ──────────────────
+   Diese Limits liegen in localStorage und sind trivial umgehbar. Sie sind
+   ausschliesslich ein Komfort-Schutz gegen versehentliches Mehrfachsenden –
+   sie duerfen NICHT als Sicherheitsmassnahme betrachtet werden.
+
+   Der tatsaechliche Missbrauchsschutz liegt serverseitig:
+     Chat        -> RLS "messages_insert_sender" + public.can_message()
+                    (supabase_message_guard.sql): nur zwischen Auftraggeber
+                    und tatsaechlichem Bewerber desselben Auftrags
+     Bewerbung   -> RLS auth.uid() = helper_id + UNIQUE(job_id, helper_id)
+                    -> hoechstens eine Bewerbung pro Auftrag und Person
+     Auftrag     -> nur 'pending' einfuegbar; Veroeffentlichung kostet 2,00 EUR
+                    und ist an eine verbrauchte Stripe-Session gebunden
+     Meldung     -> echtes serverseitiges Stundenlimit in api/report.js
+     Push        -> api/push.js: Token-Pruefung + Beziehungspruefung related()
+     Registrierung -> Rate-Limits von Supabase Auth (E-Mail-Versand)
+   Siehe CLAUDE.md §17 fuer die verbleibende Luecke (verteiltes Limit). */
 const RATE_LIMITS = {
   register:   { max:3,  window:3600000,  key:'rl_reg' },
   postJob:    { max:5,  window:86400000, key:'rl_post' },
@@ -3934,29 +3998,37 @@ function getRateLimitRemaining(action) {
   } catch { return cfg.max; }
 }
 
-/* ── User Trust Score (0–100) ────────────────────── */
-function calcTrustScore(user) {
-  if (!user) return 0;
-  let score = 20; // base
-  if (user.consentAGB)        score += 10;
-  if (user.consentDSE)        score += 10;
-  if (user.registeredAt)      score += 10;
-  if (user.role)              score += 5;
-  if (!user.isMinor)          score += 5;
-  if (user.newsletter !== undefined) score += 5;
-  const apps = getUserApps(user.email);
-  score += Math.min(apps.length * 5, 20); // up to 20 from activity
-  const warns = getWarnings();
-  score -= warns.length * 15;
-  score = Math.max(0, Math.min(100, score));
-  return score;
+/* ── Profilstärke (0–100) ───────────────────────────────────
+   ERSETZT den früheren "Trust Score". Der vergab Punkte für rein technische
+   Zustände (AGB akzeptiert, registriert, Rolle gesetzt, Newsletter-Feld
+   vorhanden) – alles Werte, die buildAppUser() für JEDEN Nutzer fest auf true
+   setzt. Damit erreichte praktisch jedes Konto das Label "Verifiziert",
+   obwohl Service Radar keine Identitätsprüfung durchführt. Das war ein
+   erfundenes Vertrauenssignal.
+
+   Diese Fassung zählt ausschließlich Zustände, die tatsächlich eingetreten
+   sind und die der Nutzer selbst beeinflussen kann. Sie behauptet keine
+   Verifikation, sondern beschreibt, wie vollständig das Profil ist. */
+function calcProfileStrength(user) {
+  var u = user || APP.user || {};
+  var score = 0;
+  if (u.name)                score += 15;   // Anzeigename gesetzt
+  if (u.avatar_url)          score += 20;   // echtes Profilbild hochgeladen
+  if (u.city)                score += 15;   // Ort angegeben
+  if (u.bio)                 score += 15;   // Beschreibung ausgefüllt
+  if (u.email_verified)      score += 15;   // E-Mail wirklich bestätigt
+  if (u.stripe_verified)     score += 10;   // mind. eine Zahlung abgeschlossen
+  if ((Number(u.review_count) || 0) > 0) score += 10;  // echte Bewertungen erhalten
+  // Verwarnungen der Moderation zählen negativ (server-seitig, STATE.warnings).
+  try { score -= (getWarnings().length || 0) * 15; } catch (e) {}
+  return Math.max(0, Math.min(100, score));
 }
 
-function getTrustLabel(score) {
-  if (score >= 80) return { label: T('ts.verified'), cls: 'trust-verified' };
-  if (score >= 50) return { label: T('ts.active'), cls: 'trust-new' };
-  if (score >= 20) return { label: T('ts.new'), cls: 'trust-new' };
-  return { label: T('ts.limited'), cls: 'trust-warned' };
+/* Neutrale, beschreibende Statusbegriffe – KEINE Verifikationsaussage. */
+function getProfileStrengthLabel(score) {
+  if (score >= 80) return { label: T('ps.complete'), cls: 'trust-verified' };
+  if (score >= 45) return { label: T('ps.partial'),  cls: 'trust-new' };
+  return { label: T('ps.new'), cls: 'trust-new' };
 }
 
 /* ── Verwarnungen & Sperren (serverseitig) ─────────
@@ -4159,27 +4231,41 @@ async function submitRating() {
       return;
     }
   }
-  // Fallback (lokal)
-  const rating = {
-    id: 'rat_' + Date.now(), chatId: APP._pendingRatingChatId, partner: APP._pendingRatingPartner,
-    rater: APP.user?.email, score: _currentRating, text: text.slice(0, 300), ts: Date.now(),
-  };
-  const ratings = JSON.parse(localStorage.getItem('sr_ratings') || '[]');
-  ratings.unshift(rating);
-  localStorage.setItem('sr_ratings', JSON.stringify(ratings.slice(0, 1000)));
-  closeModal('modal-rating');
-  showToast(T('toast.rating.saved'), 'ok');
+  // Kein localStorage-Fallback mehr: eine nur lokal gespeicherte Bewertung war
+  // für die bewertete Person unsichtbar, ging beim Gerätewechsel verloren und
+  // widersprach den echten Werten aus `reviews`. Lieber ehrlich melden, dass
+  // die Bewertung nicht zugeordnet werden konnte.
+  console.error('[SR] submitRating: kein reviewee_id – Bewertung nicht gespeichert');
+  showToast(LANG==='de'
+    ? 'Bewertung konnte nicht zugeordnet werden. Bitte den Chat erneut öffnen und es dort versuchen.'
+    : 'Could not match this review. Please reopen the chat and try again there.', 'err');
 }
 
-function getUserRatings(email) {
-  const ratings = JSON.parse(localStorage.getItem('sr_ratings') || '[]');
-  return ratings.filter(r => r.partner === email || r.partnerEmail === email);
-}
+/* ── Bewertungen: EINE Quelle der Wahrheit ──────────────────
+   Alle Bewertungen stammen aus der Supabase-Tabelle `reviews`. Der Trigger
+   `on_review_change` (supabase_reviews_fix.sql) pflegt daraus automatisch
+   profiles.rating (Durchschnitt) und profiles.review_count (Anzahl).
+   buildAppUser() übernimmt beide Werte nach APP.user – genau dieselben Felder,
+   die renderPublicProfile() für das öffentliche Profil nutzt. Eigenes und
+   öffentliches Profil können sich damit nicht mehr widersprechen.
 
-function getAvgRating(email) {
-  const r = getUserRatings(email);
-  if (!r.length) return null;
-  return (r.reduce((s, x) => s + x.score, 0) / r.length).toFixed(1);
+   Die frühere localStorage-Quelle 'sr_ratings' wurde entfernt: sie war pro
+   Browser lokal, kam auf einem neuen Gerät leer zurück und erzeugte
+   Anzeigen wie "Noch keine Bewertungen · 7 Bewertungen". */
+function _acctRatingStats(){
+  var u = APP.user || {};
+  // Liegt die Bewertungsliste bereits geladen vor (Bewertungs-Ansicht), wird
+  // direkt daraus gerechnet – dieselbe Tabelle, garantiert konsistent mit der
+  // angezeigten Liste und ohne zusätzliche Abfrage.
+  var list = APP._acctReviews;
+  if (Array.isArray(list)) {
+    if (!list.length) return { avg: null, count: 0 };
+    var sum = list.reduce(function(s, r){ return s + (Number(r.rating) || 0); }, 0);
+    return { avg: (sum / list.length).toFixed(1), count: list.length };
+  }
+  var c = Number(u.review_count) || 0;
+  var a = Number(u.rating) || 0;
+  return { avg: (c > 0 && a > 0) ? a.toFixed(1) : null, count: c };
 }
 
 /* ── Content validation before job post ─────────── */
@@ -4238,7 +4324,7 @@ let APP = {
   user: null, postCat:'g', activeChatId:null, activeThread:null,
   jobFilter:'all', pendingJobId:null, pendingPayJobId:null,
   selectedRole:'jobber', _pendingRatingChatId:null, _pendingRatingPartner:null,
-  _legalUpdateCallback:null, _pendingJobPayload:null, viewMode:null,
+  _legalUpdateCallback:null, _pendingJobPayload:null, _pendingJobId:null, _pendingJobDirty:false, viewMode:null,
 };
 
 /* ══════════════════════════════════════════════════════
@@ -4319,9 +4405,54 @@ function unlockScroll(){
   document.body.style.top = '';
   window.scrollTo(0, _scrollY);
 }
+/* ── A11y-Helfer für Modals ─────────────────────────────────────
+   Bewusst KEIN vollständiger Focus-Trap: bei ~20 Overlays, die teils
+   gleichzeitig gestapelt sind (page-modal + APP._pageStack), wäre ein
+   Trap-Mechanismus fehleranfällig und könnte den Nutzer einsperren.
+   Umgesetzt sind die drei robusten Bausteine: Fokus beim Öffnen ins Modal,
+   Escape schließt, Fokus kehrt zum Auslöser zurück. Der vollständige Trap ist
+   als spätere Aufgabe dokumentiert (CLAUDE.md §17). */
+function _mFocusIn(el){
+  if(!el) return;
+  setTimeout(function(){
+    try{
+      // Nur SICHTBARE Kandidaten: die Modals blenden Schritte per display:none
+      // aus (Post-Wizard, Auth-Panes). Ein verstecktes Feld zu fokussieren
+      // würde still fehlschlagen und den Fokus auf <body> zurückwerfen.
+      var vis = function(n){ return n && n.offsetParent !== null; };
+      var pick = function(sel){
+        var list = el.querySelectorAll(sel);
+        for (var i=0; i<list.length; i++) if (vis(list[i])) return list[i];
+        return null;
+      };
+      // Erstes sinnvolles Ziel: Eingabefeld, sonst Schließen/Zurück, sonst Button.
+      var t = pick('.mcard input:not([type=hidden]):not([disabled]), .mcard textarea:not([disabled]), .acct input:not([type=hidden]):not([disabled])')
+           || pick('.mclose, .acct-ib')
+           || pick('.mcard button:not([disabled]), .acct button:not([disabled])');
+      if(t && typeof t.focus === 'function') t.focus({ preventScroll: true });
+    }catch(e){}
+  }, 60);
+}
+function _mFocusRestore(id){
+  try{
+    var map = APP._mReturnFocus || {};
+    var prev = map[id];
+    delete map[id];
+    if(prev && document.contains(prev) && typeof prev.focus === 'function') prev.focus({ preventScroll: true });
+  }catch(e){}
+}
+
 function openModal(id) {
   const el = document.getElementById(id);
   if (!el) return;
+  // Auslöser merken, damit der Fokus beim Schließen dorthin zurückkehrt.
+  try{
+    var a = document.activeElement;
+    if(a && a !== document.body && !el.contains(a)){
+      APP._mReturnFocus = APP._mReturnFocus || {};
+      APP._mReturnFocus[id] = a;
+    }
+  }catch(e){}
   // Seiten-Screens (Account, Rechtstexte): kein Body-Lock, kein Overlay-Scroll –
   // die SEITE selbst scrollt. Mehrere Screens werden gestapelt (Zurueck moeglich).
   if (el.classList.contains('page-modal')) {
@@ -4336,12 +4467,14 @@ function openModal(id) {
       document.body.classList.add('acct-open');
       el.classList.add('open');
       window.scrollTo(0, 0);
+      _mFocusIn(el);
     }
     applyTranslations();
     return;
   }
   if (!el.classList.contains('open')) { if (_openModals === 0) lockScroll(); _openModals++; }
   el.classList.add('open');
+  _mFocusIn(el);
   // Always re-apply translations so modal content matches active language
   applyTranslations();
 }
@@ -4357,16 +4490,39 @@ function closeModal(id) {
     if (prev) {                       // zurueck zum darunterliegenden Screen
       prev.classList.remove('page-hidden');
       window.scrollTo(0, 0);
+      _mFocusIn(prev);
     } else {                          // letzter Screen -> zurueck zur Seite
       document.body.classList.remove('acct-open');
       try { window.scrollTo(0, APP._acctPrevScroll || 0); } catch(e){}
+      _mFocusRestore(id);
     }
     return;
   }
   if (el.classList.contains('open')) _openModals = Math.max(0, _openModals - 1);
   el.classList.remove('open');
   if (_openModals === 0) unlockScroll();
+  _mFocusRestore(id);
 }
+
+/* Escape schließt das oberste offene Overlay. Vorher war kein einziges Modal
+   per Tastatur schließbar. #modal-legal-update wird ausgenommen – dort muss
+   der Nutzer die neuen Rechtstexte aktiv bestätigen. */
+document.addEventListener('keydown', function(e){
+  if (e.key !== 'Escape' && e.key !== 'Esc') return;
+  var open = Array.prototype.slice.call(
+    document.querySelectorAll('.moverlay.open:not(.page-hidden)')
+  );
+  if (!open.length) return;
+  // Klassische Overlays liegen immer ÜBER einem Seiten-Screen (page-modal),
+  // deshalb zuerst diese schließen. querySelectorAll liefert Dokument-, nicht
+  // Öffnungsreihenfolge – ohne diese Unterscheidung würde Escape sonst zufällig
+  // den darunterliegenden Account-Screen treffen.
+  var classic = open.filter(function(el){ return !el.classList.contains('page-modal'); });
+  var top = (classic.length ? classic : open)[(classic.length ? classic : open).length - 1];
+  if (!top || top.id === 'modal-legal-update') return;
+  e.preventDefault();
+  try { closeModal(top.id); } catch(err){}
+});
 function overlayClose(e,id){ if(e.target===e.currentTarget) closeModal(id); }
 
 /* ══════════════════════════════════════════════════════
@@ -4719,6 +4875,7 @@ async function logout() {
   // Clear app state + caches
   APP.user = null; APP.activeChatId = null; APP.activeThread = null;
   APP.pendingJobId = null; APP.pendingPayJobId = null; APP._legalUpdateCallback = null;
+  APP._pendingJobId = null; APP._pendingJobPayload = null; APP._pendingJobDirty = false;
   STATE.apps = []; STATE.ownerJobs = []; STATE.threads = []; STATE.threadMap = {};
 
   // Reset auth modal so re-login works
@@ -4763,7 +4920,7 @@ function openChats(){
   if(searchInp) searchInp.value = '';
   openModal('modal-chats');
   const list=document.getElementById('thread-list');
-  if(list) list.innerHTML=`<div class="chat-empty-state"><div class="icon">⏳</div></div>`;
+  if(list) list.innerHTML=`<div class="chat-empty-state"><div class="icon"><span class="spin spin-dark" aria-hidden="true"></span></div></div>`;
   loadThreads().then(()=>{ renderChatList(''); updateBadge(); });
 }
 
@@ -4968,7 +5125,7 @@ async function openPublicProfile(userId){
   try{ history.replaceState(null,'', '#/profile/'+userId); }catch(e){}
   openModal('modal-pubprofile');
   var box=document.getElementById('pubprofile-content');
-  if(box) box.innerHTML='<div style="text-align:center;padding:50px 20px;color:var(--c-ink4);font-size:26px">⏳</div>';
+  if(box) box.innerHTML='<div style="text-align:center;padding:50px 20px"><span class="spin spin-dark" aria-hidden="true"></span></div>';
   if(!window.SR){ if(box) box.innerHTML='<div style="padding:24px;text-align:center;color:var(--c-ink3)">'+(LANG==='de'?'Profil derzeit nicht verfügbar.':'Profile unavailable.')+'</div>'; return; }
   var p=null, reviews=[];
   try{ p=await SR.getPublicProfile(userId); }catch(e){ console.error('[SR] getPublicProfile', e); }
@@ -5125,7 +5282,7 @@ function _acctRow(icon,title,sub,go,badge){
 /* ── Ebene 1: Account-Uebersicht ───────────────────── */
 function _acctHome(){
   var de=LANG==='de', u=APP.user;
-  var rating=getAvgRating(u.email), rc=u.review_count||0;
+  var _rs=_acctRatingStats(), rating=_rs.avg, rc=_rs.count;
   var pct=acctCompleteness();
   var unread=0; try{ unread=totalUnread()||0; }catch(e){}
   var chats=(STATE.threads||[]).length;
@@ -5185,7 +5342,7 @@ function _acctHome(){
 /* ── Ebene 2: Profil / persoenliche Daten ──────────── */
 function _acctProfile(){
   var de=LANG==='de', u=APP.user;
-  var trustScore=calcTrustScore(u), trustInfo=getTrustLabel(trustScore);
+  var psScore=calcProfileStrength(u), psInfo=getProfileStrengthLabel(psScore);
   return _acctBar(de?'Profil':'Profile', true)+
   '<div class="acct-body">'+
     '<div class="acct-hero">'+
@@ -5206,15 +5363,20 @@ function _acctProfile(){
       '<div class="acct-hint">'+(de?'Für andere Nutzer in deinem öffentlichen Profil sichtbar.':'Visible to other users on your public profile.')+'</div></div>'+
     '<button class="acct-btn" id="acct-save" onclick="acctSaveProfile()">'+(de?'Speichern':'Save')+'</button>'+
 
-    '<div class="acct-lab">'+(de?'Vertrauen':'Trust')+'</div>'+
-    '<div class="trust-score"><span style="font-size:12.5px;color:var(--c-ink3);min-width:78px">'+T('prof.trust')+'</span>'+
-      '<div class="ts-bar"><div class="ts-fill" style="width:'+trustScore+'%"></div></div>'+
-      '<span style="font-size:12.5px;font-weight:600;color:var(--c-ink2);min-width:32px;text-align:right">'+trustScore+'%</span></div>'+
-    '<div style="margin-top:10px"><span class="trust-badge '+trustInfo.cls+'">'+trustInfo.label+'</span></div>'+
+    '<div class="acct-lab">'+T('ps.title')+'</div>'+
+    '<div class="trust-score"><span style="font-size:12.5px;color:var(--c-ink3);min-width:78px">'+T('ps.title')+'</span>'+
+      '<div class="ts-bar"><div class="ts-fill" style="width:'+psScore+'%"></div></div>'+
+      '<span style="font-size:12.5px;font-weight:600;color:var(--c-ink2);min-width:32px;text-align:right">'+psScore+'%</span></div>'+
+    '<div style="margin-top:10px"><span class="trust-badge '+psInfo.cls+'">'+psInfo.label+'</span></div>'+
+    '<div class="acct-hint" style="margin-top:8px">'+T('ps.hint')+'</div>'+
 
+    // Nur echte, tatsächlich eingetretene Zustände. Der frühere Haken bei
+    // "E-Mail bestätigt" war fest verdrahtet und damit unabhängig vom
+    // wirklichen Bestätigungsstand.
     '<div class="acct-lab">'+T('prof.verifstand')+'</div>'+
-    '<div class="verif-item"><div class="verif-dot done">✓</div><span style="font-size:13px">'+T('prof.v.email')+'</span></div>'+
-    '<div class="verif-item"><div class="verif-dot '+(u.consentAGB?'done':'open')+'">'+(u.consentAGB?'✓':'○')+'</div><span style="font-size:13px">'+T('prof.v.agb')+'</span></div>'+
+    '<div class="verif-item"><div class="verif-dot '+(u.email_verified?'done':'open')+'">'+(u.email_verified?'✓':'○')+'</div><span style="font-size:13px">'+T('prof.v.email')+'</span></div>'+
+    '<div class="verif-item"><div class="verif-dot '+(u.stripe_verified?'done':'open')+'">'+(u.stripe_verified?'✓':'○')+'</div><span style="font-size:13px">'+T('prof.v.pay')+'</span></div>'+
+    '<div class="acct-hint" style="margin-top:6px">'+T('prof.v.none')+'</div>'+
 
     '<button class="acct-mini" style="margin-top:16px" onclick="openPublicProfile(\''+esc(String(u.id))+'\')">'+_acctIcon('external-link',13)+' '+(de?'Öffentliches Profil ansehen':'View public profile')+'</button>'+
   '</div>';
@@ -5238,7 +5400,12 @@ function _acctActivity(){
       var st=j.status||'active', pend=st==='pending', flag=st==='flagged', clo=st==='closed';
       var tag = pend?'<span class="pj-status pending">'+T('prof.status.pending')+'</span>' : flag?'<span class="pj-status" style="background:var(--c-rlt);color:var(--c-red)">'+T('prof.status.flagged')+'</span>' : clo ?'<span class="pj-status" style="background:var(--c-bg2);color:var(--c-ink3)">'+T('prof.status.closed')+'</span>' :      '<span class="pj-status active">'+T('prof.status.active')+'</span>';
       var id=esc(String(j.id)), a=[];
-      if(pend) a.push('<button class="acct-mini" onclick="closeModal(\'modal-profile\');resumePayment(\''+id+'\')">'+_acctIcon('credit-card',13)+' '+T('prof.paynow')+'</button>');
+      if(pend){
+        a.push('<button class="acct-mini" onclick="closeModal(\'modal-profile\');resumePayment(\''+id+'\')">'+_acctIcon('credit-card',13)+' '+T('prof.paynow')+'</button>');
+        // Entwurf vor der Zahlung korrigieren – hier sind auch Kategorie und
+        // Ort noch änderbar, danach nicht mehr.
+        a.push('<button class="acct-mini" onclick="openEditJob(\''+id+'\')">'+_acctIcon('pencil',13)+' '+T('job.edit')+'</button>');
+      }
       if(st==='active'){
         a.push('<button class="acct-mini" onclick="openEditJob(\''+id+'\')">'+_acctIcon('pencil',13)+' '+T('job.edit')+'</button>');
         a.push('<button class="acct-mini" onclick="closeJobConfirm(\''+id+'\')">'+_acctIcon('check',13)+' '+T('job.complete')+'</button>');
@@ -5289,7 +5456,7 @@ function _acctActivity(){
 /* ── Ebene 2: Bewertungen (lazy geladen) ───────────── */
 function _acctReviews(){
   var de=LANG==='de', u=APP.user;
-  var rating=getAvgRating(u.email), rc=u.review_count||0;
+  var _rs=_acctRatingStats(), rating=_rs.avg, rc=_rs.count;
   var list=APP._acctReviews;
   var inner;
   if(!Array.isArray(list)){
@@ -5622,8 +5789,9 @@ function initResumePayment() {
   if (btn) { btn.disabled=true; btn.innerHTML=`<span class="spin"></span> ${T('pay.connect2')}`; }
 
   showToast(T('toast.pay.redirect'));
-  const _job = (typeof getJobById === 'function') ? getJobById(APP.pendingPayJobId) : null;
-  startStripeCheckout({ kind:'resume', jobId: APP.pendingPayJobId, jobTitle: _job ? jobTitle(_job) : '', btn });
+  // Der Auftrag existiert bereits als 'pending' – es wird nur eine Checkout-
+  // Session dafür erzeugt. Server prüft Eigentum und Status.
+  startStripeCheckout({ jobId: APP.pendingPayJobId, btn: btn });
 }
 /* ════════ WEB PUSH (Browser-Benachrichtigungen) ════════ */
 var _vapidKey = null;
@@ -5758,8 +5926,13 @@ async function loadSavedJobs(){
   if(!window.SR || !APP.user){ STATE.savedIds=new Set(); STATE.savedJobs=[]; return; }
   try{
     var rows=await SR.listSavedJobs(APP.user.id);
-    STATE.savedIds=new Set((rows||[]).map(function(r){return String(r.job_id);}));
-    STATE.savedJobs=(rows||[]).map(function(r){ return r.jobs?jobFromRow(r.jobs):null; }).filter(Boolean);
+    // Nur Einträge mit tatsächlich noch existierendem Auftrag zählen. Vor der
+    // Migration supabase_saved_jobs.sql (ON DELETE CASCADE) konnten verwaiste
+    // Verweise auf gelöschte Aufträge zurückbleiben – die würden sonst als
+    // "gemerkt" gelten, ohne in der Liste aufzutauchen.
+    var live=(rows||[]).filter(function(r){ return r && r.jobs; });
+    STATE.savedIds=new Set(live.map(function(r){return String(r.job_id);}));
+    STATE.savedJobs=live.map(function(r){ return jobFromRow(r.jobs); }).filter(Boolean);
   }catch(e){ console.error('[SR] loadSavedJobs', e); STATE.savedIds=new Set(); STATE.savedJobs=[]; }
 }
 function isJobSaved(id){ return !!(STATE.savedIds && STATE.savedIds.has(String(id))); }
@@ -5866,6 +6039,16 @@ function openEditJob(id){
   document.getElementById('edit-job-city').value=job.city||'';
   var sel=document.getElementById('edit-job-cat');
   if(sel) sel.innerHTML=['g','h','s','m'].map(function(c){ return '<option value="'+c+'"'+(job.cat===c?' selected':'')+'>'+catEmoji(c)+' '+catName(c)+'</option>'; }).join('');
+  // Kategorie und Ort definieren, WAS wo gesucht wird. Nach der Veröffentlichung
+  // sind sie fixiert (serverseitig per DB-Trigger erzwungen), damit eine einzelne
+  // Inseratsgebühr nicht in beliebig viele völlig andere Aufträge umgewandelt
+  // werden kann. Vor der Zahlung ('pending') bleibt alles frei änderbar.
+  var _locked = (job.status || 'active') !== 'pending';
+  var _city = document.getElementById('edit-job-city');
+  if(sel)   sel.disabled = _locked;
+  if(_city) _city.readOnly = _locked;
+  var _hint = document.getElementById('edit-job-lock');
+  if(_hint){ _hint.style.display = _locked ? 'block' : 'none'; }
   closeModal('modal-profile');
   openModal('modal-edit-job');
 }
@@ -5879,10 +6062,31 @@ async function submitEditJob(){
   var cat=document.getElementById('edit-job-cat').value||'g';
   if(!title || !desc || !city || price<=0){ showToast(T('toast.postfields'),'err'); return; }
   if(typeof validateJobContent==='function' && !validateJobContent(title,desc)) return;
-  try{ await SR.updateJob(id,{ title:title, description:desc, price:price, city:city, category:cat }); }
-  catch(e){ console.error('[SR] updateJob', e); showToast(LANG==='de'?'Speichern fehlgeschlagen.':'Save failed.','err'); return; }
+  // Bei einem veröffentlichten Auftrag sind Kategorie und Ort fixiert. Sie
+  // werden dann gar nicht erst mitgeschickt: sanitize() ist nicht garantiert
+  // idempotent, ein unverändert gemeinter Wert könnte sich minimal
+  // unterscheiden und der Trigger würde die ganze Bearbeitung ablehnen.
+  var _job0 = getJobById(id);
+  var _lock = _job0 && (_job0.status || 'active') !== 'pending';
+  var _patch = { title:title, description:desc, price:price };
+  if(!_lock){ _patch.city = city; _patch.category = cat; }
+  try{ await SR.updateJob(id, _patch); }
+  catch(e){
+    console.error('[SR] updateJob', e);
+    // Der DB-Trigger (supabase_stripe_publishing.sql) lehnt unerlaubte
+    // Änderungen ab – die Fehlermeldung ist bereits nutzerlesbar.
+    var _c=(e&&e.code)||'', _m=(e&&(e.message||e.details||e.hint))||'';
+    if(_c==='42501' || /42501|nicht geaendert|nicht erlaubt|veroeffentlichten Auftrags/i.test(_m)){
+      showToast(_m.replace(/^.*?:\s*/,'') || T('job.edit.locked'), 'err');
+    } else {
+      showToast(LANG==='de'?'Speichern fehlgeschlagen.':'Save failed.','err');
+    }
+    return;
+  }
   var sid=String(id);
-  var apply=function(j){ return String(j.id)===sid?Object.assign({},j,{title:title, desc:desc, price:price, city:city, cat:cat}):j; };
+  var _local={title:title, desc:desc, price:price};
+  if(!_lock){ _local.city=city; _local.cat=cat; }
+  var apply=function(j){ return String(j.id)===sid?Object.assign({},j,_local):j; };
   STATE.jobs=(STATE.jobs||[]).map(apply);
   STATE.ownerJobs=(STATE.ownerJobs||[]).map(apply);
   if(STATE.jobMap && STATE.jobMap[sid]) STATE.jobMap[sid]=apply(STATE.jobMap[sid]);
@@ -6012,6 +6216,12 @@ function openPostJob(){
   // Clear any content warnings from previous session
   document.querySelectorAll('.content-warn').forEach(el=>el.remove());
   APP.pendingPayJobId = null;
+  // Neuer Auftrag -> der 'pending'-Entwurf eines früheren Durchlaufs darf nicht
+  // wiederverwendet werden, sonst würde der alte Auftrag überschrieben statt
+  // eines neuen angelegt.
+  APP._pendingJobId = null;
+  APP._pendingJobPayload = null;
+  APP._pendingJobDirty = false;
   stepBar(1);
   openModal('modal-post');
 }
@@ -6074,12 +6284,20 @@ function goPostStep(n){
     const jlat=mapCenter.lat+(Math.random()-.5)*.018;
     const jlng=mapCenter.lng+(Math.random()-.5)*.018;
     const ploc=sanitize(document.getElementById('p-loc').value.trim(),150);
-    // Der Auftrag wird NICHT hier gespeichert – erst nach erfolgreicher Stripe-Zahlung (siehe handlePaymentReturn).
+    // Der Auftrag wird beim Klick auf "Bezahlen" als status='pending' gespeichert
+    // (initPayment) und erst nach SERVERSEITIG bestätigter Zahlung auf 'active'
+    // gesetzt – siehe api/verify-checkout-session.js. Der Entwurf überlebt damit
+    // einen Tab-Absturz oder einen Gerätewechsel und liegt nicht mehr nur im
+    // sessionStorage.
     APP._pendingJobPayload={
       user_id: APP.user.id,
       title: t, description: d, category: APP.postCat,
       city: ploc, latitude: jlat, longitude: jlng,
-      price: p, status: 'active' };
+      price: p, status: 'pending' };
+    // Der Nutzer kann über "Zurück" zu Schritt 3 und mit geänderten Daten
+    // erneut hierher kommen. Ein bereits angelegter Entwurf wird dann in
+    // initPayment() aktualisiert – markieren, dass das nötig ist.
+    APP._pendingJobDirty = true;
     const ps=document.getElementById('pay-screen');
     const pp=document.getElementById('pay-processing');
     if(ps)ps.style.display='block';
@@ -6400,7 +6618,7 @@ function selectPayMethod(method) {
  *           wird der Auftrag in Supabase als 'active' gespeichert.
  *           ?sr_pay=cancel  → nichts wird veröffentlicht.
  */
-function initPayment() {
+async function initPayment() {
   // Pflicht-Einwilligungen
   const c1 = document.getElementById('pay-consent-widerruf');
   const c2 = document.getElementById('pay-consent-stripe');
@@ -6415,33 +6633,102 @@ function initPayment() {
   if (!APP.user) { showToast(T('toast.pay.loginfirst'), 'err'); if (btn) { btn.disabled=false; btn.innerHTML=T('pay.btn'); } return; }
   if (!APP._pendingJobPayload) { showToast(T('toast.postfields'), 'err'); if (btn) { btn.disabled=false; btn.innerHTML=T('pay.btn'); } return; }
 
-  // Auftrag wird NICHT direkt veröffentlicht – wir leiten zur echten Stripe-Bezahlseite.
+  // Schritt 1: Auftrag als 'pending' in Supabase speichern (RLS erlaubt dem
+  // Client nur noch 'pending'). Erst dadurch existiert eine job_id, an die die
+  // Stripe-Session gebunden werden kann – und der Entwurf ist dauerhaft sicher.
+  // Schritt 2: Checkout für genau diese job_id starten.
+  // Der Auftrag wird NICHT hier veröffentlicht, das macht ausschließlich der Server.
   showToast(T('toast.pay.redirect'));
-  startStripeCheckout({ kind:'new', payload: APP._pendingJobPayload, jobTitle: (APP._pendingJobPayload.title || ''), btn });
+  (async function(){
+    var jobId = APP._pendingJobId || null;
+    try {
+      if (!jobId) {
+        var created = await SR.createJob(APP._pendingJobPayload);
+        jobId = created && created.id;
+      } else if (APP._pendingJobDirty) {
+        // Entwurf existiert bereits (z. B. Checkout-Abbruch, dann über
+        // "Zurück" die Daten korrigiert) -> aktualisieren statt einen
+        // zweiten Auftrag anzulegen. status/user_id bleiben unangetastet.
+        // latitude/longitude bewusst NICHT mitschicken: sie werden bei jedem
+        // Betreten von Schritt 4 neu gewürfelt, tragen keine Nutzerabsicht und
+        // würden den Trigger auslösen, falls der Auftrag zwischenzeitlich
+        // (Webhook) schon aktiv geworden ist.
+        var pl = APP._pendingJobPayload || {};
+        await SR.updateJob(jobId, {
+          title: pl.title, description: pl.description,
+          category: pl.category, city: pl.city, price: pl.price
+        });
+      }
+      APP._pendingJobDirty = false;
+    } catch (e) {
+      console.error('[SR] pending job speichern', e);
+      showToast(T('toast.job.savefail'), 'err');
+      if (btn) { btn.disabled = false; btn.innerHTML = T('pay.btn'); }
+      return;
+    }
+    if (!jobId) {
+      showToast(T('toast.job.savefail'), 'err');
+      if (btn) { btn.disabled = false; btn.innerHTML = T('pay.btn'); }
+      return;
+    }
+    // Merken, damit ein zweiter Klick nach einem Checkout-Fehler keinen zweiten
+    // Auftrag anlegt.
+    APP._pendingJobId = jobId;
+    try { await loadOwnerJobs(); } catch(e){}
+    startStripeCheckout({ jobId: jobId, btn: btn });
+  })();
 }
 
 /* ═══════════ Stripe Checkout – ECHTE Zahlung ═══════════
-   Der Auftrag wird NICHT direkt veröffentlicht. Es wird eine Stripe-Checkout-
-   Session (Server: /api/create-checkout-session) erstellt und der Nutzer dorthin
-   weitergeleitet. Erst nach serverseitig bestätigter Zahlung
-   (/api/verify-checkout-session) wird der Auftrag in Supabase als 'active' gespeichert. Bei Abbruch wird nichts veröffentlicht. */
+   Ablauf (serverseitig abgesichert):
+   1. Der Auftrag liegt bereits als status='pending' in Supabase (RLS erlaubt dem
+      Client ausschließlich 'pending').
+   2. /api/create-checkout-session prüft Token + Eigentum und bindet die
+      Stripe-Session fest an diese job_id (metadata.job_id/user_id und
+      jobs.stripe_session_id mit UNIQUE-Index).
+   3. Nach der Zahlung schaltet AUSSCHLIESSLICH der Server den Auftrag live –
+      entweder über /api/verify-checkout-session oder über den Stripe-Webhook.
+      Beide Wege sind idempotent; eine Session kann nur einmal verbraucht werden.
+   Der Client kann eine Veröffentlichung nicht mehr selbst auslösen. */
 async function startStripeCheckout(opts){
   opts = opts || {};
+  var jobId = opts.jobId;
+  if (!jobId) { showToast(T('toast.job.notfound'), 'err'); if (opts.btn) { opts.btn.disabled=false; opts.btn.innerHTML=T('pay.btn'); } return; }
   try {
+    // Der Server prüft anhand des Access-Tokens, ob der Auftrag dem Aufrufer
+    // gehört und noch 'pending' ist, und bindet die Stripe-Session fest an
+    // diese job_id (metadata + jobs.stripe_session_id UNIQUE).
+    var token = '';
+    try { var sess = await SR.getSession(); token = (sess && sess.access_token) || ''; } catch(e){}
+    if (!token) throw new Error('no-session');
+
     const res = await fetch('/api/create-checkout-session', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ jobTitle: opts.jobTitle || '', userEmail: (APP.user && APP.user.email) || '' })
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'Authorization':'Bearer ' + token },
+      body: JSON.stringify({ job_id: String(jobId) })
     });
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.url) throw new Error(data.error || ('HTTP ' + res.status));
-    // Rückkehr-Daten sichern (überlebt den Redirect im selben Tab)
-    if (opts.kind === 'resume' && opts.jobId != null) {
-      sessionStorage.setItem('sr_resume_job', String(opts.jobId));
-      sessionStorage.removeItem('sr_pending_job');
-    } else if (opts.payload) {
-      sessionStorage.setItem('sr_pending_job', JSON.stringify(opts.payload));
-      sessionStorage.removeItem('sr_resume_job');
+
+    // Der Auftrag war bereits bezahlt (z. B. Webhook noch unterwegs, oder der
+    // Nutzer klickt im Konto ein zweites Mal auf "Jetzt bezahlen"). Der Server
+    // hat ihn in diesem Fall direkt freigeschaltet – das ist ein Erfolg, kein
+    // Fehler, und es darf kein zweites Mal kassiert werden.
+    if (data && (data.already_paid || data.already_active)) {
+      try { closeModal('modal-resume-pay'); } catch(e){}
+      try { closeModal('modal-post'); } catch(e){}
+      APP._pendingJobId = null; APP._pendingJobPayload = null; APP._pendingJobDirty = false;
+      try { await loadJobs(); } catch(e){}
+      try { await loadOwnerJobs(); } catch(e){}
+      try { renderJobCards(); addMarkers(); updateBadge(); _profileRerenderIfOpen(); } catch(e){}
+      if (data.published || data.already_active) showToast(T('toast.pay.success'), 'ok');
+      else showToast(T('toast.pay.verify'), 'err');
+      return;
     }
+
+    if (!res.ok || !data.url) throw new Error(data.error || ('HTTP ' + res.status));
+    // Kein sessionStorage mehr: der Auftrag liegt bereits als 'pending' in der
+    // Datenbank. Geht der Tab verloren, findet der Nutzer ihn im Konto unter
+    // "Aktivitäten" wieder – oder der Stripe-Webhook schaltet ihn live.
     window.location.href = data.url;   // → gehostete Stripe-Bezahlseite
   } catch (err) {
     console.error('[SR] checkout start', err);
@@ -6458,8 +6745,9 @@ async function handlePaymentReturn(){
   const clean = () => { try { history.replaceState({}, document.title, location.pathname); } catch(e){} };
 
   if (pay === 'cancel') {
-    sessionStorage.removeItem('sr_pending_job');
-    sessionStorage.removeItem('sr_resume_job');
+    // Der Auftrag bleibt als 'pending' im Konto stehen und kann dort jederzeit
+    // nachbezahlt oder gelöscht werden – es geht nichts verloren.
+    APP._pendingJobId = null;
     clean();
     showToast(T('toast.pay.cancelled'), 'err');
     return;
@@ -6469,45 +6757,72 @@ async function handlePaymentReturn(){
   const sid = q.get('session_id');
   if (!sid) { clean(); return; }
 
-  showToast(T('toast.pay.verify'));
-  let paid = false;
-  try {
-    const r = await fetch('/api/verify-checkout-session?session_id=' + encodeURIComponent(sid));
-    const d = await r.json().catch(() => ({}));
-    paid = !!d.paid;
-  } catch (e) { console.error('[SR] verify', e); }
-
-  if (!paid) { clean(); showToast(T('toast.pay.notpaid'), 'err'); return; }
   if (!APP.user || !window.SR) { showToast(T('toast.pay.loginfirst'), 'err'); return; }
 
+  // Der Server entscheidet, ob veröffentlicht wird. Diese Antwort ist die
+  // einzige Quelle der Wahrheit – der Client veröffentlicht nichts mehr selbst.
+  showToast(T('toast.pay.verify'));
+  let d = null;
   try {
-    const resumeId   = sessionStorage.getItem('sr_resume_job');
-    const pendingRaw = sessionStorage.getItem('sr_pending_job');
-    if (resumeId) {
-      await SR.updateJob(resumeId, { status: 'active' });
-    } else if (pendingRaw) {
-      const payload = JSON.parse(pendingRaw);
-      payload.user_id = APP.user.id;   // immer der aktuell angemeldete Nutzer
-      payload.status  = 'active';
-      await SR.createJob(payload);
-    } else { clean(); return; }   // nichts zu veröffentlichen
-    sessionStorage.removeItem('sr_pending_job');
-    sessionStorage.removeItem('sr_resume_job');
-    APP._pendingJobPayload = null;
-    clean();
-    try { if(APP.user && !APP.user.stripe_verified && window.SR){ await SR.updateProfile(APP.user.id,{stripe_verified:true}); APP.user.stripe_verified=true; } } catch(e){}
-    await loadJobs(); try { await loadOwnerJobs(); } catch(e){}
-    updateBadge(); renderJobCards(); addMarkers();
-    showToast(T('toast.pay.success'), 'ok');
-    try {
-      openModal('modal-post');
-      ['ps1','ps2','ps3','ps4','pay-screen','pay-processing'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
-      const ok = document.getElementById('ps-ok'); if (ok) ok.style.display='block';
-    } catch(e){}
-  } catch (e) {
-    console.error('[SR] publish after pay', e);
-    showToast(T('toast.job.savefail'), 'err');
+    var token = '';
+    try { var sess = await SR.getSession(); token = (sess && sess.access_token) || ''; } catch(e){}
+    const r = await fetch('/api/verify-checkout-session?session_id=' + encodeURIComponent(sid), {
+      headers: token ? { 'Authorization': 'Bearer ' + token } : {}
+    });
+    d = await r.json().catch(() => ({}));
+  } catch (e) { console.error('[SR] verify', e); }
+
+  // Sitzung abgelaufen, Netzwerkfehler, oder eine strukturell unvollständige
+  // Antwort (fehlende ENV-Variablen liefern kein 'published'-Feld). In all
+  // diesen Fällen ist NICHT bewiesen, dass nicht bezahlt wurde – die session_id
+  // bleibt deshalb in der URL, damit ein erneuter Versuch möglich ist.
+  if (!d || typeof d.published === 'undefined') {
+    showToast(LANG==='de'
+      ? 'Der Zahlungsstatus konnte gerade nicht geprüft werden. Bitte die Seite in einem Moment neu laden.'
+      : 'Could not verify the payment status right now. Please reload the page in a moment.', 'err');
+    return;
   }
+  if (d.code === 'unauthenticated') {
+    showToast(T('toast.pay.loginfirst'), 'err');
+    return;
+  }
+
+  if (!d.published) {
+    clean();
+    if (!d.paid) {
+      showToast(T('toast.pay.notpaid'), 'err');
+    } else if (d.code === 'db_error') {
+      // Zahlung ok, Datenbank kurzzeitig nicht erreichbar. Der Stripe-Webhook
+      // wird automatisch erneut zugestellt und holt die Freischaltung nach.
+      showToast(LANG==='de'
+        ? 'Zahlung eingegangen. Der Auftrag wird in Kürze freigeschaltet – du findest ihn im Konto unter Aktivitäten.'
+        : 'Payment received. Your job will go live shortly – you can find it in your account under Activity.', 'err');
+    } else {
+      // no_job_ref / mismatch / forbidden: das kann der Webhook NICHT beheben.
+      // Ehrlich sein und dem Nutzer die Referenz für den Support mitgeben.
+      showToast(LANG==='de'
+        ? 'Zahlung eingegangen, aber der Auftrag konnte nicht zugeordnet werden. Bitte melde dich bei info@service-radar.com mit dieser Referenz: ' + sid
+        : 'Payment received, but the job could not be matched. Please contact info@service-radar.com with this reference: ' + sid, 'err');
+    }
+    try { await loadOwnerJobs(); } catch(e){}
+    try { _profileRerenderIfOpen(); } catch(e){}
+    return;
+  }
+
+  // Ab hier: der Server hat den Auftrag live geschaltet ('published' oder
+  // 'already_published' – beides ist Erfolg, ein Reload ändert daran nichts).
+  APP._pendingJobPayload = null;
+  APP._pendingJobId = null;
+  clean();
+  try { if(APP.user && !APP.user.stripe_verified && window.SR){ await SR.updateProfile(APP.user.id,{stripe_verified:true}); APP.user.stripe_verified=true; } } catch(e){}
+  await loadJobs(); try { await loadOwnerJobs(); } catch(e){}
+  updateBadge(); renderJobCards(); addMarkers();
+  showToast(T('toast.pay.success'), 'ok');
+  try {
+    openModal('modal-post');
+    ['ps1','ps2','ps3','ps4','pay-screen','pay-processing'].forEach(id => { const el=document.getElementById(id); if(el) el.style.display='none'; });
+    const ok = document.getElementById('ps-ok'); if (ok) ok.style.display='block';
+  } catch(e){}
 }
 
 function submitPayment(){
@@ -6858,6 +7173,10 @@ function initRadar(){
    CENTRAL INIT — initApp() is the single entry point
 ══════════════════════════════════════════════════════ */
 async function initApp() {
+  // Aufräumen: 'sr_ratings' war eine rein lokale Bewertungsquelle, die durch
+  // die Supabase-Tabelle `reviews` ersetzt wurde. Die Altdaten können nirgends
+  // mehr angezeigt werden und stehen auch nicht mehr in der Cookie-Richtlinie.
+  try { localStorage.removeItem('sr_ratings'); } catch(e){}
   try { loadSavedLocation(); } catch(e){}   // gespeicherten Standort wiederherstellen (kein erneutes Nachfragen)
   const savedLang = localStorage.getItem('sr_lang') || 'de';
   setLang(savedLang);
@@ -6900,6 +7219,8 @@ async function initApp() {
         APP.user = null;
         STATE.apps = []; STATE.ownerJobs = []; STATE.threads = []; STATE.threadMap = {};
         STATE.savedIds = new Set(); STATE.savedJobs = [];
+        // Zahlungs-Entwurf gehört zum abgemeldeten Konto – nicht weiterreichen.
+        APP._pendingJobId = null; APP._pendingJobPayload = null; APP._pendingJobDirty = false;
         updateNav(); updateBadge(); renderJobCards(); addMarkers();
         return;
       }
@@ -7038,7 +7359,7 @@ window.addEventListener('load', () => {
   setTimeout(() => { if (typeof leafMap !== 'undefined' && leafMap) leafMap.invalidateSize(false); }, 400);
 });
 </script>
-<script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@1.41.0/dist/umd/lucide.min.js"></script>
 <script>try{ if(window.lucide) lucide.createIcons(); }catch(e){}</script>
 </body>
 </html>

@@ -51,6 +51,11 @@
 
   function unwrap(res) { if (res.error) throw res.error; return res.data; }
 
+  // Spaltenliste fuer alle jobs-Abfragen. stripe_session_id und paid_at fehlen
+  // hier absichtlich – sie sind serverseitige Zahlungsdaten (api/_pay.js).
+  var JOB_COLS = 'id,user_id,title,description,category,city,latitude,longitude,' +
+                 'price,status,created_at, profiles:user_id(id,full_name,email,city,avatar_url,rating)';
+
   var SR = {
     client: sb,
 
@@ -201,14 +206,28 @@
     async listSavedJobs(userId) {
       if (!userId) return [];
       return unwrap(await sb.from('saved_jobs')
-        .select('job_id, created_at, jobs:job_id(*, profiles:user_id(id,full_name,email,city,avatar_url,rating))')
+        // 'jobs:job_id(*)' waere hier falsch: die Zahlungsspalten sind fuer
+        // anon/authenticated per Spalten-GRANT gesperrt (supabase_stripe_publishing.sql).
+        .select('job_id, created_at, jobs:job_id(' + JOB_COLS + ')')
         .eq('user_id', userId)
         .order('created_at', { ascending: false }));
     },
     async saveJob(userId, jobId) {
-      var res = await sb.from('saved_jobs').insert({ user_id: userId, job_id: jobId }).select().single();
+      // ignoreDuplicates: true -> "INSERT ... ON CONFLICT DO NOTHING".
+      // Ein Doppelklick oder ein zweiter Tab scheitert damit NICHT mehr am
+      // Unique-Index (saved_jobs_user_job_uidx); Merken ist idempotent.
+      //
+      // Bewusst NICHT merge-duplicates (das Standard-Verhalten von upsert):
+      // ein "DO UPDATE" braucht UPDATE-Rechte, und genau die sind auf
+      // saved_jobs entzogen (supabase_saved_jobs.sql) – es gibt dort auch
+      // keine UPDATE-Policy. maybeSingle(), weil DO NOTHING bei einem
+      // bereits vorhandenen Eintrag null zurueckgibt: das ist Erfolg.
+      var res = await sb.from('saved_jobs')
+        .upsert({ user_id: userId, job_id: jobId },
+                { onConflict: 'user_id,job_id', ignoreDuplicates: true })
+        .select('id, user_id, job_id, created_at').maybeSingle();
       if (res.error) { console.error('SAVED_JOBS INSERT ERROR:', res.error); throw res.error; }
-      return res.data;
+      return res.data;   // null = war schon gemerkt
     },
     async unsaveJob(userId, jobId) {
       var res = await sb.from('saved_jobs').delete().eq('user_id', userId).eq('job_id', jobId);
@@ -231,31 +250,39 @@
     },
 
     /* ───────── JOBS ───────── */
+    // Bewusst KEIN select('*'): jobs.stripe_session_id und jobs.paid_at sind
+    // serverseitige Zahlungsdaten und haben in einer oeffentlichen Antwort
+    // nichts zu suchen. RLS filtert Zeilen, nicht Spalten.
     async listActiveJobs() {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)')
+        .select(JOB_COLS)
         .eq('status', 'active')
         .order('created_at', { ascending: false }));
     },
     async jobsByOwner(userId) {
       return unwrap(await sb.from('jobs')
-        .select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)')
+        .select(JOB_COLS)
         .eq('user_id', userId)
         .order('created_at', { ascending: false }));
     },
     async getJobsByIds(ids) {
       var list = Array.from(new Set((ids || []).filter(Boolean)));
       if (!list.length) return [];
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').in('id', list));
+      return unwrap(await sb.from('jobs').select(JOB_COLS).in('id', list));
     },
     async getJob(id) {
-      return unwrap(await sb.from('jobs').select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').eq('id', id).maybeSingle());
+      return unwrap(await sb.from('jobs').select(JOB_COLS).eq('id', id).maybeSingle());
     },
     async createJob(payload) {
-      return unwrap(await sb.from('jobs').insert(payload).select('*, profiles:user_id(id,full_name,email,city,avatar_url,rating)').single());
+      return unwrap(await sb.from('jobs').insert(payload).select(JOB_COLS).single());
     },
     async updateJob(id, patch) {
-      return unwrap(await sb.from('jobs').update(patch).eq('id', id).select().single());
+      // Explizite Spalten statt select('*'): die Zahlungsspalten sind fuer
+      // anon/authenticated per Spalten-GRANT gesperrt, ein '*' wuerde scheitern.
+      return unwrap(await sb.from('jobs')
+        .update(patch).eq('id', id)
+        .select('id,user_id,title,description,category,city,latitude,longitude,price,status,created_at')
+        .single());
     },
     // ECHTES Löschen: RLS (jobs_delete_own) erlaubt nur dem Eigentümer das Löschen.
     // DB-Cascade entfernt zugehörige applications + messages; reviews.job_id wird NULL.

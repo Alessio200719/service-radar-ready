@@ -628,7 +628,12 @@ html[lang="en"] #legal-de-note{display:block}
 @media(max-width:600px){
   .msg-area{-webkit-overflow-scrolling:touch}
   #ch-input{font-size:16px} /* prevent iOS zoom on focus */
-  .mcard{border-radius:var(--r3) var(--r3) 0 0;max-height:92dvh}
+  /* KEIN max-height mehr: die Karte fliesst, gescrollt wird das Overlay.
+     Ein max-height:92dvh hier war mit offener Tastatur die Ursache dafuer,
+     dass das Ende langer Formulare nicht mehr erreichbar war. */
+  .mcard{border-radius:var(--r3) var(--r3) 0 0}
+  /* Weniger Rand auf kleinen Displays, damit lange Formulare mehr Platz haben */
+  .moverlay{padding:10px}
   .imp-box{padding:20px 14px}
   #modal-pdf .mcard{border-radius:0;max-height:100dvh;max-height:100vh}
   #modal-pdf iframe{min-height:55vh}
@@ -639,6 +644,9 @@ html[lang="en"] #legal-de-note{display:block}
 }
 
 /* ══ PDF MODAL ═══════════════════════════════════ */
+/* AUSNAHME vom Overlay-Scroll: der PDF-Viewer ist ein Rahmen fester Hoehe,
+   gescrollt wird im iframe durch den PDF-Betrachter selbst. */
+#modal-pdf{overflow:hidden}
 #modal-pdf .mcard{max-width:760px;width:95vw;max-height:90vh;display:flex;flex-direction:column}
 #modal-pdf .pdf-header{
   display:flex;align-items:center;justify-content:space-between;
@@ -679,9 +687,23 @@ html[lang="en"] #legal-de-note{display:block}
    Hit-Testing), scrollt selbst nicht (overflow:hidden). Die .mcard ist der EINE
    Scroll-Container: overflow-y:auto + natives Momentum, KEIN transform (der zweite
    Compositing-Trigger, der in Safari das Scrollen über Kind-Elementen blockiert). */
-.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;opacity:0;pointer-events:none;transition:opacity .2s}
+/* ── EIN Scroller pro Modal: das OVERLAY, nicht die Karte ──────────────────
+   Vorher war die .mcard ein innerer Scroller (max-height:100% + overflow-y:auto)
+   INNERHALB eines fixierten, nicht scrollenden Flex-Overlays – bei gleichzeitig
+   per body.modal-lock fixiertem Body. Diese Verschachtelung ist die Ursache der
+   Wisch-Probleme auf iOS/Safari: die Geste trifft mal den inneren, mal den
+   aeusseren Container, und mit offener Tastatur schrumpft der sichtbare Bereich,
+   waehrend max-height:92dvh nicht mitgeht -> Formularende unerreichbar.
+
+   Jetzt scrollt das Overlay selbst, die Karte fliesst. Das ist dieselbe
+   Grundregel, die den Account-Bereich (.page-modal) seit dem Safari-Fix stabil
+   macht: genau EIN Scroll-Container, keine Verschachtelung.
+   Optik unveraendert – Abdunklung, Zentrierung und Kartenbreite bleiben gleich.
+   margin:auto auf der Karte haelt die Zentrierung UND verhindert das bekannte
+   Flexbox-Problem, dass bei zu hohem Inhalt der obere Rand abgeschnitten wird. */
+.moverlay{position:fixed;inset:0;z-index:9000;background:rgba(13,17,23,.72);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;opacity:0;pointer-events:none;transition:opacity .2s}
 .moverlay.open{opacity:1;pointer-events:all}
-.mcard{background:var(--c-bg);border-radius:var(--r4);width:100%;max-width:500px;box-shadow:var(--sh4);position:relative;margin:auto;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;border:1px solid var(--c-bds)}
+.mcard{background:var(--c-bg);border-radius:var(--r4);width:100%;max-width:500px;box-shadow:var(--sh4);position:relative;margin:auto;max-height:none;overflow:visible;border:1px solid var(--c-bds)}
 .mcard-inner{padding:36px}
 .mclose{position:absolute;top:12px;right:12px;width:32px;height:32px;border-radius:50%;background:var(--c-bg1);border:1px solid var(--c-bd);font-size:14px;color:var(--c-ink3);transition:all .15s;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .mclose:hover{background:var(--c-bg2);color:var(--c-ink)}
@@ -758,7 +780,11 @@ html[lang="en"] #legal-de-note{display:block}
 .chat-modal-list .mcard{max-width:600px}
 .chat-search-wrap{display:flex;align-items:center;gap:8px;background:var(--c-bg1);border:1px solid var(--c-bd);border-radius:var(--r1);padding:9px 14px;margin-bottom:16px}
 .chat-search-wrap input{border:none;outline:none;background:transparent;font-size:14px;color:var(--c-ink);width:100%}
+/* Auf dem Desktop darf die Liste einen eigenen Scrollbereich haben (das Modal
+   bleibt dadurch kompakt). Auf Touch waere das ein zweiter Scroller im
+   Overlay-Scroller – dort fliesst die Liste stattdessen. */
 .thread-list{display:flex;flex-direction:column;gap:2px;max-height:460px;overflow-y:auto}
+@media(max-width:600px){ .thread-list{max-height:none;overflow:visible} }
 .thread-list::-webkit-scrollbar{width:4px}.thread-list::-webkit-scrollbar-thumb{background:var(--c-bg2);border-radius:4px}
 .ct{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--r1);cursor:pointer;transition:background .15s;position:relative}
 .ct:hover{background:var(--c-bg1)}.ct.unread{background:var(--c-blt)}
@@ -773,6 +799,11 @@ html[lang="en"] #legal-de-note{display:block}
 .chat-empty-state{text-align:center;padding:48px 20px;color:var(--c-ink3)}
 .chat-empty-state .icon{font-size:40px;margin-bottom:12px}
 .chat-empty-state h4{font-size:16px;font-weight:700;margin-bottom:6px;color:var(--c-ink2)}
+/* AUSNAHME vom Overlay-Scroll: das Chat-Fenster ist ein Panel fester Hoehe mit
+   eigenem Verlauf-Scroller (.msg-area). Damit das Overlay NICHT zusaetzlich
+   scrollt (zwei Scroller uebereinander = genau das Problem, das oben behoben
+   wurde), scrollt es hier nicht mit. */
+.chat-win{overflow:hidden}
 .chat-win .mcard{max-width:560px;display:flex;flex-direction:column;height:85vh;max-height:640px;padding:0;overflow:hidden}
 .ch-header{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--c-bds);flex-shrink:0;background:var(--c-bg)}
 .ch-back{width:32px;height:32px;border-radius:50%;background:var(--c-bg1);border:1px solid var(--c-bd);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;transition:all .15s}
@@ -788,7 +819,11 @@ html[lang="en"] #legal-de-note{display:block}
 .day-sep::before,.day-sep::after{content:'';flex:1;height:1px;background:var(--c-bds)}
 .msg{display:flex;align-items:flex-end;gap:8px;animation:msgIn .2s ease-out}
 .msg.me{flex-direction:row-reverse}
-.msg-bub{max-width:75%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5;word-break:break-word}
+/* white-space:pre-wrap erhaelt Zeilenumbrueche aus der Nachricht. Ohne diese
+   Regel kollabierte jedes \n im HTML zu einem Leerzeichen – mehrzeilige
+   Nachrichten kamen als ein langer Fliesstext an.
+   overflow-wrap:anywhere bricht auch lange URLs, ohne die Blase zu sprengen. */
+.msg-bub{max-width:75%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal}
 .msg.other .msg-bub{background:var(--c-bg1);border:1px solid var(--c-bds);color:var(--c-ink);border-bottom-left-radius:4px}
 .msg.me .msg-bub{background:var(--c-blue);color:#fff;border-bottom-right-radius:4px}
 .msg-ts{font-size:10.5px;color:var(--c-ink5);margin-bottom:2px;flex-shrink:0}
@@ -4472,7 +4507,14 @@ function openModal(id) {
     applyTranslations();
     return;
   }
-  if (!el.classList.contains('open')) { if (_openModals === 0) lockScroll(); _openModals++; }
+  if (!el.classList.contains('open')) {
+    if (_openModals === 0) lockScroll();
+    _openModals++;
+    // Das Overlay ist jetzt der Scroll-Container. Beim erneuten Öffnen würde
+    // sonst die Scrollposition des letzten Besuchs stehen bleiben und das
+    // Modal erschiene mittendrin statt am Anfang.
+    try { el.scrollTop = 0; } catch(e){}
+  }
   el.classList.add('open');
   _mFocusIn(el);
   // Always re-apply translations so modal content matches active language
@@ -4992,9 +5034,14 @@ async function openChatWin(key){
   setTimeout(()=>{ const a=document.getElementById('msg-area'); if(a)a.scrollTop=a.scrollHeight; document.getElementById('ch-input')?.focus(); },80);
 }
 
-function renderMsgs(key){
+function renderMsgs(key, forceBottom){
   const t=(STATE.threadMap[key])||APP.activeThread; if(!t) return;
   const area=document.getElementById('msg-area'); if(!area) return;
+  // Vor dem Neuaufbau merken, ob der Nutzer nahe am Ende war. Sonst würde
+  // jedes eingehende Ereignis ihn aus dem Lesen älterer Nachrichten
+  // herausreissen. 60px Toleranz deckt Rundungen und Zoom ab.
+  const wasNearBottom = (area.scrollHeight - area.scrollTop - area.clientHeight) < 60;
+  const prevTop = area.scrollTop;
   const me=APP.user.id;
   const msgs=t.msgs||[];
   let lastDay='';
@@ -5010,31 +5057,82 @@ function renderMsgs(key){
         const who=isMe?(APP.user.name||''):(t.otherName||'');
         return `${sep}<div class="msg ${isMe?'me':'other'}">${!isMe?avatarHtml(who, t.otherAvatar, 28, t.otherId):''}<div><div class="msg-ts">${ts}</div><div class="msg-bub">${esc(m.message)}</div></div></div>`;
       }).join('');
-  area.scrollTop=area.scrollHeight;
+  // Ans Ende springen nur bei eigener Nachricht oder wenn der Nutzer ohnehin
+  // unten stand. Liest er weiter oben, bleibt seine Position erhalten.
+  if(forceBottom || wasNearBottom) area.scrollTop=area.scrollHeight;
+  else area.scrollTop=prevTop;
 }
 
 async function sendMsg(){
   const inp=document.getElementById('ch-input');
-  const raw=(inp?inp.value:'').trim();
+  const btn=document.getElementById('ch-send');
   const t=APP.activeThread;
+  // Ein laufender Versand blockiert jeden weiteren. Ohne diese Sperre könnten
+  // Doppelklick auf den Button und ein gleichzeitiges Enter zwei identische
+  // Nachrichten erzeugen.
+  if(APP._chatSending) return;
+
+  // Zeilenumbrüche INNERHALB der Nachricht bleiben erhalten; nur außen wird
+  // getrimmt und mehr als eine Leerzeile zusammengefasst. Eine Nachricht, die
+  // nur aus Leerzeichen/Umbrüchen besteht, wird dadurch zu '' und abgewiesen.
+  const raw=(inp?inp.value:'').replace(/\r\n?/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
   if(!raw || !t) return;
   if(!checkRateLimit('chat_msg')){ showToast(T('toast.chat.limit'),'err'); return; }
   const scan=scanContent(raw); if(!scan.ok){ showToast(T('toast.chat.blocked'),'err'); return; }
   const txt=sanitize(raw,1000);
-  if(inp){ inp.value=''; inp.style.height='auto'; inp.focus(); }
+  if(!txt) return;
+
+  APP._chatSending=true;
+  if(btn) btn.disabled=true;
+  // Eingabe sofort leeren: das ist das erwartete Messenger-Gefühl. Bei einem
+  // Fehler wird der Text unten vollständig zurückgeschrieben.
+  if(inp){ inp.value=''; autoGrow(inp); }
   try {
     const row=await SR.sendMessage({ job_id:t.jobId, sender_id:APP.user.id, receiver_id:t.otherId, message:txt });
     (t.msgs=t.msgs||[]).push(row);
     t.lastTs=Date.parse(row.created_at); t.lastMsg=txt;
     try { notifyUser(t.otherId, 'message'); } catch(e){}
     localStorage.setItem('sr_seen_'+t.key, String(Date.now()));
-    renderMsgs(t.key);
-  } catch(e){ console.error('[SR] sendMessage', e); showToast(T('toast.chat.sendfail'),'err'); if(inp) inp.value=txt; }
+    renderMsgs(t.key, true);              // eigene Nachricht -> immer ans Ende
+  } catch(e){
+    console.error('[SR] sendMessage', e);
+    showToast(T('toast.chat.sendfail'),'err');
+    // Text unverändert zurück, Höhe wieder anpassen, Cursor ans Ende.
+    if(inp){
+      inp.value=txt;
+      autoGrow(inp);
+      try { inp.focus(); inp.setSelectionRange(txt.length, txt.length); } catch(err){}
+    }
+  } finally {
+    APP._chatSending=false;
+    if(btn) btn.disabled=false;
+    // Fokus nur zurückholen, wenn Enter zum Senden benutzt wird. Auf Touch
+    // würde ein erzwungener Fokus die Tastatur ungefragt wieder aufklappen.
+    if(inp && _chatEnterSends()) { try{ inp.focus(); }catch(err){} }
+  }
 }
 
 
-function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg()}}
-function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px'}
+/* Enter sendet nur auf Geräten mit feinem Zeiger (Maus/Trackpad).
+   Auf Touch-Geräten erzeugt Return eine neue Zeile, gesendet wird über den
+   Button – dort ist Return auf der virtuellen Tastatur die Zeilenumbruch-Taste
+   und ein Versand-Trigger wäre überraschend.
+   Bewusst (pointer:coarse) statt User-Agent-Auswertung: das ist eine
+   Fähigkeitsabfrage des Browsers, kein fragiles UA-Parsing, und sie folgt
+   einem angeschlossenen externen Keyboard korrekt.
+   e.isComposing schützt IME-Eingaben (z. B. asiatische Tastaturen), bei denen
+   Enter einen Kandidaten bestätigt und keine Nachricht absenden darf. */
+function _chatEnterSends(){
+  try { return !window.matchMedia('(pointer: coarse)').matches; } catch(e){ return true; }
+}
+function handleChatKey(e){
+  if(e.key!=='Enter' || e.shiftKey) return;
+  if(e.isComposing || e.keyCode===229) return;
+  if(!_chatEnterSends()) return;          // Touch: Return = neue Zeile
+  e.preventDefault();
+  sendMsg();
+}
+function autoGrow(el){ if(!el) return; el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
 
 /* ══════════════════════════════════════════════════════
    PROFILE
@@ -6310,6 +6408,14 @@ function goPostStep(n){
     if(el) el.style.display=i===n-1?'block':'none';
   });
   stepBar(n);
+  // Beim Schrittwechsel an den Anfang des neuen Schritts. Gescrollt wird der
+  // Overlay-Container (der EINE Scroller, siehe .moverlay). Ohne das landet der
+  // Nutzer mitten im neuen Schritt, weil die Scrollposition des vorherigen
+  // Schritts erhalten bleibt. Passiert NUR hier – nicht beim Tippen.
+  try {
+    var _ov=document.getElementById('modal-post');
+    if(_ov) _ov.scrollTop=0;
+  } catch(e){}
 }
 
 function stepBar(n){
@@ -7313,12 +7419,11 @@ function bindEventListeners() {
     }
   });
 
-  // Chat input: Enter to send, Shift+Enter for newline
-  const chatInp = document.getElementById('ch-input');
-  if (chatInp) {
-    chatInp.addEventListener('keydown', handleChatKey);
-    chatInp.addEventListener('input', () => autoGrow(chatInp));
-  }
+  // Chat-Eingabe: KEINE Listener hier registrieren.
+  // Das Textarea trägt bereits onkeydown="handleChatKey(event)" und
+  // oninput="autoGrow(this)" im Markup. Ein zusätzliches addEventListener
+  // hätte beide Handler DOPPELT ausgeführt – handleChatKey lief pro
+  // Enter-Druck zweimal und rief sendMsg() zweimal auf.
 
   // Chat search
   const chatSearch = document.getElementById('chat-search-inp');

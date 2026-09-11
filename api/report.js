@@ -133,7 +133,10 @@ module.exports = async function handler(req, res) {
         const c = await sb.from('reports').select('id', { count: 'exact', head: true })
           .eq('target_type', 'job').eq('target_id', tid);
         if (typeof c.count === 'number' && c.count >= 3) {
-          await sb.from('jobs').update({ status: 'flagged' }).eq('id', tid);
+          // eq('status','active'): nur veroeffentlichte Auftraege markieren.
+          // Ein 'pending'-Entwurf koennte sonst nie mehr aktiviert werden –
+          // eine anschliessende Zahlung wuerde ins Leere laufen.
+          await sb.from('jobs').update({ status: 'flagged' }).eq('id', tid).eq('status', 'active');
         }
       } catch (e) { console.error('[SR] auto-flag', e && e.message); }
     }

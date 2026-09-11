@@ -20,15 +20,20 @@ function esc(s) {
 }
 function escAttr(s){ return esc(s); }
 
+// Inline-SVGs statt Emojis: gleiche Bildsprache wie die App und blog/,
+// ohne zusaetzliche Abhaengigkeit (Lucide laeuft nur clientseitig).
+const PIN_SVG = '<svg class="ico" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+const LOGO_SVG = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><path d="M12 12 L19.5 8"/><circle cx="12" cy="12" r="1.2" fill="#ffffff" stroke="none"/></svg>';
+
 // Leistungs-Taxonomie (SEO-Slugs -> Job-Kategorien g/h/s/m bzw. Keywords)
 const SERVICES = {
-  gartenarbeit:   { title: 'Gartenarbeit',   emoji: '🌿', cats: ['g'],          desc: 'Rasen mähen, Hecken schneiden, Unkraut jäten, Beete pflegen – finde Helfer für deinen Garten oder biete deine Hilfe an.' },
-  reinigung:      { title: 'Reinigung',      emoji: '🧽', cats: ['h'], kw: ['reinig','putz','sauber','fenster'], desc: 'Wohnungsreinigung, Fensterputzen, Grundreinigung und mehr – lokale Reinigungskräfte in deiner Nähe.' },
-  haushaltshilfe: { title: 'Haushaltshilfe', emoji: '🏠', cats: ['h'],          desc: 'Unterstützung im Haushalt: aufräumen, waschen, bügeln, einkaufen. Finde verlässliche Haushaltshilfen vor Ort.' },
-  umzugshilfe:    { title: 'Umzugshilfe',    emoji: '📦', cats: ['m'],          desc: 'Möbel tragen, Umzugskartons schleppen, Transport – kräftige Helfer für deinen Umzug in der Region.' },
-  nachhilfe:      { title: 'Nachhilfe',      emoji: '📚', cats: [], kw: ['nachhilfe','lernen','mathe','vokabel','tutor','schule','prüfung'], desc: 'Lernunterstützung für Schule, Studium und Sprachen – qualifizierte Nachhilfe in deiner Nähe.' },
-  handwerk:       { title: 'Handwerk',       emoji: '🔧', cats: [], kw: ['handwerk','montage','reparatur','aufbau','renovier','streichen','bohren'], desc: 'Kleine Reparaturen, Möbelmontage, Renovierung und Aufbau – geschickte Hände für jede Aufgabe.' },
-  sonstiges:      { title: 'Sonstiges',      emoji: '✨', cats: [],              desc: 'Weitere lokale Aufgaben und Dienstleistungen – von Einkaufshilfe bis Tierbetreuung.' },
+  gartenarbeit:   { title: 'Gartenarbeit', cats: ['g'],          desc: 'Rasen mähen, Hecken schneiden, Unkraut jäten, Beete pflegen – finde Helfer für deinen Garten oder biete deine Hilfe an.' },
+  reinigung:      { title: 'Reinigung', cats: ['h'], kw: ['reinig','putz','sauber','fenster'], desc: 'Wohnungsreinigung, Fensterputzen, Grundreinigung und mehr – lokale Reinigungskräfte in deiner Nähe.' },
+  haushaltshilfe: { title: 'Haushaltshilfe', cats: ['h'],          desc: 'Unterstützung im Haushalt: aufräumen, waschen, bügeln, einkaufen. Finde verlässliche Haushaltshilfen vor Ort.' },
+  umzugshilfe:    { title: 'Umzugshilfe', cats: ['m'],          desc: 'Möbel tragen, Umzugskartons schleppen, Transport – kräftige Helfer für deinen Umzug in der Region.' },
+  nachhilfe:      { title: 'Nachhilfe', cats: [], kw: ['nachhilfe','lernen','mathe','vokabel','tutor','schule','prüfung'], desc: 'Lernunterstützung für Schule, Studium und Sprachen – qualifizierte Nachhilfe in deiner Nähe.' },
+  handwerk:       { title: 'Handwerk', cats: [], kw: ['handwerk','montage','reparatur','aufbau','renovier','streichen','bohren'], desc: 'Kleine Reparaturen, Möbelmontage, Renovierung und Aufbau – geschickte Hände für jede Aufgabe.' },
+  sonstiges:      { title: 'Sonstiges', cats: [],              desc: 'Weitere lokale Aufgaben und Dienstleistungen – von Einkaufshilfe bis Tierbetreuung.' },
 };
 const SERVICE_ORDER = ['gartenarbeit','reinigung','haushaltshilfe','umzugshilfe','nachhilfe','handwerk','sonstiges'];
 const CAT_LABEL = { g: 'Garten', h: 'Haushalt', s: 'Einkaufen', m: 'Möbel/Umzug' };
@@ -76,16 +81,23 @@ function jobCardHtml(j) {
     + '<div class="jc-top"><span class="jc-cat">' + esc(cat) + '</span>' + (price ? '<span class="jc-price">' + esc(price) + '</span>' : '') + '</div>'
     + '<h3 class="jc-title">' + esc(j.title || 'Aufgabe') + '</h3>'
     + (desc ? '<p class="jc-desc">' + desc + '…</p>' : '')
-    + (city ? '<div class="jc-city">📍 ' + city + '</div>' : '')
+    + (city ? '<div class="jc-city">' + PIN_SVG + ' ' + city + '</div>' : '')
     + '<a class="jc-cta" href="' + SITE + '/#jobs">Auftrag ansehen →</a>'
     + '</article>';
 }
 
 const BASE_CSS = `
 *{box-sizing:border-box;margin:0;padding:0}
+/* DESIGN-TOKENS – SPIEGEL von index.html :root.
+   Die Werte sind identisch, nur die Namen sind kuerzer (--ink statt --c-ink).
+   Ohne Build-System gibt es keine gemeinsame Quelle; wer index.html aendert,
+   muss diese Zeile mitziehen. Pruefen mit:
+     grep -o '\-\-c-[a-z0-9]*:#[0-9a-f]*' index.html
+   Empfehlung fuer spaeter: identische Namen (--c-*) verwenden, dann macht ein
+   einfacher diff den Drift sichtbar. Siehe CLAUDE.md §17. */
 :root{--ink:#0f1117;--ink3:#586069;--ink4:#8b949e;--bg:#fff;--bg1:#f6f8fa;--bd:#d0d7de;--blue:#0969da;--green:#1a7f37}
 html{scroll-behavior:smooth}
-body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--ink);line-height:1.65;background:var(--bg);-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);line-height:1.65;background:var(--bg);-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
 header.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid #eaeef2}
@@ -106,7 +118,8 @@ h1{font-size:clamp(28px,4.4vw,42px);font-weight:800;letter-spacing:-.02em;line-h
 .jc-price{font-weight:800;font-size:17px}
 .jc-title{font-size:16px;font-weight:700}
 .jc-desc{font-size:13.5px;color:var(--ink3)}
-.jc-city{font-size:13px;color:var(--ink4)}
+.jc-city{font-size:13px;color:var(--ink4);display:flex;align-items:center;gap:5px}
+.ico{flex:0 0 auto;vertical-align:-2px}
 .jc-cta{font-size:13.5px;font-weight:600;color:var(--blue);margin-top:auto}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .card{border:1px solid var(--bd);border-radius:14px;padding:18px;background:var(--bg);transition:border-color .15s,transform .15s}
@@ -136,12 +149,12 @@ footer{border-top:1px solid #eaeef2;margin-top:40px;padding:30px 0;color:var(--i
 
 function header() {
   return '<header class="nav"><div class="wrap nav-in">'
-    + '<a class="logo" href="' + SITE + '/"><span class="ic">📡</span>Service Radar</a>'
+    + '<a class="logo" href="' + SITE + '/"><span class="ic">' + LOGO_SVG + '</span>Service Radar</a>'
     + '<a class="nav-cta" href="' + SITE + '/#jobs">Aufträge entdecken</a>'
     + '</div></header>';
 }
 function newsletterBlock() {
-  return '<div class="nl"><h3>📬 Newsletter</h3>'
+  return '<div class="nl"><h3>Newsletter</h3>'
     + '<p>Neue Aufträge & Tipps aus deiner Region – kostenlos, jederzeit abbestellbar.</p>'
     + '<form id="nlf" onsubmit="return nlSub(event)">'
     + '<input id="nle" type="email" required placeholder="Deine E-Mail-Adresse" aria-label="E-Mail">'
@@ -149,7 +162,7 @@ function newsletterBlock() {
     + '<div class="msg" id="nlm" role="status"></div></div>'
     + '<script>function nlSub(e){e.preventDefault();var m=document.getElementById("nlm"),b=document.getElementById("nle").value;'
     + 'm.textContent="Senden…";fetch("/api/newsletter-subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:b})})'
-    + '.then(r=>r.json()).then(d=>{m.style.color=d.ok?"#1a7f37":"#cf222e";m.textContent=d.ok?"✅ Fast geschafft – bitte bestätige die E-Mail in deinem Postfach.":(d.error||"Fehler.");if(d.ok)document.getElementById("nlf").reset();})'
+    + '.then(r=>r.json()).then(d=>{m.style.color=d.ok?"#1a7f37":"#cf222e";m.textContent=d.ok?"Fast geschafft – bitte bestätige die E-Mail in deinem Postfach.":(d.error||"Fehler.");if(d.ok)document.getElementById("nlf").reset();})'
     + '.catch(()=>{m.style.color="#cf222e";m.textContent="Netzwerkfehler.";});return false;}</script>';
 }
 function footer(topCities) {
@@ -205,4 +218,5 @@ async function topCities(minJobs = CITY_MIN_JOBS, max = 60) {
 module.exports = {
   SITE, esc, escAttr, SERVICES, SERVICE_ORDER, CAT_LABEL, slugify, normalizeCity,
   fetchJobs, jobCardHtml, page, newsletterBlock, header, footer, topCities, CITY_MIN_JOBS,
+  PIN_SVG, LOGO_SVG,
 };

@@ -29,7 +29,7 @@ module.exports = async function handler(req, res) {
   const svcChips = S.SERVICE_ORDER.map(s =>
     '<a class="chip" href="' + S.SITE + '/leistungen/' + s + '">' + S.SERVICES[s].emoji + ' ' + S.esc(S.SERVICES[s].title) + '</a>').join('');
   const otherCities = (cities || []).filter(c => c.slug !== slug).slice(0, 10)
-    .map(c => '<a class="chip" href="' + S.SITE + '/jobs/' + c.slug + '">📍 ' + S.esc(c.name) + '</a>').join('')
+    .map(c => '<a class="chip" href="' + S.SITE + '/jobs/' + c.slug + '">' + S.PIN_SVG + ' ' + S.esc(c.name) + '</a>').join('')
     || '<a class="chip" href="' + S.SITE + '/#jobs">Aufträge in deiner Nähe</a>';
 
   const bc = { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: [

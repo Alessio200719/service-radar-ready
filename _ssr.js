@@ -95,51 +95,52 @@ const BASE_CSS = `
      grep -o '\-\-c-[a-z0-9]*:#[0-9a-f]*' index.html
    Empfehlung fuer spaeter: identische Namen (--c-*) verwenden, dann macht ein
    einfacher diff den Drift sichtbar. Siehe CLAUDE.md §17. */
-:root{--ink:#0f1117;--ink3:#586069;--ink4:#8b949e;--bg:#fff;--bg1:#f6f8fa;--bd:#d0d7de;--blue:#0969da;--green:#1a7f37}
+:root{--ink:#141513;--ink3:#5E5F58;--ink4:#6C6D66;--bg:#FFFFFF;--bg-page:#FAF9F6;--bg1:#F2F1EC;--bd:#E3E1D9;--bds:#E7E5DC;--blue:#1F5E3D;--green:#C2410C;--success-soft:#E4EFE8;--success:#2C744F}
+@font-face{font-family:'Newsreader';font-style:normal;font-display:swap;font-weight:200 800;src:url(/assets/fonts/newsreader-latin-wght-normal.woff2?v=1) format('woff2-variations');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'IBM Plex Sans';font-style:normal;font-display:swap;font-weight:400;src:url(/assets/fonts/ibm-plex-sans-latin-400-normal.woff2?v=1) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}@font-face{font-family:'IBM Plex Sans';font-style:normal;font-display:swap;font-weight:600;src:url(/assets/fonts/ibm-plex-sans-latin-600-normal.woff2?v=1) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--ink);line-height:1.65;background:var(--bg);-webkit-font-smoothing:antialiased}
-a{color:inherit;text-decoration:none}
+body{font-family:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);line-height:1.65;background:var(--bg-page);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}b,strong{font-weight:600}body{font-synthesis-weight:none}
 .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
-header.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid #eaeef2}
+header.nav{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bds)}
 .nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;color:var(--ink)}
+.logo{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px;letter-spacing:-.01em;color:var(--ink)}
 .logo .ic{width:32px;height:32px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:15px}
 .nav-cta{background:var(--ink);color:#fff;padding:9px 16px;border-radius:10px;font-weight:600;font-size:14px}
 .hero{padding:48px 0 8px}
 .bc{font-size:13px;color:var(--ink4);margin-bottom:14px}
 .bc a:hover{color:var(--blue)}
-h1{font-size:clamp(28px,4.4vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:14px}
+h1{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(28px,3.4vw,40px);font-weight:400;letter-spacing:-.02em;line-height:1.2;margin-bottom:14px}
 .lead{font-size:17px;color:var(--ink3);max-width:680px}
 .sec{padding:30px 0}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.jc{border:1px solid var(--bd);border-radius:14px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
+.jc{border:1px solid var(--bd);border-radius:10px;padding:16px;background:var(--bg);display:flex;flex-direction:column;gap:8px}
 .jc-top{display:flex;justify-content:space-between;align-items:center}
-.jc-cat{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--green);background:#d1f7c4;padding:3px 9px;border-radius:100px}
-.jc-price{font-weight:800;font-size:17px}
-.jc-title{font-size:16px;font-weight:700}
+.jc-cat{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--success);background:var(--success-soft);padding:3px 9px;border-radius:100px}
+.jc-price{font-weight:600;font-size:17px;color:var(--green);font-variant-numeric:tabular-nums}
+.jc-title{font-size:16px;font-weight:600}
 .jc-desc{font-size:13.5px;color:var(--ink3)}
 .jc-city{font-size:13px;color:var(--ink4);display:flex;align-items:center;gap:5px}
 .ico{flex:0 0 auto;vertical-align:-2px}
 .jc-cta{font-size:13.5px;font-weight:600;color:var(--blue);margin-top:auto}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
-.card{border:1px solid var(--bd);border-radius:14px;padding:18px;background:var(--bg);transition:border-color .15s,transform .15s}
+.card{border:1px solid var(--bd);border-radius:10px;padding:18px;background:var(--bg);transition:border-color .15s,transform .15s}
 .card:hover{border-color:var(--ink4);transform:translateY(-2px)}
 .card .e{font-size:24px}
-.card h3{font-size:16px;font-weight:700;margin:8px 0 4px}
+.card h3{font-size:16px;font-weight:600;margin:8px 0 4px}
 .card p{font-size:13.5px;color:var(--ink3)}
-.empty{border:1px dashed var(--bd);border-radius:14px;padding:28px;text-align:center;color:var(--ink3);background:var(--bg1)}
+.empty{border:1px dashed var(--bd);border-radius:10px;padding:28px;text-align:center;color:var(--ink3);background:var(--bg1)}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
 .chip{border:1px solid var(--bd);border-radius:100px;padding:7px 14px;font-size:13.5px;font-weight:600;color:var(--ink);background:var(--bg)}
 .chip:hover{border-color:var(--blue);color:var(--blue)}
-h2.h{font-size:22px;font-weight:800;margin-bottom:14px;letter-spacing:-.01em}
-.nl{background:var(--bg1);border:1px solid #eaeef2;border-radius:16px;padding:22px;margin:28px 0}
-.nl h3{font-size:18px;font-weight:800;margin-bottom:6px}
+h2.h{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:24px;font-weight:400;margin-bottom:14px;letter-spacing:-.01em}
+.nl{background:var(--bg1);border:1px solid var(--bds);border-radius:12px;padding:22px;margin:28px 0}
+.nl h3{font-size:18px;font-weight:600;margin-bottom:6px}
 .nl p{font-size:14px;color:var(--ink3);margin-bottom:12px}
 .nl form{display:flex;gap:8px;flex-wrap:wrap}
 .nl input{flex:1;min-width:200px;border:1px solid var(--bd);border-radius:10px;padding:11px 14px;font-size:16px;font-family:inherit}
-.nl button{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer}
+.nl button{background:var(--ink);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:600;font-size:14px;cursor:pointer}
 .nl .msg{font-size:13px;margin-top:8px}
-footer{border-top:1px solid #eaeef2;margin-top:40px;padding:30px 0;color:var(--ink4);font-size:13.5px}
+footer{border-top:1px solid var(--bds);margin-top:40px;padding:30px 0;color:var(--ink4);font-size:13.5px}
 .fcols{display:flex;flex-wrap:wrap;gap:22px;margin-bottom:18px}
 .fcols a{color:var(--ink3)}.fcols a:hover{color:var(--blue)}
 .fcols b{display:block;color:var(--ink);font-size:12px;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
@@ -162,8 +163,8 @@ function newsletterBlock() {
     + '<div class="msg" id="nlm" role="status"></div></div>'
     + '<script>function nlSub(e){e.preventDefault();var m=document.getElementById("nlm"),b=document.getElementById("nle").value;'
     + 'm.textContent="Senden…";fetch("/api/newsletter-subscribe",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email:b})})'
-    + '.then(r=>r.json()).then(d=>{m.style.color=d.ok?"#1a7f37":"#cf222e";m.textContent=d.ok?"Fast geschafft – bitte bestätige die E-Mail in deinem Postfach.":(d.error||"Fehler.");if(d.ok)document.getElementById("nlf").reset();})'
-    + '.catch(()=>{m.style.color="#cf222e";m.textContent="Netzwerkfehler.";});return false;}</script>';
+    + '.then(r=>r.json()).then(d=>{m.style.color=d.ok?"#2C744F":"#B3261E";m.textContent=d.ok?"Fast geschafft – bitte bestätige die E-Mail in deinem Postfach.":(d.error||"Fehler.");if(d.ok)document.getElementById("nlf").reset();})'
+    + '.catch(()=>{m.style.color="#B3261E";m.textContent="Netzwerkfehler.";});return false;}</script>';
 }
 function footer(topCities) {
   const svc = SERVICE_ORDER.map(s => '<a href="' + SITE + '/leistungen/' + s + '">' + esc(SERVICES[s].title) + '</a>').join('');
@@ -187,7 +188,7 @@ function page({ title, desc, canonical, robots, h1, bodyHtml, jsonld, topCities 
     + '<meta name="description" content="' + escAttr(desc) + '">'
     + '<link rel="canonical" href="' + escAttr(canonical) + '">'
     + '<meta name="robots" content="' + (robots || 'index,follow,max-image-preview:large') + '">'
-    + '<meta name="theme-color" content="#0f1117">'
+    + '<meta name="theme-color" content="#FAF9F6">'
     + '<meta property="og:type" content="website"><meta property="og:site_name" content="Service Radar">'
     + '<meta property="og:title" content="' + escAttr(title) + '"><meta property="og:description" content="' + escAttr(desc) + '">'
     + '<meta property="og:url" content="' + escAttr(canonical) + '"><meta property="og:image" content="' + SITE + '/og-image.png">'

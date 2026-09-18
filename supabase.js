@@ -53,8 +53,11 @@
 
   // Spaltenliste fuer alle jobs-Abfragen. stripe_session_id und paid_at fehlen
   // hier absichtlich – sie sind serverseitige Zahlungsdaten (api/_pay.js).
+  // desired_date und duration_h kamen mit supabase_job_schedule.sql dazu. Ohne
+  // sie hier kaeme das Wunschdatum nie im Client an - eine Spalte, die nicht
+  // in der Liste steht, liefert PostgREST nicht mit.
   var JOB_COLS = 'id,user_id,title,description,category,city,latitude,longitude,' +
-                 'price,status,created_at, profiles:user_id(id,full_name,email,city,avatar_url,rating)';
+                 'price,status,desired_date,duration_h,created_at, profiles:user_id(id,full_name,email,city,avatar_url,rating)';
 
   var SR = {
     client: sb,
@@ -281,7 +284,7 @@
       // anon/authenticated per Spalten-GRANT gesperrt, ein '*' wuerde scheitern.
       return unwrap(await sb.from('jobs')
         .update(patch).eq('id', id)
-        .select('id,user_id,title,description,category,city,latitude,longitude,price,status,created_at')
+        .select('id,user_id,title,description,category,city,latitude,longitude,price,status,desired_date,duration_h,created_at')
         .single());
     },
     // ECHTES Löschen: RLS (jobs_delete_own) erlaubt nur dem Eigentümer das Löschen.

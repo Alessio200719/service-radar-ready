@@ -217,9 +217,9 @@ body.modal-lock{position:fixed;left:0;right:0;width:100%;overflow:hidden}
 button,a,.fc,.cat-pill,.mbn-item,.jcard,.lang-btn{-webkit-tap-highlight-color:transparent}
 .btn,.fc,.mbn-item,.lang-btn,.hamburger{-webkit-user-select:none;user-select:none}
 
-/* ── A11y: Bedienelemente sind echte <button> ───────────────────
+/* ── A11y: Bedienelemente sind echte <button type="button"> ───────────────────
    Diese Controls waren früher <div onclick> und damit per Tastatur nicht
-   erreichbar. Als <button> erben sie Fokus, Enter/Space und die richtige
+   erreichbar. Als <button type="button"> erben sie Fokus, Enter/Space und die richtige
    Rolle für Screenreader. Der Reset stellt exakt die vorherige Optik wieder
    her – Browser-Defaults für Schrift, Farbe und Breite werden neutralisiert. */
 .cat-pill,.cpick,.role-card,.pay-method,.user-pill{
@@ -286,8 +286,6 @@ input,textarea,select{font-family:inherit}
 
 /* ── PILLS/BADGES ── */
 .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border:1px solid}
-.pill-b{background:var(--c-blt);color:var(--c-blue2);border-color:var(--c-accent-bd)}
-.pill-g{background:var(--c-glt);color:var(--c-green2);border-color:var(--c-success-bd)}
 /* .vbadge entfernt (Phase 6): die gruenen Verifizierungs-Pills im oeffentlichen
    Profil waren der einzige Nutzer. Gruene Pills lesen sich wie ein Guetesiegel;
    belegt ist aber nur eine bestaetigte E-Mail-Adresse. Ersetzt durch die
@@ -308,8 +306,6 @@ input,textarea,select{font-family:inherit}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 20px;border-radius:var(--r1);font-size:14px;font-weight:600;line-height:1.25;transition:all .15s;border:1px solid transparent;white-space:nowrap;cursor:pointer}
 .btn-primary{background:var(--c-blue);color:#fff;border-color:var(--c-blue2)}
 .btn-primary:hover{background:var(--c-blue2);box-shadow:var(--sh1)}
-.btn-green{background:var(--c-gm);color:#fff;border-color:var(--c-green2)}
-.btn-green:hover{background:var(--c-green2);box-shadow:var(--sh1)}
 .btn-outline{background:var(--c-bg);color:var(--c-ink2);border-color:var(--c-bd);box-shadow:var(--sh0)}
 .btn-outline:hover{background:var(--c-bg1);border-color:var(--c-ink5)}
 .btn-ghost{background:transparent;color:var(--c-ink3);border-color:transparent}
@@ -321,7 +317,6 @@ input,textarea,select{font-family:inherit}
 .btn-lg{padding:13px 24px;font-size:15px;border-radius:var(--r2)}
 .btn-sm{padding:6px 14px;font-size:13px;border-radius:var(--r0)}
 .btn-full{width:100%}
-.btn-icon{padding:8px;border-radius:var(--r0)}
 
 /* ── ANIMATIONS ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -404,7 +399,12 @@ body.sr-in .nav-end > .lang-pill{display:none}
 .hamburger.open span:nth-child(2){opacity:0}
 .hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 .mobile-menu{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;z-index:250;background:var(--c-bg);padding:20px 24px;flex-direction:column;gap:4px;overflow-y:auto}
-.mobile-menu.open{display:flex;animation:fadeIn .2s}
+/* Im geoeffneten Zustand ueber den Cookie-Hinweis (8900), aber unter die
+   Modale (9000): der Hinweis lag sonst als schwebende weisse Karte auf dem
+   unteren Drittel des offenen Menues. Gemessen 390px: Menue y 64-844,
+   Hinweis y 611-844. Kein Menuepunkt war dadurch unerreichbar - es sah nur
+   aus, als gehoerte der Hinweis ins Menue. */
+.mobile-menu.open{display:flex;animation:fadeIn .2s;z-index:8950}
 .mobile-menu a{padding:13px 16px;font-size:16px;font-weight:500;color:var(--c-ink);border-radius:var(--r1);transition:background .15s}
 .mobile-menu a:hover{background:var(--c-bg1)}
 .mm-divider{height:1px;background:var(--c-bds);margin:8px 0}
@@ -478,7 +478,7 @@ body.sr-in .nav-end > .lang-pill{display:none}
 /* ══ HOW IT WORKS ═════════════════════════════════ */
 /* ── ABLAUF ── numerierte Sequenz. Trennlinien statt Karten, linksbuendig,
    damit die Reihenfolge und nicht die Kachel die Aufmerksamkeit traegt. */
-.steps{list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--c-bd)}
+.steps{list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0;border-top:1px solid var(--c-bd)}
 .step{padding:28px 28px 0 0;border-left:1px solid var(--c-bd);padding-left:24px}
 .step:first-child{border-left:none;padding-left:0}
 .step-n{display:block;font-family:var(--f-display);font-size:32px;font-weight:400;color:var(--c-accent);line-height:1;margin-bottom:14px;font-variant-numeric:tabular-nums}
@@ -555,7 +555,6 @@ body.sr-in .nav-end > .lang-pill{display:none}
 .jcard-prox{display:inline-flex;align-items:center;gap:5px;color:var(--c-ink2);font-weight:600;font-variant-numeric:tabular-nums;flex-shrink:0}
 .jcard-cat{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .jcard-cat::before{content:"\00B7";margin-right:7px;color:var(--c-ink5)}
-.jcard-new{margin-left:auto;flex-shrink:0;font-size:10.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-accent)}
 
 /* flex-start statt baseline: bei zweizeiligen Titeln legte der Browser den
    Betrag sonst neben die ZWEITE Zeile. */
@@ -602,7 +601,6 @@ body.sr-in .nav-end > .lang-pill{display:none}
 .jl-empty-h{font-size:15px;font-weight:600;color:var(--c-ink);margin-bottom:7px}
 .jl-empty-p{font-size:13px;color:var(--c-ink3);line-height:1.6;max-width:32ch;margin:0 auto}
 .jl-empty-acts{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
-.pending-badge{display:inline-flex;align-items:center;gap:5px;background:var(--c-alt);color:var(--c-amber);border:1px solid var(--c-amber-bd);border-radius:100px;padding:2px 9px;font-size:11px;font-weight:600}
 
 /* ══ PAYMENT SCREEN ══════════════════════════════ */
 .pay-screen{padding:4px 0}
@@ -693,7 +691,7 @@ body.sr-in .nav-end > .lang-pill{display:none}
 .for-sec{background:var(--c-bg1)}
 /* ── ZWEI ROLLEN ── zwei Spalten, durch eine Linie getrennt statt durch
    zwei Karten. Keine Hover-Anhebung, kein Schatten. */
-.for-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px solid var(--c-bd)}
+.for-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;border-top:1px solid var(--c-bd)}
 .for-card{padding:32px 40px 0 0;position:relative}
 .for-card:last-child{border-left:1px solid var(--c-bd);padding-left:40px;padding-right:0}
 .for-ico{color:var(--c-accent);display:flex;align-items:center;margin-bottom:14px;height:22px}
@@ -713,7 +711,7 @@ body.sr-in .nav-end > .lang-pill{display:none}
 /* Eine Spaltenzahl pro Breakpoint. Vorher standen vier konkurrierende
    grid-template-columns fuer dieselbe Liste im Stylesheet; zwischen 481 und
    768px gewann die engste Fassung mit zwei rund 276px breiten Spalten. */
-.safety-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;border-top:1px solid var(--c-bd)}
+.safety-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 40px;border-top:1px solid var(--c-bd)}
 .sfcard{background:none;border:none;border-bottom:1px solid var(--c-bds);border-radius:0;padding:22px 0;text-align:left;display:flex;gap:14px;align-items:flex-start}
 /* Letzte Zeile ohne Trennlinie. Bei zwei Spalten und ungerader Anzahl steht
    das letzte Element allein links - sonst haengt dort eine halbe Linie. */
@@ -765,20 +763,13 @@ body.sr-in .nav-end > .lang-pill{display:none}
 
 /* ══ FOOTER ═══════════════════════════════════════ */
 footer{background:var(--c-bg);border-top:1px solid var(--c-bds)}
-.foot-top{padding:64px 0 40px;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.foot-top{padding:64px 0 40px;display:grid;grid-template-columns:minmax(0,2fr) repeat(3,minmax(0,1fr));gap:40px}
 .foot-brand p{color:var(--c-ink3);font-size:13.5px;line-height:1.7;margin-top:12px;max-width:250px}
 .foot-col h4{font-size:12px;font-weight:600;margin-bottom:14px;color:var(--c-ink);text-transform:uppercase;letter-spacing:.06em}
 .foot-col ul{list-style:none;display:flex;flex-direction:column;gap:9px}
 .foot-col ul li a{color:var(--c-ink3);font-size:13.5px;transition:color .15s}
 .foot-col ul li a:hover{color:var(--c-blue)}
 .foot-bot{padding:20px 0;border-top:1px solid var(--c-bds);display:flex;justify-content:center;align-items:center;text-align:center;font-size:12.5px;color:var(--c-ink4)}
-
-/* ══ IMPRESSUM ════════════════════════════════════ */
-/* ══ TRUST & SAFETY SYSTEM ═══════════════════════ */
-/* .trust-badge/.trust-verified/.trust-new entfernt (Phase 7): einziger Nutzer
-   war das gruene Abzeichen "Profil vollstaendig" neben der Profilstaerke. */
-.trust-warned{background:var(--c-alt);color:var(--c-amber);border-color:var(--c-amber-bd)}
-.trust-blocked{background:var(--c-rlt);color:var(--c-red);border-color:var(--c-red-bd)}
 
 /* Report button */
 .report-btn{
@@ -791,14 +782,16 @@ footer{background:var(--c-bg);border-top:1px solid var(--c-bds)}
 
 /* Rating stars */
 .rating-stars{display:flex;align-items:center;gap:3px}
-.star{font-size:14px;cursor:pointer;transition:all .1s;color:var(--c-bg3)}
+/* .star ist seit Phase 10 ein <button type="button">. background/border/padding werden
+   zurueckgesetzt, damit sich optisch nichts aendert. */
+.star{font-size:14px;cursor:pointer;transition:all .1s;color:var(--c-bg3);
+  background:none;border:none;padding:0;font-family:inherit;line-height:1}
 .star.on,.star:hover{color:var(--c-star)}
-
-/* Verification progress */
-.verif-bar{
-  background:var(--c-bg1);border:1px solid var(--c-bds);
-  border-radius:var(--r2);padding:14px 16px;margin-bottom:16px;
-}
+/* Im Bewertungsdialog sind die Sterne das Eingabefeld - dort brauchen sie
+   Groesse und eine Zielflaeche, nicht nur 14px Schrift. */
+#rating-stars-row .star{font-size:30px;width:44px;height:44px;display:flex;
+  align-items:center;justify-content:center}
+#rating-stars-row .star:focus-visible{border-radius:var(--r1)}
 /* .verif-item/.verif-dot entfernt (Phase 7): die Bestaetigungen im Profil
    nutzen jetzt dieselbe Liste wie die offenen Profilfelder (.acct-miss) mit
    Haken bzw. offenem Kreis - Form und Text unterscheiden die Zustaende,
@@ -809,13 +802,6 @@ footer{background:var(--c-bg);border-top:1px solid var(--c-bds)}
 .safety-rule{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--c-bds);font-size:13px}
 .safety-rule:last-child{border-bottom:none}
 .safety-rule-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-
-/* Spam/rate limit notice */
-.rate-limit-box{
-  background:var(--c-alt);border:1px solid var(--c-amber-bd);border-radius:var(--r2);
-  padding:14px 16px;margin-bottom:14px;font-size:13.5px;color:var(--c-amber);
-  display:flex;align-items:flex-start;gap:10px;
-}
 
 /* Profile trust score */
 /* .trust-score/.ts-bar/.ts-fill entfernt (Phase 7): der Profilbereich war ihr
@@ -835,28 +821,11 @@ footer{background:var(--c-bg);border-top:1px solid var(--c-bds)}
 .acct-miss li.filled svg{color:var(--c-ink4)}
 .acct-miss li.open svg{color:var(--c-ink4)}
 
-/* Blacklisted job overlay */
-.job-blocked-overlay{
-  position:absolute;inset:0;background:rgba(248,231,229,.92);
-  border-radius:var(--r2);display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:600;color:var(--c-red);gap:6px;
-  backdrop-filter:blur(2px);
-}
-
 /* Content warning box */
 .content-warn{
   background:var(--c-alt);border:1px solid var(--c-amber-bd);border-radius:var(--r1);
   padding:10px 14px;font-size:12.5px;color:var(--c-amber);margin-bottom:12px;
 }
-
-/* Pagination / load more */
-.load-more-btn{
-  width:100%;padding:10px;border-radius:var(--r1);
-  background:var(--c-bg1);border:1px solid var(--c-bd);
-  font-size:13.5px;font-weight:600;color:var(--c-ink3);
-  cursor:pointer;transition:all .15s;font-family:var(--f);margin-top:8px;
-}
-.load-more-btn:hover{background:var(--c-bg2);color:var(--c-ink2)}
 .legal-tab{padding:8px 16px;border-radius:var(--r1);font-size:13.5px;font-weight:600;background:var(--c-bg);border:1px solid var(--c-bd);color:var(--c-ink3);cursor:pointer;transition:all .15s;font-family:var(--f)}
 .legal-tab:hover{background:var(--c-bg1);border-color:var(--c-ink5);color:var(--c-ink2)}
 .legal-tab.on{background:var(--c-ink);color:#fff;border-color:var(--c-ink)}
@@ -869,7 +838,10 @@ html[lang="en"] #legal-de-note{display:block}
 .imp-blk{margin-bottom:24px;padding-bottom:24px;border-bottom:1px solid var(--c-bds)}
 .imp-blk:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .imp-blk h3{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--c-ink4);margin-bottom:8px}
-.imp-blk p,.imp-blk a{font-size:14px;color:var(--c-ink2);line-height:1.75}
+/* Im Impressum stehen E-Mail-Adresse und die Adresse der EU-Schlichtungs-
+   stelle - beides Woerter ohne Trennmoeglichkeit. Gemessen 320px: 251px
+   Inhalt in 246px Kasten. */
+.imp-blk p,.imp-blk a{font-size:14px;color:var(--c-ink2);line-height:1.75;overflow-wrap:anywhere}
 .imp-blk a{color:var(--c-blue)}
 
 /* ══ COOKIE ══════════════════════════════════════ */
@@ -882,7 +854,17 @@ html[lang="en"] #legal-de-note{display:block}
   padding:20px 24px;
   max-width:580px;width:calc(100% - 32px);
   box-shadow:var(--sh-overlay);
-  z-index:9999;font-size:13.5px;line-height:1.6;
+  /* 8900 statt 9999 (Phase 9). Gemessen: mit 9999 lag der Hinweis ueber JEDEM
+     offenen Modal (.moverlay hat 9000) und machte dessen untere Knoepfe
+     unerreichbar - nachgewiesen bei 390px UND bei 1280px; elementFromPoint
+     lieferte auf ".report-btn" im Auftrag-Detail den Banner statt des Knopfs.
+     Stapelordnung jetzt: Bottom-Nav 1200 < Hinweis 8900 < offenes
+     Mobile-Menue 8950 < Modale 9000.
+     Ohne offenes Modal liegt der Hinweis weiterhin ueber allem und ist
+     vollstaendig sichtbar und bedienbar. An Consent-Logik, Texten und
+     Speicherung aendert sich nichts - der Hinweis wartet nur, bis der Nutzer
+     das schliesst, was er selbst geoeffnet hat. */
+  z-index:8900;font-size:13.5px;line-height:1.6;
   animation:fadeUp .35s ease-out;
 }
 #cookie .ck-title{
@@ -1003,10 +985,17 @@ html[lang="en"] #legal-de-note{display:block}
 .field textarea{resize:vertical;min-height:80px;line-height:1.5}
 .ferr{font-size:12px;color:var(--c-red);margin-top:4px;display:none}
 .ferr.show{display:block}
-.pw-wrap{position:relative}.pw-wrap input{padding-right:42px}
-.pw-eye{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:15px;color:var(--c-ink4);padding:2px}
-.frow2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.pw-wrap{position:relative}.pw-wrap input{padding-right:48px}
+/* Gemessen 4x4px (Phase 9): der Knopf war genau so gross wie sein Inhalt, und
+   der ist ein Symbol, das erst nachtraeglich gezeichnet wird. Praktisch nicht
+   zu treffen - weder mit dem Finger noch mit der Maus. Jetzt eine feste
+   Flaeche von 44x44; das Symbol darin bleibt so klein wie vorher. */
+.pw-eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  background:none;border:none;cursor:pointer;font-size:15px;color:var(--c-ink4);padding:0}
+.pw-eye:focus-visible{border-radius:var(--r1)}
+.frow2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:14px}
 .role-card{border:1.5px solid var(--c-bd);border-radius:var(--r2);padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s;background:var(--c-bg)}
 .role-card:hover{border-color:var(--c-blue);background:var(--c-blt)}
 .role-card.on{border-color:var(--c-blue);background:var(--c-blt);box-shadow:0 0 0 3px rgba(var(--rgb-accent),.1)}
@@ -1054,23 +1043,22 @@ html[lang="en"] #legal-de-note{display:block}
 .post-fee-row>span{min-width:0}
 .post-fee-v{font-size:16px;color:var(--c-ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .post-fee-p{font-size:12.5px;color:var(--c-ink3);margin-top:5px;line-height:1.5}
-.cat-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* minmax(0,1fr) statt 1fr (Phase 9): 1fr ist minmax(auto,1fr) - eine Spalte
+   waechst also ueber ihren Anteil hinaus, sobald der laengste Kategoriename
+   breiter ist. Gemessen bei 320px: Spalten 131px und 137px statt 2x134px,
+   der Picker stand 17px (DE) bzw. 27px (EN) ueber dem Kartenrand. */
+.cat-pick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .cpick{border:1.5px solid var(--c-bd);border-radius:var(--r2);padding:18px 14px;text-align:center;cursor:pointer;transition:all .18s;background:var(--c-bg)}
 .cpick:hover{border-color:var(--c-accent-bd);background:var(--c-bg1)}
 /* Ausgewaehlt ohne Ring - dieselbe ruhige Flaeche wie die aktive Job-Card. */
 .cpick.on{border-color:var(--c-accent);background:var(--c-accent-soft)}
 .cpick .ci{color:var(--c-ink2);margin-bottom:8px;display:flex;justify-content:center}
 .cpick.on .ci{color:var(--c-accent)}
-.cpick .cn{font-size:14px;font-weight:600}
+/* Gemessen (Phase 9, EN, 320px): "Moving/Furniture" ist 136px breit, die
+   Zelle 86px - ein Schraegstrich ist keine Trennstelle, das Wort stand ueber
+   dem Rand des Feldes. */
+.cpick .cn{font-size:14px;font-weight:600;overflow-wrap:anywhere}
 .cpick .cs{font-size:12px;color:var(--c-ink3);margin-top:3px;font-variant-numeric:tabular-nums}
-.stripe-box{background:var(--c-ink);border-radius:var(--r2);padding:22px;color:#fff;margin-bottom:16px}
-.stripe-box .card-prev{font-size:18px;font-family:'Courier New',monospace;letter-spacing:.14em;margin-bottom:14px;color:rgba(255,255,255,.8)}
-.stripe-box label{color:rgba(255,255,255,.68);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em}
-.stripe-box input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:var(--r0);color:#fff;font-family:inherit;font-size:14px;padding:9px 12px;width:100%;outline:none;transition:border-color .15s;margin-top:4px}
-.stripe-box input::placeholder{color:rgba(255,255,255,.3)}.stripe-box input:focus{border-color:var(--c-gm)}
-.stripe-frow{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.amount-box{display:flex;justify-content:space-between;align-items:center;background:var(--c-bg1);border:1px solid var(--c-bd);border-radius:var(--r1);padding:12px 16px;margin-bottom:14px}
-.amount-box .albl{font-size:13px;color:var(--c-ink3)}.amount-box .aval{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--c-signal)}
 .success-screen{text-align:center;padding:16px 0}
 .success-icon{font-size:56px;margin-bottom:14px}
 .success-screen h3{font-size:19px;font-weight:600;margin-bottom:8px}
@@ -1086,22 +1074,32 @@ html[lang="en"] #legal-de-note{display:block}
 .jd-fact{min-width:0}
 .jd-fact dt{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--c-ink3);margin-bottom:5px}
 .jd-fact dd{font-size:14px;color:var(--c-ink);display:flex;align-items:center;gap:6px;font-variant-numeric:tabular-nums}
-.jd-desc{font-size:14px;color:var(--c-ink3);line-height:1.7;margin-bottom:20px}
+/* overflow-wrap:anywhere (Phase 9): eine im Auftragstext genannte Adresse ist
+   ein Wort ohne Trennmoeglichkeit. Gemessen bei 320px: der Kasten war 222px
+   breit, sein Inhalt 405px - und .moverlay hat overflow-x:hidden, der Rest war
+   also nicht abgeschnitten-und-scrollbar, sondern schlicht weg. Noch bei 480px
+   fehlten 45px. .jd-title trug die Regel laengst, die Beschreibung nicht. */
+.jd-desc{font-size:14px;color:var(--c-ink3);line-height:1.7;margin-bottom:20px;
+  overflow-wrap:anywhere}
 .auftr-box{display:flex;align-items:center;gap:12px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px 16px;margin-bottom:18px}
-.auftr-av{width:42px;height:42px;border-radius:50%;background:var(--c-bg1);color:var(--c-ink2);font-size:16px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .auftr-name{font-size:14px;font-weight:600}
 .auftr-meta{font-size:12px;color:var(--c-ink3);display:flex;gap:8px;margin-top:3px;flex-wrap:wrap}
 .divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--c-ink4);font-size:12px}
 .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--c-bd)}
 .muted-link{text-align:center;font-size:13px;color:var(--c-ink3);margin-top:12px}
 .muted-link a{color:var(--c-blue);cursor:pointer}
-.mt-12{margin-top:12px}.mt-16{margin-top:16px}
+.mt-12{margin-top:12px}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.62);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
 /* Dunkle Spinner-Variante fuer helle Flaechen – ersetzt frueher genutzte Emoji-Ladeanzeigen */
 .spin-dark{width:26px;height:26px;border-color:var(--c-bg2);border-top-color:var(--c-ink3)}
 
 /* ══ TOAST ═══════════════════════════════════════ */
-#toast{white-space:normal;max-width:calc(100vw - 32px);text-align:center;position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--c-ink);color:#fff;padding:12px 20px;border-radius:var(--r2);font-size:13.5px;font-weight:500;box-shadow:var(--sh4);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;display:flex;align-items:center;gap:8px}
+/* pointer-events:none (Phase 9): der Hinweis liegt mit z-index 9999 ueber
+   allem, auch ueber offenen Modalen. Er enthaelt nichts Bedienbares - ohne
+   diese Zeile faengt er in den Sekunden, die er sichtbar ist, Tipper ab,
+   die dem Knopf darunter galten. Im Ruhezustand steht er 70px unterhalb
+   des Sichtbereichs und stoert dort ohnehin nicht. */
+#toast{pointer-events:none;white-space:normal;max-width:calc(100vw - 32px);text-align:center;position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(70px);background:var(--c-ink);color:#fff;padding:12px 20px;border-radius:var(--r2);font-size:13.5px;font-weight:500;box-shadow:var(--sh4);z-index:9999;transition:transform .3s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;display:flex;align-items:center;gap:8px}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #toast.ok{background:var(--c-success-dark)}#toast.err{background:var(--c-red-dark)}
 
@@ -1521,7 +1519,7 @@ body.acct-open{
 .acct-row-t{font-size:14.5px;font-weight:600;letter-spacing:-.01em}
 .acct-row-s{font-size:12.5px;color:var(--c-ink3);margin-top:2px;font-weight:400}
 .acct-row-ch{color:var(--c-ink4);flex-shrink:0}
-/* Spans in <button>/Flex-Kontext als Block ausrichten */
+/* Spans in <button type="button">/Flex-Kontext als Block ausrichten */
 .acct-row-tx,.acct-row-t,.acct-row-s{display:block}
 .acct-badge{background:var(--c-blue);color:#fff;font-size:11px;font-weight:600;min-width:19px;height:19px;border-radius:var(--r2);display:flex;align-items:center;justify-content:center;padding:0 6px;flex-shrink:0}
 .acct-out{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;margin-top:18px;padding:11px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--c-ink3);cursor:pointer;border-radius:var(--r1)}
@@ -1775,10 +1773,13 @@ body.acct-open{
   .ch-job{min-height:44px}
   .ct{min-height:44px;padding:14px 4px 14px 24px}
   .ct-dot{top:30px}
-  /* Der Schliessen-Knopf der Nachrichtenliste war 32x32. Bewusst NUR hier
-     angehoben: .mclose gehoert allen Modalen, und die uebrigen Flaechen
-     stehen in dieser Phase unter Sperre. */
-  #modal-chats .mclose{width:44px;height:44px}
+  /* Phase 8 hob den Schliessen-Knopf NUR fuer die Nachrichtenliste an, weil
+     .mclose allen Modalen gehoert und die uebrigen Flaechen damals gesperrt
+     waren. Phase 9 ist genau die Phase dafuer: der Audit fand 32x32 in 143
+     von 432 Messungen - in Auth, Job-Detail, Auftrag erstellen, Profil,
+     Bewerten, Melden, Zahlung, Sicherheitshinweisen und Bearbeiten.
+     Jetzt einmal fuer alle, und die Sonderregel entfaellt. */
+  .mclose{width:44px;height:44px;top:8px;right:8px}
   /* Das Eingabefeld selbst ist einzeilig nur 24px hoch - zu wenig zum
      Antippen. min-height hebt es auf 44px, der Rahmen darum gibt dafuer
      Innenabstand ab, damit die Eingabezeile insgesamt nicht klobig wird.
@@ -1791,7 +1792,12 @@ body.acct-open{
   .msg-w{max-width:min(84%, 46ch)}
   .chat-win .ch-input-area{background:var(--c-bg);padding-bottom:calc(12px + env(safe-area-inset-bottom))}
   input,textarea,select{font-size:16px}
-  .field input,.field textarea,.field select{padding:12px 14px}
+  /* Die Regel darueber hat nur die Spezifitaet eines Typselektors und verlor
+     gegen ".field input{font-size:14px}". Gemessen (Phase 9): #p-dur und
+     #p-pay standen mit 14px da, das Datumsfeld daneben mit 16px - iOS zoomt
+     beim Fokus in genau diese beiden Felder hinein und laesst den Nutzer im
+     vergroesserten Formular zurueck. Gleiche Spezifitaet, spaetere Stelle. */
+  .field input,.field textarea,.field select{padding:12px 14px;font-size:16px}
   /* Der Wizard ist auf dem Telefon der wichtigste Bildschirm der App. */
   .post-h{font-size:18px}
   .post-nav{flex-direction:column-reverse;gap:8px}
@@ -1800,7 +1806,46 @@ body.acct-open{
   .post-sum dt{padding:8px 0 0}
   .post-sum dd{padding:2px 0 8px;border-bottom:1px solid var(--c-bds)}
   .post-sum dd:last-child{border-bottom:none}
-  #modal-post .check-row input[type=checkbox],#modal-resume-pay .check-row input[type=checkbox]{width:24px;height:24px}
+  /* Ankreuzfelder: 24px statt der 13px des Systems. Vorher galt das nur fuer
+     zwei Modale - die Sicherheitshinweise, die man VOR der ersten Bewerbung
+     bestaetigen muss, hatten weiterhin 13x13. Die Zeile bekommt zusaetzlich
+     44px Hoehe, damit auch die Beschriftung sicher trifft. */
+  .check-row input[type=checkbox]{width:24px;height:24px;flex-shrink:0}
+  .check-row{min-height:44px;align-items:center}
+  .check-row label{padding:6px 0}
+
+  /* ── Zielflaechen ausserhalb des Chats (Phase 9) ──────────────────────
+     Alle Werte unten sind gemessen, nicht geschaetzt. Nichts davon aendert
+     Farbe, Reihenfolge oder Schriftgroesse - nur die Hoehe der Flaeche, die
+     der Finger trifft. */
+  .mtab{min-height:44px}                       /* war 36px (Anmelden/Registrieren) */
+  .legal-tab{min-height:44px;display:inline-flex;align-items:center}  /* war 34px */
+  .report-btn{min-height:44px;padding:4px 10px}                       /* war 22px */
+  #cookie .ck-btn{min-height:44px}                                    /* war 35-41px */
+  .logo{min-height:44px}                                              /* war 34px */
+  .skip-link:focus{min-height:44px;display:inline-flex;align-items:center} /* war 26px */
+  /* Der Radius-Regler war 24px hoch. Die Schiene bleibt so duenn wie vorher,
+     nur die Flaeche darum waechst - accent-color und Farbe unveraendert. */
+  .hsearch-rad input[type=range]{height:44px}
+  /* Die Suche in der Nachrichtenliste war 19px hoch: das Feld war genau so
+     hoch wie seine Textzeile. */
+  .chat-search-wrap{padding:4px 12px;min-height:46px}
+  .chat-search-wrap input{min-height:44px}
+  /* Footer-Links standen mit 16px Hoehe und 19px Abstand da. Der Abstand
+     allein erfuellt die Vorgabe schon (24px-Kreise um die Links ueberlappen
+     sich nicht), die Flaeche selbst nicht. Vier Pixel Innenabstand heben sie
+     auf 24px, ohne dass der Footer sichtbar waechst - der vorhandene Abstand
+     nimmt sie auf. */
+  .foot-col ul li a{display:inline-block;padding:4px 0}
+  /* Die Radiuszeile der Suche war 263px breit in einem 258px-Kasten: die
+     Beschriftung bricht nicht und der Regler hat eine Mindestbreite. Auf
+     schmalen Geraeten bekommt sie deshalb eine eigene Zeile. */
+  .hsearch-rad{flex-basis:100%}
+  /* Der Regler hatte seine Eigenbreite von 129px als Ausgangsgroesse; zusammen
+     mit Beschriftung (70px) und Wert (46px) plus Abstaenden ergab das 263px in
+     einer 258px breiten Zeile. Mit kleiner Ausgangsgroesse rechnet der Rest
+     der Zeile zuerst, der Regler nimmt, was uebrig bleibt. */
+  .hsearch-rad input[type=range]{flex:1 1 60px;min-width:0}
   /* ── Oeffentliches Profil, schmale Viewports ──────────────────────────
      Der alte Kopf kippte hier auf zentriert und las sich dadurch wie ein
      Social-Media-Profil. Er bleibt jetzt linksbuendig; nur der Innenabstand
@@ -1848,14 +1893,11 @@ body.acct-open{
 
 <a class="skip-link" href="#content" data-i18n="a11y.skip">Zum Inhalt springen</a>
 
-<!-- MOBILE BOTTOM NAV (per CSS nur auf Smartphones <=640px sichtbar; Desktop/Tablet: display:none) -->
-<nav class="mobile-bottomnav" aria-label="Mobile Navigation">
- <button class="mbn-item" onclick="mobileHome()"><span class="mbn-ic"><i data-lucide="house" width="22" height="22"></i></span><span data-i18n="mnav.home">Start</span></button>
- <button class="mbn-item" onclick="mobileMap()"><span class="mbn-ic"><i data-lucide="map" width="22" height="22"></i></span><span data-i18n="mnav.map">Karte</span></button>
- <button class="mbn-item mbn-add" onclick="mobileAdd()" aria-label="Auftrag erstellen"><span class="mbn-ic"><i data-lucide="plus" width="24" height="24"></i></span><span data-i18n="mnav.add">Auftrag</span></button>
- <button class="mbn-item" onclick="mobileChats()"><span class="mbn-ic"><i data-lucide="message-circle" width="22" height="22"></i></span><span class="mbn-badge" id="mnav-chat-badge"></span><span data-i18n="mnav.msg">Chats</span></button>
- <button class="mbn-item" onclick="mobileProfile()"><span class="mbn-ic"><i data-lucide="user" width="22" height="22"></i></span><span data-i18n="mnav.profile">Profil</span></button>
-</nav>
+<!-- MOBILE BOTTOM NAV: steht jetzt am Ende des <body>. Sie ist
+     position:fixed, die Darstellung aendert sich dadurch nicht - wohl aber
+     die Reihenfolge fuer Tastatur und Screenreader. Vorher war sie das
+     ERSTE Element nach dem Sprunglink, also noch vor Kopfzeile und
+     Inhalt: gemessen Position 1 von 31 Kindern des <body>. -->
 
 <!-- NAV -->
 <nav id="nav" data-i18n-aria="a11y.nav.main" aria-label="Hauptnavigation">
@@ -1874,15 +1916,15 @@ body.acct-open{
  </ul>
  <div class="nav-end">
  <div class="lang-pill" role="group" data-i18n-aria="lang.aria" aria-label="Sprache wählen">
- <button class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
- <button class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
+ <button type="button" class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
+ <button type="button" class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
  </div>
  <!-- Primaeraktion ist "Auftrag einstellen": das ist die Marktseite, die
       angeworben werden muss. openPostJob() faengt den ausgeloggten Fall
       selbst ab (Registrierung + Hinweis) - der Auth-Flow bleibt unberuehrt. -->
  <div id="nav-auth">
- <button class="btn btn-outline btn-sm" onclick="openAuth('login')" data-i18n="nav.login">Anmelden</button>
- <button class="btn btn-dark btn-sm" onclick="openPostJob()" data-i18n="nav.post">Auftrag einstellen</button>
+ <button type="button" class="btn btn-outline btn-sm" onclick="openAuth('login')" data-i18n="nav.login">Anmelden</button>
+ <button type="button" class="btn btn-dark btn-sm" onclick="openPostJob()" data-i18n="nav.post">Auftrag einstellen</button>
  </div>
  <div id="nav-user" class="user-area">
  <!-- Rollenschalter: bestehende APP.viewMode-Logik, kein neues Rollensystem.
@@ -1891,11 +1933,11 @@ body.acct-open{
  <button type="button" data-mode="helper" aria-pressed="false" onclick="setViewMode('helper')" data-i18n="role.jobber">Helfer</button>
  <button type="button" data-mode="client" aria-pressed="false" onclick="setViewMode('client')" data-i18n="role.auftr">Auftraggeber</button>
  </div>
- <button class="btn btn-dark btn-sm" id="navPrimary" onclick="srNavPrimary()" data-i18n="nav.post">Auftrag einstellen</button>
+ <button type="button" class="btn btn-dark btn-sm" id="navPrimary" onclick="srNavPrimary()" data-i18n="nav.post">Auftrag einstellen</button>
  <button type="button" class="user-pill" id="userPill" aria-expanded="false" aria-haspopup="true" aria-controls="udrop" onclick="toggleDrop()">
  <div class="u-av" id="uAv">A</div>
  <span class="u-name" id="uName">User</span>
- <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>
+ <svg aria-hidden="true" focusable="false" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 4l4 4 4-4"/></svg>
  </button>
  <div class="udrop" id="udrop">
  <div class="udrop-head" style="display:flex;align-items:center;gap:10px"><div class="u-av" id="dropAv" style="width:38px;height:38px;font-size:14px">A</div><div style="min-width:0"><div class="udrop-name" id="dropName"></div><div class="udrop-role" id="dropRole"></div></div></div>
@@ -1908,8 +1950,8 @@ body.acct-open{
  <div class="udrop-lang">
  <span class="udrop-lang-l" data-i18n="nav.lang.lab">Sprache</span>
  <div class="lang-pill" role="group" data-i18n-aria="lang.aria" aria-label="Sprache wählen">
- <button class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
- <button class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
+ <button type="button" class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
+ <button type="button" class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
  </div>
  </div>
  <hr>
@@ -1936,19 +1978,19 @@ body.acct-open{
  </div>
  </div>
  <div class="lang-pill" style="display:flex;align-self:flex-start;margin-bottom:8px" role="group" data-i18n-aria="lang.aria" aria-label="Sprache wählen">
- <button class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
- <button class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
+ <button type="button" class="lang-btn active" data-lang="de" aria-pressed="true" onclick="setLang('de')">DE</button>
+ <button type="button" class="lang-btn" data-lang="en" aria-pressed="false" onclick="setLang('en')">EN</button>
  </div>
  <div class="mm-btns" id="mm-auth">
- <button class="btn btn-dark btn-full" onclick="closeMM();openPostJob()" data-i18n="nav.post">Auftrag einstellen</button>
- <button class="btn btn-outline btn-full" onclick="closeMM();openAuth('login')" data-i18n="nav.login">Anmelden</button>
- <button class="btn btn-outline btn-full" onclick="closeMM();openAuth('register')" data-i18n="nav.start">Kostenlos starten</button>
+ <button type="button" class="btn btn-dark btn-full" onclick="closeMM();openPostJob()" data-i18n="nav.post">Auftrag einstellen</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeMM();openAuth('login')" data-i18n="nav.login">Anmelden</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeMM();openAuth('register')" data-i18n="nav.start">Kostenlos starten</button>
  </div>
  <div class="mm-btns" id="mm-user">
- <button class="btn btn-dark btn-full" id="mmPrimary" onclick="closeMM();srNavPrimary()" data-i18n="nav.post">Auftrag einstellen</button>
- <button class="btn btn-outline btn-full" onclick="closeMM();openProfile()" data-i18n="drop.profile">Mein Profil</button>
- <button class="btn btn-outline btn-full" onclick="closeMM();openChats()" data-i18n="chat.title">Nachrichten</button>
- <button class="btn btn-danger btn-full" onclick="closeMM();logout()" data-i18n="nav.logout">Abmelden</button>
+ <button type="button" class="btn btn-dark btn-full" id="mmPrimary" onclick="closeMM();srNavPrimary()" data-i18n="nav.post">Auftrag einstellen</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeMM();openProfile()" data-i18n="drop.profile">Mein Profil</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeMM();openChats()" data-i18n="chat.title">Nachrichten</button>
+ <button type="button" class="btn btn-danger btn-full" onclick="closeMM();logout()" data-i18n="nav.logout">Abmelden</button>
  </div>
 </div>
 
@@ -1975,7 +2017,7 @@ body.acct-open{
  <label for="locInput" class="sr-only" data-i18n="map.ph">Stadt oder PLZ eingeben…</label>
  <input type="text" id="locInput" data-i18n-ph="map.ph" placeholder="Stadt oder PLZ eingeben…" onkeydown="if(event.key==='Enter')srHeroSearch()">
  </div>
- <button class="btn btn-primary hsearch-go" onclick="srHeroSearch()" data-i18n="map.search">Suchen</button>
+ <button type="button" class="btn btn-primary hsearch-go" onclick="srHeroSearch()" data-i18n="map.search">Suchen</button>
  </div>
  <div class="hsearch-meta">
  <div class="hsearch-rad">
@@ -1983,7 +2025,7 @@ body.acct-open{
  <input type="range" min="1" max="20" value="5" id="rSlider" aria-describedby="rVal" oninput="updateRadius(this.value)">
  <span class="rv" id="rVal">5 km</span>
  </div>
- <button class="btn btn-ghost btn-sm" onclick="useMyLocation()" data-i18n="geo.btn">Standort verwenden</button>
+ <button type="button" class="btn btn-ghost btn-sm" onclick="useMyLocation()" data-i18n="geo.btn">Standort verwenden</button>
  </div>
  <div id="geo-hint" class="geo-hint">Mit deinem Standort siehst du sofort, was in direkter Umgebung zu tun ist.</div>
  </div>
@@ -1993,7 +2035,7 @@ body.acct-open{
 
  <div class="hero-2nd">
  <span data-i18n="hero.or">Du brauchst selbst Hilfe?</span>
- <button class="btn btn-outline" onclick="openPostJob()" data-i18n="hero.cta2">Aufgabe einstellen</button>
+ <button type="button" class="btn btn-outline" onclick="openPostJob()" data-i18n="hero.cta2">Aufgabe einstellen</button>
  </div>
 
  <!-- Nur Aussagen, die das Produkt tatsaechlich einloest: Registrierung ist
@@ -2015,11 +2057,11 @@ body.acct-open{
  </div>
  <div class="filter-bar">
  <span class="filter-lbl" data-i18n="map.filter">Filter:</span>
- <button class="fc on" data-cat="all" onclick="setFilter('all',this)" data-i18n="filter.all">Alle</button>
- <button class="fc" data-cat="g" onclick="setFilter('g',this)"><i data-lucide="sprout" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.g">Garten</span></button>
- <button class="fc" data-cat="h" onclick="setFilter('h',this)"><i data-lucide="house" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.h">Haushalt</span></button>
- <button class="fc" data-cat="s" onclick="setFilter('s',this)"><i data-lucide="shopping-cart" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.s">Einkaufen</span></button>
- <button class="fc" data-cat="m" onclick="setFilter('m',this)"><i data-lucide="package" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.m">Möbel/Umzug</span></button>
+ <button type="button" class="fc on" data-cat="all" onclick="setFilter('all',this)" data-i18n="filter.all">Alle</button>
+ <button type="button" class="fc" data-cat="g" onclick="setFilter('g',this)"><i data-lucide="sprout" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.g">Garten</span></button>
+ <button type="button" class="fc" data-cat="h" onclick="setFilter('h',this)"><i data-lucide="house" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.h">Haushalt</span></button>
+ <button type="button" class="fc" data-cat="s" onclick="setFilter('s',this)"><i data-lucide="shopping-cart" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.s">Einkaufen</span></button>
+ <button type="button" class="fc" data-cat="m" onclick="setFilter('m',this)"><i data-lucide="package" width="16" height="16" style="vertical-align:-3px" aria-hidden="true"></i> <span data-i18n="filter.m">Möbel/Umzug</span></button>
  </div>
  <div class="map-grid">
  <div class="map-frame">
@@ -2173,7 +2215,7 @@ body.acct-open{
  <li><span class="ck ck-b" aria-hidden="true">✓</span><span data-i18n="for.c1.l3">Direkter Chat mit Bewerbern</span></li>
  <li><span class="ck ck-b" aria-hidden="true">✓</span><span data-i18n="for.c1.l4">E-Mail-bestätigte Konten</span></li>
  </ul>
- <button class="btn btn-primary" onclick="openPostJob()" data-i18n="for.c1.btn">Aufgabe einstellen</button>
+ <button type="button" class="btn btn-primary" onclick="openPostJob()" data-i18n="for.c1.btn">Aufgabe einstellen</button>
  </div>
  <div class="for-card">
  <div class="for-ico" aria-hidden="true"><i data-lucide="user-round-check" width="20" height="20"></i></div>
@@ -2185,7 +2227,7 @@ body.acct-open{
  <li><span class="ck ck-g" aria-hidden="true">✓</span><span data-i18n="for.c2.l3">Karte zeigt Aufgaben auf einen Blick</span></li>
  <li><span class="ck ck-g" aria-hidden="true">✓</span><span data-i18n="for.c2.l4">Flexibel &amp; ohne feste Bindung</span></li>
  </ul>
- <button class="btn btn-outline" onclick="openAuth('register')" data-i18n="for.c2.btn">Als Helfer starten</button>
+ <button type="button" class="btn btn-outline" onclick="openAuth('register')" data-i18n="for.c2.btn">Als Helfer starten</button>
  </div>
  </div>
  </div>
@@ -2263,8 +2305,8 @@ body.acct-open{
  <p class="cta-p" data-i18n="cta.c1.p">Registriere dich kostenlos und finde Aufgaben in deiner Nähe – oder stelle selbst eine ein.</p>
  </div>
  <div class="cta-acts">
- <button class="btn btn-oncta" onclick="openAuth('register')" data-i18n="cta.c1.btn">Kostenlos registrieren</button>
- <button class="btn btn-oncta-2" onclick="openPostJob()" data-i18n="cta.c2.btn">Jetzt inserieren – 2 €</button>
+ <button type="button" class="btn btn-oncta" onclick="openAuth('register')" data-i18n="cta.c1.btn">Kostenlos registrieren</button>
+ <button type="button" class="btn btn-oncta-2" onclick="openPostJob()" data-i18n="cta.c2.btn">Jetzt inserieren – 2 €</button>
  </div>
  </div>
  </div>
@@ -2276,11 +2318,11 @@ body.acct-open{
  <div id="legal-de-note" style="background:var(--c-alt);border:1px solid var(--c-amber-bd);border-radius:var(--r1);padding:10px 14px;margin-bottom:18px;font-size:13px;color:var(--c-amber)">ℹ The legal documents (Imprint, Terms, Privacy, Cookie Policy) are legally binding in German only. An English summary is not available.</div>
  <!-- Tab navigation -->
  <div style="display:flex;gap:6px;margin-bottom:32px;flex-wrap:wrap" id="legal-tabs">
- <button class="legal-tab on" onclick="showLegal('impressum-box')" data-i18n="foot.imprint">Impressum</button>
- <button class="legal-tab" onclick="showLegal('agb-box')" data-i18n="auth.agb.link">AGB</button>
- <button class="legal-tab" onclick="showLegal('datenschutz-box')" data-i18n="foot.privacy">Datenschutzerklärung</button>
- <button class="legal-tab" onclick="showLegal('nutzung-box')" data-i18n="foot.terms">Nutzungsbedingungen</button>
- <button class="legal-tab" onclick="showLegal('cookie-box')" data-i18n="foot.cookie">Cookie-Richtlinie</button>
+ <button type="button" class="legal-tab on" onclick="showLegal('impressum-box')" data-i18n="foot.imprint">Impressum</button>
+ <button type="button" class="legal-tab" onclick="showLegal('agb-box')" data-i18n="auth.agb.link">AGB</button>
+ <button type="button" class="legal-tab" onclick="showLegal('datenschutz-box')" data-i18n="foot.privacy">Datenschutzerklärung</button>
+ <button type="button" class="legal-tab" onclick="showLegal('nutzung-box')" data-i18n="foot.terms">Nutzungsbedingungen</button>
+ <button type="button" class="legal-tab" onclick="showLegal('cookie-box')" data-i18n="foot.cookie">Cookie-Richtlinie</button>
  </div>
 
  <!-- ═══════════════════════════════
@@ -2866,11 +2908,11 @@ body.acct-open{
 <!-- MODAL: AUTH -->
 <div class="moverlay page-modal" id="modal-auth" onclick="overlayClose(event,'modal-auth')" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-auth')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <button type="button" class="mclose" onclick="closeModal('modal-auth')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div class="mtabs">
- <button class="mtab on" id="tab-login" onclick="authTab('login')" data-i18n="auth.tab.login">Anmelden</button>
- <button class="mtab" id="tab-register" onclick="authTab('register')" data-i18n="auth.tab.register">Registrieren</button>
+ <button type="button" class="mtab on" id="tab-login" onclick="authTab('login')" data-i18n="auth.tab.login">Anmelden</button>
+ <button type="button" class="mtab" id="tab-register" onclick="authTab('register')" data-i18n="auth.tab.register">Registrieren</button>
  </div>
  <!-- LOGIN -->
  <div id="pane-login">
@@ -2996,7 +3038,7 @@ body.acct-open{
  <div class="success-icon"><i data-lucide="party-popper" width="52" height="52"></i></div>
  <h3 data-i18n="auth.succ.title">Willkommen bei Service Radar!</h3>
  <p data-i18n="auth.succ.p">Dein Konto wurde erstellt. Entdecke jetzt Aufgaben in deiner Nähe.</p>
- <button class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-auth')" data-i18n="auth.succ.btn">Los geht's! </button>
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-auth')" data-i18n="auth.succ.btn">Los geht's! </button>
  </div>
  </div>
  </div>
@@ -3004,14 +3046,14 @@ body.acct-open{
 
 <!-- MODAL: JOB DETAIL -->
 <div class="moverlay" id="modal-job" onclick="overlayClose(event,'modal-job')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.job" aria-label="Auftragsdetails">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner" style="padding:28px" id="jd-content"></div>
  </div>
 </div>
 
 <!-- MODAL: APPLY -->
 <div class="moverlay" id="modal-apply" onclick="overlayClose(event,'modal-apply')" role="dialog" aria-modal="true" aria-labelledby="apply-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-apply')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-apply')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div id="apply-form">
  <h3 id="apply-title" style="font-size:19px;font-weight:600;margin-bottom:16px"></h3>
@@ -3020,7 +3062,7 @@ body.acct-open{
  <label for="apply-msg" data-i18n="apply.msg.lbl">Deine Nachricht an den Auftraggeber</label>
  <textarea id="apply-msg" rows="4" data-i18n-ph="apply.msg.ph" placeholder="Hallo! Ich würde diese Aufgabe gerne übernehmen. Ich bin verfügbar am…"></textarea>
  </div>
- <button class="btn btn-dark btn-full btn-lg" onclick="submitApply()" style="font-size:15px" data-i18n="apply.btn">Ich bin dabei!</button>
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="submitApply()" style="font-size:15px" data-i18n="apply.btn">Ich bin dabei!</button>
  <div style="background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r1);padding:12px 14px;margin-top:12px;font-size:12px;color:var(--c-ink4);line-height:1.6">
  <strong style="color:var(--c-ink3)" data-i18n="apply.notes.t">Wichtige Hinweise:</strong><br>
  <span data-i18n="apply.note1">· Service Radar vermittelt ausschließlich den Kontakt. Der Vertrag kommt zwischen dir und dem Auftraggeber zustande.</span><br>
@@ -3032,7 +3074,7 @@ body.acct-open{
  <div class="success-icon"></div>
  <h3 data-i18n="apply.succ.t">Bewerbung gesendet!</h3>
  <p data-i18n="apply.succ.p">Ein Chat wurde geöffnet. Der Auftraggeber wird dir gleich antworten.</p>
- <button class="btn btn-primary btn-full btn-lg" onclick="closeModal('modal-apply');openChats()" data-i18n="apply.succ.btn">Zum Chat →</button>
+ <button type="button" class="btn btn-primary btn-full btn-lg" onclick="closeModal('modal-apply');openChats()" data-i18n="apply.succ.btn">Zum Chat →</button>
  </div>
  </div>
  </div>
@@ -3040,7 +3082,7 @@ body.acct-open{
 
 <!-- MODAL: POST JOB -->
 <div class="moverlay" id="modal-post" onclick="overlayClose(event,'modal-post')" role="dialog" aria-modal="true" aria-labelledby="modal-post-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-post')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-post')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
 <div class="stepbar" role="presentation"><div class="sdot active" id="sd1"></div><div class="sdot" id="sd2"></div><div class="sdot" id="sd3"></div></div>
 
@@ -3062,7 +3104,7 @@ body.acct-open{
  <div class="field"><label for="p-title" data-i18n="post.title">Titel</label><input type="text" id="p-title" data-i18n-ph="post.title.ph" placeholder="z.B. Rasen mähen – ca. 200m²" maxlength="100" aria-describedby="p-title-hint" required><p class="fhint" id="p-title-hint" data-i18n="post.title.hint">Kurz und konkret – so finden Helfer die Aufgabe schneller.</p></div>
  <div class="field"><label for="p-desc" data-i18n="post.desc">Beschreibung</label><textarea id="p-desc" data-i18n-ph="post.desc.ph" placeholder="Details zur Aufgabe, Dauer, was wird benötigt…" maxlength="1000" required></textarea></div>
  <div class="post-nav">
- <button class="btn btn-dark btn-full" onclick="goPostStep(2)" data-i18n="post.next">Weiter →</button>
+ <button type="button" class="btn btn-dark btn-full" onclick="goPostStep(2)" data-i18n="post.next">Weiter →</button>
  </div>
  </div>
 
@@ -3079,8 +3121,8 @@ body.acct-open{
  </div>
  <p class="fhint" id="p-when-hint" data-i18n="post.when.hint">Beides ist freiwillig. Ohne Datum erscheint dein Auftrag als zeitlich flexibel.</p>
  <div class="post-nav">
- <button class="btn btn-outline" onclick="goPostStep(1)" data-i18n="post.back">← Zurück</button>
- <button class="btn btn-dark" onclick="goPostStep(3)" data-i18n="post.next">Weiter →</button>
+ <button type="button" class="btn btn-outline" onclick="goPostStep(1)" data-i18n="post.back">← Zurück</button>
+ <button type="button" class="btn btn-dark" onclick="goPostStep(3)" data-i18n="post.next">Weiter →</button>
  </div>
  </div>
 
@@ -3148,13 +3190,13 @@ body.acct-open{
  <label for="pay-consent-stripe" style="font-size:12.5px;color:var(--c-ink2);line-height:1.5"><span data-i18n="pay.consent.stripe.pre">Ich stimme der Verarbeitung meiner Zahlungsdaten durch</span> <a href="https://stripe.com/de/privacy" target="_blank" rel="noopener" style="color:var(--c-blue)">Stripe Payments Europe, Ltd.</a> <span data-i18n="pay.consent.stripe.post">zu.</span></label>
  </div>
  </div>
- <button class="pay-btn-main" id="pay-main-btn" onclick="srPostPay()" data-i18n="pay.btn">Jetzt 2,00 € bezahlen</button>
+ <button type="button" class="pay-btn-main" id="pay-main-btn" onclick="srPostPay()" data-i18n="pay.btn">Jetzt 2,00 € bezahlen</button>
  <p style="text-align:center;font-size:11.5px;color:var(--c-ink4);margin-top:10px;line-height:1.6"><span data-i18n="pay.legal.pre">Mit der Zahlung akzeptierst du unsere</span> <a href="#impressum" onclick="showLegal('agb-box')" style="color:var(--c-blue)" data-i18n="auth.agb.link">AGB</a> <span data-i18n="auth.reg.legal.and">und</span> <a href="#impressum" onclick="showLegal('datenschutz-box')" style="color:var(--c-blue)" data-i18n="foot.privacy">Datenschutzerklärung</a>.</p>
  <div style="background:var(--c-bg1);border:1px solid var(--c-bd);border-radius:var(--r1);padding:12px 14px;margin-top:10px;font-size:12.5px;color:var(--c-ink3);line-height:1.6;text-align:center">
  <strong data-i18n="pay.secure.t"> Sichere Zahlung über Stripe</strong><br><span data-i18n="pay.secure.p">Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet. Dein Auftrag wird erst nach erfolgreicher Zahlung veröffentlicht.</span>
  </div>
   <div class="post-nav" style="margin-top:16px">
- <button class="btn btn-outline btn-full" onclick="goPostStep(2)" data-i18n="post.back">← Zurück</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="goPostStep(2)" data-i18n="post.back">← Zurück</button>
  </div>
  </div>
 
@@ -3170,7 +3212,7 @@ body.acct-open{
  <div class="success-icon"><i data-lucide="party-popper" width="52" height="52"></i></div>
  <h3 data-i18n="post.ok.t">Aufgabe inseriert!</h3>
  <p data-i18n="post.ok.p">Deine Aufgabe ist live. Helfer in deiner Nähe können sie direkt entdecken und dich per Chat kontaktieren.</p>
- <button class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-post');renderJobCards();addMarkers();showToast(T('toast.post.succ'),'ok')" data-i18n="post.ok.btn">Super, danke!</button>
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="closeModal('modal-post');renderJobCards();addMarkers();showToast(T('toast.post.succ'),'ok')" data-i18n="post.ok.btn">Super, danke!</button>
  </div>
  </div>
  </div>
@@ -3179,12 +3221,12 @@ body.acct-open{
 <!-- MODAL: CHAT LIST -->
 <div class="moverlay chat-modal-list" id="modal-chats" onclick="overlayClose(event,'modal-chats')" role="dialog" aria-modal="true" aria-labelledby="modal-chats-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-chats')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <button type="button" class="mclose" onclick="closeModal('modal-chats')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <h3 id="modal-chats-title" style="font-size:19px;font-weight:600;margin-bottom:16px" data-i18n="chat.title">Nachrichten</h3>
  <div class="chat-search-wrap">
- <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
- <input type="text" id="chat-search-inp" data-i18n-ph="chat.search.ph" placeholder="Chats durchsuchen…" oninput="filterChatList(this.value)">
+ <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+ <input type="text" id="chat-search-inp" data-i18n-ph="chat.search.ph" placeholder="Chats durchsuchen…" data-i18n-aria="chat.search.ph" aria-label="Chats durchsuchen" oninput="filterChatList(this.value)">
  </div>
  <!-- role="list" explizit: list-style:none nimmt der Liste in Safari/VoiceOver
       sonst die Listensemantik, und damit die Ansage "Liste mit N Eintraegen". -->
@@ -3196,7 +3238,7 @@ body.acct-open{
 <!-- MODAL: ÖFFENTLICHES PROFIL -->
 <div class="moverlay" id="modal-pubprofile" onclick="overlayClose(event,'modal-pubprofile')" role="dialog" aria-modal="true" data-i18n-aria="a11y.dlg.profile" aria-label="Öffentliches Profil">
  <div class="mcard prof-modal">
- <button class="mclose" onclick="closePublicProfile()" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <button type="button" class="mclose" onclick="closePublicProfile()" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner" id="pubprofile-content"></div>
  </div>
 </div>
@@ -3209,7 +3251,7 @@ body.acct-open{
  <button type="button" class="ch-ib" id="ch-back" onclick="closeModal('modal-chat-win');openChats()" data-i18n-aria="chat.back" aria-label="Zurück zu den Nachrichten">
  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
  </button>
- <button type="button" class="ch-who" id="ch-who">
+ <button type="button" class="ch-who" id="ch-who" data-i18n-aria="chat.profile.generic" aria-label="Profil ansehen">
  <span class="ch-av" id="ch-av" aria-hidden="true"></span>
  <span class="ch-name" id="ch-name"></span>
  </button>
@@ -3233,7 +3275,7 @@ body.acct-open{
  <div class="sr-only" id="ch-live" aria-live="polite" aria-atomic="true"></div>
  <div class="ch-input-area">
  <div class="ch-input-wrap">
- <textarea class="ch-textarea" id="ch-input" data-i18n-ph="chat.input.ph" placeholder="Nachricht schreiben…" rows="1" onkeydown="handleChatKey(event)" oninput="autoGrow(this)"></textarea>
+ <textarea class="ch-textarea" id="ch-input" data-i18n-ph="chat.input.ph" placeholder="Nachricht schreiben…" data-i18n-aria="chat.input.ph" aria-label="Nachricht schreiben" rows="1" onkeydown="handleChatKey(event)" oninput="autoGrow(this)"></textarea>
  </div>
  <button type="button" class="ch-send-btn" id="ch-send" onclick="sendMsg()" data-i18n-aria="chat.send" aria-label="Nachricht senden">
  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg>
@@ -3248,9 +3290,9 @@ body.acct-open{
  <div class="acct-scroll" onclick="overlayClose(event,'modal-legal-view')">
  <div class="acct legal-acct">
  <div class="acct-bar">
- <button class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Zurück"><i data-lucide="arrow-left" width="17" height="17"></i></button>
+ <button type="button" class="acct-ib" onclick="closeModal('modal-legal-view')" aria-label="Zurück"><i data-lucide="arrow-left" width="17" height="17"></i></button>
  <div class="acct-bt" id="legal-view-title"></div>
- <button class="acct-ib" onclick="closeModal('modal-legal-view')" data-i18n-aria="a11y.close" aria-label="Schließen"><i data-lucide="x" width="17" height="17"></i></button>
+ <button type="button" class="acct-ib" onclick="closeModal('modal-legal-view')" data-i18n-aria="a11y.close" aria-label="Schließen"><i data-lucide="x" width="17" height="17"></i></button>
  </div>
  <div class="acct-body legal-view-body" id="legal-view-body"></div>
  </div>
@@ -3265,7 +3307,7 @@ body.acct-open{
 
 <!-- MODAL: RESUME PAYMENT (für ausstehende Jobs aus dem Profil) -->
 <div class="moverlay" id="modal-resume-pay" onclick="overlayClose(event,'modal-resume-pay')" role="dialog" aria-modal="true" aria-labelledby="modal-resume-pay-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-resume-pay')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-resume-pay')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <h3 id="modal-resume-pay-title" style="font-size:19px;font-weight:600;margin-bottom:4px" data-i18n="rp.title">Zahlung abschließen</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="rp.sub">Dein Auftrag wartet auf die Zahlung der Inseratsgebühr.</p>
@@ -3288,7 +3330,7 @@ body.acct-open{
  <div class="pay-trust-item" data-i18n="pay.trust.ssl">SSL-verschlüsselt</div>
  <div class="pay-trust-item" data-i18n="pay.trust.once">Einmalig, kein Abo</div>
  </div>
- <button class="pay-btn-main" id="rp-pay-btn" onclick="initResumePayment()" data-i18n="pay.btn">Jetzt 2,00 € bezahlen</button>
+ <button type="button" class="pay-btn-main" id="rp-pay-btn" onclick="initResumePayment()" data-i18n="pay.btn">Jetzt 2,00 € bezahlen</button>
  <p class="pay-demo-note" data-i18n="rp.demo">Sichere Zahlung über Stripe</p>
  </div>
 
@@ -3303,7 +3345,7 @@ body.acct-open{
 
 <!-- MODAL: REPORT (Job oder Nutzer melden) -->
 <div class="moverlay" id="modal-report" onclick="overlayClose(event,'modal-report')" role="dialog" aria-modal="true" aria-labelledby="modal-report-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-report')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-report')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <h3 id="modal-report-title" style="font-size:19px;font-weight:600;margin-bottom:6px" data-i18n="rep.title">Inhalt melden</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" data-i18n="rep.sub">Bitte wähle den Grund für deine Meldung. Alle Meldungen werden vom Betreiber geprüft.</p>
@@ -3339,14 +3381,14 @@ body.acct-open{
  <div class="warn-box" style="font-size:12.5px">
  <span data-i18n="rep.warn">Falsche oder missbräuchliche Meldungen können zur Sperrung deines Kontos führen.</span>
  </div>
- <button class="btn btn-danger btn-full btn-lg" id="report-submit" onclick="submitReport()" style="font-size:15px" data-i18n="rep.submit">Meldung absenden</button>
+ <button type="button" class="btn btn-danger btn-full btn-lg" id="report-submit" onclick="submitReport()" style="font-size:15px" data-i18n="rep.submit">Meldung absenden</button>
  </div>
  </div>
 </div>
 
 <!-- MODAL: SAFETY RULES (gezeigt vor erster Bewerbung / Inserat) -->
 <div class="moverlay" id="modal-safety-rules" onclick="overlayClose(event,'modal-safety-rules')" role="dialog" aria-modal="true" aria-labelledby="modal-safety-rules-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-safety-rules')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-safety-rules')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div class="safety-modal-icon"></div>
  <h3 id="modal-safety-rules-title" style="font-size:19px;font-weight:600;margin-bottom:6px;text-align:center" data-i18n="sr.title">Sicherheitshinweise</h3>
@@ -3363,24 +3405,30 @@ body.acct-open{
  <input type="checkbox" id="safety-ack" required>
  <label for="safety-ack" style="font-size:13px" data-i18n="sr.ack">Ich habe die Sicherheitshinweise gelesen und verstanden.</label>
  </div>
- <button class="btn btn-dark btn-full btn-lg" onclick="ackSafetyRules()" style="font-size:15px" data-i18n="sr.btn">Verstanden – weiter</button>
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="ackSafetyRules()" style="font-size:15px" data-i18n="sr.btn">Verstanden – weiter</button>
  </div>
  </div>
 </div>
 
 <!-- MODAL: RATING (Bewertung nach Auftragsabschluss) -->
 <div class="moverlay" id="modal-rating" onclick="overlayClose(event,'modal-rating')" role="dialog" aria-modal="true" aria-labelledby="modal-rating-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-rating')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-rating')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
- <h3 id="modal-rating-title" style="font-size:19px;font-weight:600;margin-bottom:6px" data-i18n="rate.title">★ Bewertung abgeben</h3>
+ <h3 id="modal-rating-title" style="font-size:19px;font-weight:600;margin-bottom:6px" data-i18n="rate.title">Bewertung abgeben</h3>
  <p style="color:var(--c-ink3);font-size:13.5px;margin-bottom:20px" id="rating-target-name" data-i18n="rate.sub">Wie war deine Erfahrung?</p>
  <div style="text-align:center;margin-bottom:20px">
  <div class="rating-stars" style="justify-content:center;gap:8px" id="rating-stars-row">
- <span class="star on" onclick="setRating(1)" data-v="1">★</span>
- <span class="star on" onclick="setRating(2)" data-v="2">★</span>
- <span class="star on" onclick="setRating(3)" data-v="3">★</span>
- <span class="star" onclick="setRating(4)" data-v="4">★</span>
- <span class="star" onclick="setRating(5)" data-v="5">★</span>
+<!-- Fuenf echte Knoepfe statt fuenf klickbarer <span> (Phase 10).
+      Die Sterne bleiben sichtbar: hier sind sie ein Eingabefeld, nicht eine
+      Anzeige - genau dafuer ist das Sternbild die uebliche Form. Vorher waren
+      sie weder fokussierbar noch mit der Tastatur bedienbar und trugen keinen
+      Namen. aria-pressed sagt an, wie viele Sterne gerade gesetzt sind;
+      setRating() bleibt unveraendert. -->
+ <button type="button" class="star on" onclick="setRating(1)" data-v="1" aria-pressed="true" data-i18n-aria="rate.star.1" aria-label="1 von 5 Sternen">★</button>
+ <button type="button" class="star on" onclick="setRating(2)" data-v="2" aria-pressed="true" data-i18n-aria="rate.star.2" aria-label="2 von 5 Sternen">★</button>
+ <button type="button" class="star on" onclick="setRating(3)" data-v="3" aria-pressed="true" data-i18n-aria="rate.star.3" aria-label="3 von 5 Sternen">★</button>
+ <button type="button" class="star" onclick="setRating(4)" data-v="4" aria-pressed="false" data-i18n-aria="rate.star.4" aria-label="4 von 5 Sternen">★</button>
+ <button type="button" class="star" onclick="setRating(5)" data-v="5" aria-pressed="false" data-i18n-aria="rate.star.5" aria-label="5 von 5 Sternen">★</button>
  </div>
  <div id="rating-label" style="font-size:14px;color:var(--c-ink3);margin-top:8px" data-i18n="rate.l3">Gut</div>
  </div>
@@ -3388,7 +3436,7 @@ body.acct-open{
  <label for="rating-text" data-i18n="rate.comment">Kommentar (optional)</label>
  <textarea id="rating-text" rows="3" data-i18n-ph="rate.comment.ph" placeholder="Deine Erfahrung in wenigen Worten…"></textarea>
  </div>
- <button class="btn btn-dark btn-full btn-lg" onclick="submitRating()" style="font-size:15px" data-i18n="rate.btn">★ Bewertung speichern</button>
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="submitRating()" style="font-size:15px" data-i18n="rate.btn">Bewertung speichern</button>
  </div>
  </div>
 </div>
@@ -3397,7 +3445,7 @@ body.acct-open{
 <!-- MODAL: AUFTRAG LÖSCHEN (Bestätigung) -->
 <div class="moverlay" id="modal-delete-job" onclick="overlayClose(event,'modal-delete-job')" role="dialog" aria-modal="true" aria-labelledby="modal-delete-job-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-delete-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <button type="button" class="mclose" onclick="closeModal('modal-delete-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <div style="text-align:center;font-size:40px;margin-bottom:6px"><i data-lucide="trash-2" width="36" height="36"></i></div>
  <h3 id="modal-delete-job-title" style="font-size:18px;font-weight:600;text-align:center;margin-bottom:8px" data-i18n="job.del.t">Auftrag löschen?</h3>
@@ -3405,8 +3453,8 @@ body.acct-open{
  <p id="del-job-title" style="text-align:center;font-weight:600;margin:4px 0 12px"></p>
  <p style="text-align:center;color:var(--c-ink4);font-size:12px;line-height:1.6;margin-bottom:18px" data-i18n="job.del.note">Bewerbungen und Chat-Nachrichten zu diesem Auftrag werden ebenfalls entfernt. Das kann nicht rückgängig gemacht werden.</p>
  <div style="display:flex;gap:10px">
- <button class="btn btn-outline btn-full" onclick="closeModal('modal-delete-job')" data-i18n="del.cancel">Abbrechen</button>
- <button class="btn btn-danger btn-full" id="del-job-btn" data-i18n="job.del.btn">Endgültig löschen</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeModal('modal-delete-job')" data-i18n="del.cancel">Abbrechen</button>
+ <button type="button" class="btn btn-danger btn-full" id="del-job-btn" data-i18n="job.del.btn">Endgültig löschen</button>
  </div>
  </div>
  </div>
@@ -3415,7 +3463,7 @@ body.acct-open{
 <!-- MODAL: AUFTRAG BEARBEITEN -->
 <div class="moverlay" id="modal-edit-job" onclick="overlayClose(event,'modal-edit-job')" role="dialog" aria-modal="true" aria-labelledby="modal-edit-job-title">
  <div class="mcard">
- <button class="mclose" onclick="closeModal('modal-edit-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
+ <button type="button" class="mclose" onclick="closeModal('modal-edit-job')" data-i18n-aria="a11y.close" aria-label="Schließen">✕</button>
  <div class="mcard-inner">
  <h3 id="modal-edit-job-title" style="font-size:18px;font-weight:600;margin-bottom:14px" data-i18n="job.edit.t">Auftrag bearbeiten</h3>
  <input type="hidden" id="edit-job-id">
@@ -3427,16 +3475,19 @@ body.acct-open{
  </div>
  <div class="field"><label for="edit-job-city" data-i18n="post.loc">Ort / Adresse *</label><input type="text" id="edit-job-city" maxlength="150"></div>
  <p id="edit-job-lock" style="display:none;font-size:12.5px;color:var(--c-ink4);margin-top:-4px" data-i18n="job.edit.locked">Kategorie und Ort sind nach der Veröffentlichung fest. Für einen anderen Auftragstyp oder Ort bitte einen neuen Auftrag einstellen.</p>
- <div style="display:flex;gap:10px;margin-top:8px">
- <button class="btn btn-outline btn-full" onclick="closeModal('modal-edit-job')" data-i18n="del.cancel">Abbrechen</button>
- <button class="btn btn-dark btn-full" onclick="submitEditJob()" data-i18n="job.edit.save">Speichern</button>
+ <!-- flex-wrap (Phase 9): zwei btn-full nebeneinander brauchten bei 320px
+      258px in einer 242px breiten Karte. Jetzt rutscht "Speichern" bei Bedarf
+      in die zweite Zeile, statt dass die Knopfleiste ueberlaeuft. -->
+ <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:8px">
+ <button type="button" class="btn btn-outline btn-full" onclick="closeModal('modal-edit-job')" data-i18n="del.cancel">Abbrechen</button>
+ <button type="button" class="btn btn-dark btn-full" onclick="submitEditJob()" data-i18n="job.edit.save">Speichern</button>
  </div>
  </div>
  </div>
 </div>
 
 <div class="moverlay" id="modal-delete-account" onclick="overlayClose(event,'modal-delete-account')" role="dialog" aria-modal="true" aria-labelledby="modal-delete-account-title">
- <div class="mcard"><button class="mclose" onclick="closeModal('modal-delete-account')" data-i18n-aria="del.cancel" aria-label="Abbrechen">✕</button>
+ <div class="mcard"><button type="button" class="mclose" onclick="closeModal('modal-delete-account')" data-i18n-aria="del.cancel" aria-label="Abbrechen">✕</button>
  <div class="mcard-inner">
  <div style="text-align:center;font-size:44px;margin-bottom:8px"><i data-lucide="trash-2" width="40" height="40"></i></div>
  <h3 id="modal-delete-account-title" style="font-size:19px;font-weight:600;margin-bottom:10px;text-align:center" data-i18n="del.title">Konto wirklich löschen?</h3>
@@ -3445,22 +3496,22 @@ body.acct-open{
  <div class="field"><label for="del-confirm-email" data-i18n="del.confirm">Zur Bestätigung gib deine E-Mail-Adresse ein:</label>
  <input type="email" id="del-confirm-email" autocomplete="off"></div>
  <div style="display:flex;gap:10px;margin-top:4px">
- <button class="btn btn-outline btn-full" onclick="closeModal('modal-delete-account')" data-i18n="del.cancel">Abbrechen</button>
- <button class="btn btn-danger btn-full" onclick="doDeleteAccount()" data-i18n="del.btn">Endgültig löschen</button>
+ <button type="button" class="btn btn-outline btn-full" onclick="closeModal('modal-delete-account')" data-i18n="del.cancel">Abbrechen</button>
+ <button type="button" class="btn btn-danger btn-full" onclick="doDeleteAccount()" data-i18n="del.btn">Endgültig löschen</button>
  </div>
  </div>
  </div>
 </div>
 
-<button id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Nach oben">
- <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+<button type="button" id="scrolltop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Nach oben">
+ <svg aria-hidden="true" focusable="false" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
 </button>
 <div id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <div id="cookie" role="dialog" aria-label="Cookie-Einstellungen" aria-live="polite">
  <div class="ck-title"><i data-lucide="cookie" width="18" height="18" style="vertical-align:-3px"></i> <span id="ck-title-txt">Cookie-Hinweis</span></div>
  <p class="ck-text" id="ck-body-txt">Service Radar verwendet ausschließlich technisch notwendige Speicherungen (z. B. localStorage für Login, Sprache und Einstellungen). Es werden keine Tracking-, Marketing- oder Analyse-Cookies eingesetzt. Details in unserer <a onclick="openLegalDocument('cookie')" class="legal-link">Cookie-Richtlinie</a>.</p>
  <div class="ck-btns">
- <button class="ck-btn ck-accept" onclick="saveCookieConsent('essential')">Verstanden</button>
+ <button type="button" class="ck-btn ck-accept" onclick="saveCookieConsent('essential')">Verstanden</button>
  </div>
 </div>
 
@@ -3474,9 +3525,9 @@ body.acct-open{
  <p style="color:var(--c-ink3);font-size:13.5px;text-align:center;margin-bottom:20px;line-height:1.65">Unsere AGB und Datenschutzerklärung wurden aktualisiert. Bitte lies und akzeptiere die neuen Bedingungen, um fortzufahren.
  </p>
  <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
- <button class="btn btn-outline btn-full" onclick="openLegalDocument('agb')">AGB lesen
+ <button type="button" class="btn btn-outline btn-full" onclick="openLegalDocument('agb')">AGB lesen
  </button>
- <button class="btn btn-outline btn-full" onclick="openLegalDocument('datenschutz')">Datenschutzerklärung lesen
+ <button type="button" class="btn btn-outline btn-full" onclick="openLegalDocument('datenschutz')">Datenschutzerklärung lesen
  </button>
  </div>
  <div class="check-row" style="margin-bottom:16px">
@@ -3488,7 +3539,7 @@ body.acct-open{
           gelesen und akzeptiere sie.
  </label>
  </div>
- <button class="btn btn-dark btn-full btn-lg" onclick="confirmLegalUpdateChecked()" style="font-size:15px">Akzeptieren &amp; fortfahren
+ <button type="button" class="btn btn-dark btn-full btn-lg" onclick="confirmLegalUpdateChecked()" style="font-size:15px">Akzeptieren &amp; fortfahren
  </button>
  </div>
  </div>
@@ -3499,7 +3550,7 @@ body.acct-open{
  <div class="mcard" style="padding:0;overflow:hidden">
  <div class="pdf-header">
  <span class="pdf-title" id="pdf-modal-title" data-i18n="pdf.title">Dokument</span>
- <button class="mclose" onclick="closeModal('modal-pdf')" data-i18n-aria="a11y.close" aria-label="Schließen" style="position:static;margin:0">✕</button>
+ <button type="button" class="mclose" onclick="closeModal('modal-pdf')" data-i18n-aria="a11y.close" aria-label="Schließen" style="position:static;margin:0">✕</button>
  </div>
  <div id="pdf-lang-note" style="display:none;background:var(--c-alt);border-bottom:1px solid var(--c-amber-bd);padding:8px 16px;font-size:12.5px;color:var(--c-amber)">
  <span data-i18n="pdf.note">ℹ Rechtsdokumente sind derzeit nur auf Deutsch verfügbar.</span>
@@ -3512,7 +3563,7 @@ body.acct-open{
  <span data-i18n="pdf.open">PDF in neuem Tab öffnen</span>
  </a>
  <br>
- <button class="btn btn-outline btn-sm" onclick="showLegalHtml(currentLegalType)" style="margin-top:8px">
+ <button type="button" class="btn btn-outline btn-sm" onclick="showLegalHtml(currentLegalType)" style="margin-top:8px">
  <span data-i18n="pdf.html">HTML-Version anzeigen →</span>
  </button>
  </div>
@@ -3574,18 +3625,15 @@ let LANG='de';
    I18N DICTIONARY — every key has de + en
 ══════════════════════════════════════════════════════ */
 const I18N = {
-  'vm.toggle':{de:'Ansicht wechseln', en:'Switch view'},
-  'vm.helper':{de:'Helfer-Modus', en:'Helper mode'},
-  'vm.client':{de:'Auftraggeber-Modus', en:'Client mode'},
   'auth.err.backend':{de:'Verbindung zum Server nicht möglich. Bitte später erneut versuchen.', en:'Could not reach the server. Please try again later.'},
   'auth.confirm.title':{de:'Registrierung erfolgreich', en:'Registration successful'},
   'auth.confirm.p':{de:'Bitte bestätige deine E-Mail. Wir haben dir einen Bestätigungslink an deine E-Mail-Adresse geschickt.', en:'Please confirm your email. We have sent a confirmation link to your email address.'},
   'toast.job.savefail':{de:'Auftrag konnte nicht gespeichert werden.', en:'Could not save the job.'},
   'toast.apply.fail':{de:'Bewerbung konnte nicht gesendet werden.', en:'Could not send the application.'},
   'toast.chat.sendfail':{de:'Nachricht konnte nicht gesendet werden.', en:'Could not send the message.'},
-  'jlist.empty.h':{de:'Noch keine Aufgaben verfügbar.', en:'No tasks available yet.'},
+  'jlist.empty.h':{de:'Noch keine Aufträge verfügbar.', en:'No jobs available yet.'},
   'jlist.empty.p':{de:'Erstelle den ersten Auftrag.', en:'Create the first job.'},
-  'map.empty':{de:'Noch keine Aufgaben in deiner Nähe verfügbar.', en:'No tasks near you yet.'},
+  'map.empty':{de:'Noch keine Aufträge in deiner Nähe verfügbar.', en:'No jobs near you yet.'},
   'geo.btn':{de:'Standort verwenden', en:'Use my location'},
   'geo.hint':{de:'Mit deinem Standort siehst du sofort, was in direkter Umgebung zu tun ist.', en:'With your location you see straight away what needs doing right nearby.'},
   'geo.hint.denied':{de:'Kein Standort verfügbar. Gib oben deine Stadt oder PLZ ein, um Aufträge in deiner Nähe zu sehen.', en:'No location available. Enter your city or postcode above to see tasks near you.'},
@@ -3628,6 +3676,10 @@ const I18N = {
   'toast.needlogin2':  {de:'Bitte anmelden.', en:'Please sign in.'},
   'toast.applied':     {de:'Bewerbung gesendet!', en:'Application sent!'},
   'toast.banned':      {de:'Dein Konto wurde gesperrt.', en:'Your account has been suspended.'},
+  /* toast.nohelper / toast.noclient / toast.loc: Hinweise ohne Aufrufer.
+     Nicht geloescht, weil sie zu Zustaenden gehoeren, die es weiterhin
+     gibt (Rollenwechsel, fehlender Standort) - dort wird derzeit nur
+     nichts gesagt. Als Restpunkt dokumentiert. */
   'toast.nohelper':    {de:'Als Auftraggeber kannst du dich nicht bewerben.', en:'As a client you cannot apply.'},
   'toast.noMsg':       {de:'Bitte eine Nachricht eingeben.', en:'Please enter a message.'},
   'toast.noclient':    {de:'Nur Auftraggeber können inserieren.', en:'Only clients can post jobs.'},
@@ -3647,7 +3699,7 @@ const I18N = {
   'toast.post.limit':  {de:'Tages-Limit erreicht: max. 5 Inserate pro Tag.', en:'Daily limit reached: max. 5 listings per day.'},
   'toast.welcome':     {de:'Willkommen', en:'Welcome'},
   'toast.loggedout':   {de:'Abgemeldet.', en:'Signed out.'},
-  'toast.rating.saved':{de:'★ Bewertung gespeichert. Danke!', en:'★ Rating saved. Thank you!'},
+  'toast.rating.saved':{de:'Bewertung gespeichert. Danke!', en:'Rating saved. Thank you!'},
   'toast.pay.success': {de:'Zahlung erfolgreich – Auftrag ist jetzt live!', en:'Payment successful – your job is now live!'},
   'toast.pay.redirect': {de:'Weiterleitung zu Stripe …', en:'Redirecting to Stripe …'},
   'toast.pay.verify':   {de:'Zahlung wird geprüft …', en:'Verifying payment …'},
@@ -3673,7 +3725,7 @@ const I18N = {
      unveraendert ("Jobs entdecken"). */
   'nav.tasks':   {de:'Aufträge', en:'Tasks'},
   'nav.pricing': {de:'Preise', en:'Pricing'},
-  'nav.post':    {de:'Auftrag einstellen', en:'Post a task'},
+  'nav.post':    {de:'Auftrag einstellen', en:'Post a job'},
   'nav.find':    {de:'Aufträge finden', en:'Find tasks'},
   'nav.role.aria':{de:'Ansicht wechseln', en:'Switch view'},
   'nav.role.lab':{de:'Ansicht', en:'View'},
@@ -3690,22 +3742,14 @@ const I18N = {
   'lang.aria':   {de:'Sprache wählen', en:'Choose language'},
 
   /* — Hero — */
-  'hero.badge':  {de:'Jetzt verfügbar in deiner Region', en:'Now available in your region'},
   'hero.t1':     {de:'Hilfe finden.', en:'Find help.'},
   'hero.t2':     {de:'Geld verdienen.', en:'Earn money.'},
   'hero.t3':     {de:'Lokal.', en:'Local.'},
-  'hero.sub':    {de:'Kleine Aufgaben in deiner Nachbarschaft – finden, anbieten, erledigen.', en:'Small tasks in your neighbourhood – find them, post them, get them done.'},
-  'hero.cta1':   {de:'Als Helfer starten', en:'Start as a helper'},
-  'hero.cta2':   {de:'Aufgabe einstellen', en:'Post a task'},
+  'hero.sub':    {de:'Kleine Aufträge in deiner Nachbarschaft – finden, anbieten, erledigen.', en:'Small jobs in your neighbourhood – find them, post them, get them done.'},
+  'hero.cta2':   {de:'Auftrag einstellen', en:'Post a job'},
   'hero.or':    {de:'Du brauchst selbst Hilfe?', en:'Need help yourself?'},
   'hero.proof1': {de:'Kostenlos registrieren', en:'Free to register'},
-  'hero.proof2': {de:'Faire Bezahlung', en:'Fair pay'},
   'hero.proof3': {de:'E-Mail-bestätigte Konten', en:'Email-confirmed accounts'},
-  'show.helper': {de:'Helfer', en:'Helper'},
-  'hero.stat1.l':{de:'Aktiver Standort', en:'Active location'},
-  'hero.stat2.l':{de:'Inseratsgebühr', en:'Listing fee'},
-  'hero.stat3.v':{de:'DSGVO', en:'GDPR'},
-  'hero.stat3.l':{de:'Datenschutz-konform', en:'Privacy-compliant'},
   'hero.loc.val':{de:'In deiner Nähe', en:'Near you'},
   'hero.loc.lbl':{de:'Lokale Aufträge', en:'Local tasks'},
   'hero.loc.val.active':{de:'Aktueller Standort', en:'Current location'},
@@ -3722,20 +3766,9 @@ const I18N = {
   'nl.sending':{de:'Senden…', en:'Sending…'},
   'nl.ok':{de:'Fast geschafft – bitte bestätige die Anmeldung über den Link in deiner E-Mail.', en:'Almost done – please confirm via the link in your email.'},
   'nl.err':{de:'Es ist ein Fehler aufgetreten. Bitte später erneut versuchen.', en:'Something went wrong. Please try again later.'},
-  'hero.notif.t':{de:'Neue Bewerbung', en:'New application'},
-  'hero.notif.s':{de:'Luca möchte deinen Auftrag übernehmen', en:'Luca wants to take on your job'},
 
   /* — Trust strip — */
   'trust.pill':  {de:'Für beide Seiten', en:'For both sides'},
-  'trust.title': {de:'Einfach. Lokal. Vertrauenswürdig.', en:'Simple. Local. Trustworthy.'},
-  'trust.c1.t':  {de:'Lokale Aufträge', en:'Local jobs'},
-  'trust.c1.d':  {de:'Nur Jobs aus deiner direkten Umgebung – kein Pendeln, kein Aufwand.', en:'Only jobs from your immediate area – no commuting, no hassle.'},
-  'trust.c2.t':  {de:'Faire Bezahlung', en:'Fair pay'},
-  'trust.c2.d':  {de:'Wir zeigen empfohlene Richtwerte – damit beide Seiten wissen, was fair ist.', en:'We show recommended rates – so both sides know what is fair.'},
-  'trust.c3.t':  {de:'E-Mail-bestätigte Nutzer', en:'Email-confirmed users'},
-  'trust.c3.d':  {de:'Registrierung per E-Mail-Bestätigung. Bewertungssystem nach jedem Auftrag.', en:'Registration via email confirmation. Rating system after every job.'},
-  'trust.c4.t':  {de:'Direkter Kontakt', en:'Direct contact'},
-  'trust.c4.d':  {de:'Integrierter Chat – Helfer und Auftraggeber kommunizieren direkt miteinander.', en:'Built-in chat – helpers and clients communicate directly.'},
 
   /* — How it works — */
   'how.pill':  {de:'Einfacher Ablauf', en:'Simple process'},
@@ -3743,15 +3776,15 @@ const I18N = {
   'how.desc':  {de:'Vom Standort bis zur Bezahlung – drei Schritte, ohne Umwege.', en:'From location to payment – three steps, no detours.'},
   'how.s1.t':  {de:'Standort wählen', en:'Choose location'},
   'how.s1.p':  {de:'Gib deinen Ort ein und stelle den Suchradius ein. Karte und Liste zeigen sofort alle Aufgaben in deiner Nähe.', en:'Enter your location and set the search radius. Map and list show every task near you straight away.'},
-  'how.s2.t':  {de:'Aufgabe wählen & melden', en:'Pick a task & apply'},
+  'how.s2.t':  {de:'Auftrag wählen & melden', en:'Pick a job & apply'},
   'how.s2.p':  {de:'Klick auf eine Aufgabe und drücke „Ich bin dabei!“ – ein Chat mit dem Auftraggeber öffnet sich direkt.', en:'Tap a task and hit “I’m in!” – a chat with the client opens right away.'},
   'how.s3.t':  {de:'Erledigen & kassieren', en:'Get it done & get paid'},
   'how.s3.p':  {de:'Triff dich vor Ort, erledige die Aufgabe und kassiere dein Geld – direkt und unkompliziert.', en:'Meet on site, complete the task and get paid – directly and easily.'},
 
   /* — Map section — */
   'map.pill':  {de:'Karte und Liste', en:'Map and list'},
-  'map.title': {de:'Aufgaben in deiner Nähe', en:'Tasks near you'},
-  'map.desc':  {de:'Alle Aufgaben in deinem eingestellten Umkreis – auf der Karte und als Liste.', en:'Every task within your chosen radius – on the map and as a list.'},
+  'map.title': {de:'Aufträge in deiner Nähe', en:'Jobs near you'},
+  'map.desc':  {de:'Alle Aufträge in deinem eingestellten Umkreis – auf der Karte und als Liste.', en:'Every job within your chosen radius – on the map and as a list.'},
   'map.ph':    {de:'Stadt oder PLZ eingeben…', en:'Enter city or postal code…'},
   'map.radius':{de:'Umkreis:', en:'Radius:'},
   'map.search':{de:'Suchen', en:'Search'},
@@ -3764,8 +3797,8 @@ const I18N = {
 
   /* — Categories — */
   'cat.pill':  {de:'Kategorien', en:'Categories'},
-  'cat.title': {de:'Typische Aufgaben', en:'Typical tasks'},
-  'cat.desc':  {de:'Vielfältige Aufgaben in deiner Umgebung – von Gartenarbeit bis Nachhilfe.', en:'A wide range of tasks nearby – from gardening to tutoring.'},
+  'cat.title': {de:'Typische Aufträge', en:'Typical jobs'},
+  'cat.desc':  {de:'Vielfältige Aufträge in deiner Umgebung – von Gartenarbeit bis Nachhilfe.', en:'A wide range of jobs nearby – from gardening to tutoring.'},
   'cat.g':     {de:'Garten', en:'Garden'},
   'cat.h':     {de:'Haushalt', en:'Household'},
   'cat.s':     {de:'Einkaufen', en:'Shopping'},
@@ -3783,22 +3816,20 @@ const I18N = {
   /* — For whom — */
   'for.title': {de:'Für jeden gemacht', en:'Made for everyone'},
   'for.desc':  {de:'Zwei klare Rollen. Ein Ziel: lokale Aufgaben schnell und fair erledigen.', en:'Two clear roles. One goal: get local tasks done quickly and fairly.'},
-  'for.c1.h':  {de:'Ich habe eine Aufgabe', en:'I have a task'},
+  'for.c1.h':  {de:'Ich habe einen Auftrag', en:'I have a job'},
   'for.c1.p':  {de:'Stelle deine Aufgabe in wenigen Minuten ein. Für eine einmalige Inseratsgebühr von 2 € erreichst du Helfer in deiner direkten Umgebung.', en:'Post your task in minutes. For a one-time listing fee of €2 you reach helpers in your immediate area.'},
-  'for.c1.l1': {de:'Aufgabe in unter 5 Minuten einstellen', en:'Post a task in under 5 minutes'},
+  'for.c1.l1': {de:'Auftrag in unter 5 Minuten einstellen', en:'Post a job in under 5 minutes'},
   'for.c1.l2': {de:'Richtwert für faire Bezahlung', en:'Guideline for fair pay'},
   'for.c1.l3': {de:'Direkter Chat mit Bewerbern', en:'Direct chat with applicants'},
   'for.c1.l4': {de:'E-Mail-bestätigte Konten', en:'Email-confirmed accounts'},
-  'for.c1.btn':{de:'Aufgabe einstellen', en:'Post a task'},
-  'for.preview':{de:'Vorschau', en:'Preview'},
+  'for.c1.btn':{de:'Auftrag einstellen', en:'Post a job'},
   'for.c2.h':  {de:'Ich will Geld verdienen', en:'I want to earn money'},
   'for.c2.p':  {de:'Finde unkompliziert kleine Aufgaben in deiner Nähe. Perfekt für alle, die flexibel etwas dazuverdienen möchten – kostenlos und ohne Verpflichtung.', en:'Easily find small tasks nearby. Perfect for anyone who wants to earn flexibly – free and with no obligation.'},
   'for.c2.l1': {de:'Kostenlos registrieren & loslegen', en:'Register for free & get started'},
   'for.c2.l2': {de:'Bezahlung direkt vom Auftraggeber', en:'Paid directly by the client'},
-  'for.c2.l3': {de:'Karte zeigt Aufgaben auf einen Blick', en:'Map shows tasks at a glance'},
+  'for.c2.l3': {de:'Karte zeigt Aufträge auf einen Blick', en:'Map shows jobs at a glance'},
   'for.c2.l4': {de:'Flexibel & ohne feste Bindung', en:'Flexible & no fixed commitment'},
   'for.c2.btn':{de:'Als Helfer starten', en:'Start as a helper'},
-  'for.chat.ex':{de:'Chat-Beispiel', en:'Chat example'},
 
   /* — Safety — */
   'safety.pill': {de:'Vertrauen & Sicherheit', en:'Trust & safety'},
@@ -3814,35 +3845,22 @@ const I18N = {
   'safety.c4.p': {de:'Klare Regeln, vollständiges Impressum und direkte Kontaktmöglichkeit.', en:'Clear rules, complete legal notice and a direct way to get in touch.'},
 
   /* — Fair pay — */
-  'pay.pill':  {de:'Faire Vergütung', en:'Fair compensation'},
-  'pay.title': {de:'Wir zeigen dir, was fair ist', en:'We show you what’s fair'},
-  'pay.desc':  {de:'Vor dem Inserieren siehst du empfohlene Richtwerte – damit niemand ausgenutzt wird.', en:'Before posting you see recommended rates – so no one is taken advantage of.'},
-  'pay.c1.t':  {de:'Gartenarbeit', en:'Gardening'},
-  'pay.c1.s':  {de:'Rasen mähen, Unkraut jäten, Laub harken', en:'Mowing, weeding, leaf raking'},
-  'pay.c2.t':  {de:'Haushalt & Reinigung', en:'Household & cleaning'},
-  'pay.c2.s':  {de:'Putzen, Einkaufen, Aufräumen', en:'Cleaning, shopping, tidying'},
-  'pay.c3.t':  {de:'Umzug & Aufbau', en:'Moving & assembly'},
-  'pay.c3.s':  {de:'Möbel aufbauen, Umzugshilfe', en:'Furniture assembly, moving help'},
-  'pay.c4.t':  {de:'Nachhilfe & Sonstiges', en:'Tutoring & more'},
-  'pay.c4.s':  {de:'Nachhilfe, Hundesitting und mehr', en:'Tutoring, dog sitting and more'},
   'price.pill':  {de:'Preise', en:'Pricing'},
   'price.title': {de:'Was Service Radar kostet', en:'What Service Radar costs'},
   'price.desc':  {de:'Eine einmalige Gebühr pro Inserat. Kein Abo, keine Provision auf den vereinbarten Lohn.', en:'A one-off fee per listing. No subscription, no commission on the agreed pay.'},
-  'price.r1.t':  {de:'Aufgaben finden und erledigen', en:'Finding and doing tasks'},
+  'price.r1.t':  {de:'Aufträge finden und erledigen', en:'Finding and doing jobs'},
   'price.r1.p':  {de:'Registrierung, Suche, Bewerbung und Chat kosten Helfer nichts.', en:'Registering, searching, applying and chatting cost helpers nothing.'},
   'price.r1.v':  {de:'kostenlos', en:'free'},
-  'price.r2.t':  {de:'Einen Auftrag einstellen', en:'Posting a task'},
+  'price.r2.t':  {de:'Einen Auftrag einstellen', en:'Posting a job'},
   'price.r2.p':  {de:'Einmalig pro Inserat, bezahlt über Stripe, inklusive MwSt. Kein Abo und keine weiteren Kosten.', en:'One-off per listing, paid via Stripe, VAT included. No subscription and no further costs.'},
   'price.r2.v':  {de:'2 €', en:'€2'},
-  'price.r3.t':  {de:'Bezahlung der Aufgabe', en:'Paying for the task'},
+  'price.r3.t':  {de:'Bezahlung des Auftrags', en:'Paying for the job'},
   'price.r3.p':  {de:'Auftraggeber und Helfer vereinbaren den Lohn direkt miteinander. Service Radar behält davon nichts ein.', en:'Client and helper agree the pay directly between themselves. Service Radar takes no cut.'},
   'price.r3.v':  {de:'frei vereinbart', en:'agreed freely'},
   'price.foot':  {de:'Die Inseratsgebühr wird vor der Veröffentlichung fällig und ist nicht erstattungsfähig. Einzelheiten stehen in den AGB.', en:'The listing fee is due before publication and is non-refundable. Details are in the terms.'},
   'pay.foot':  {de:'Richtwerte basieren auf regionalen Durchschnittswerten. Der Endpreis wird frei vereinbart.', en:'Guide rates are based on regional averages. The final price is agreed freely.'},
 
   /* — Testimonials — */
-  'safe.pill': {de:'Sicherheit & Datenschutz', en:'Security & privacy'},
-  'safe.title':{de:'Sicher von der Zahlung bis zum Kontakt', en:'Secure from payment to contact'},
   'safe.c1.t': {de:'Sichere Zahlung über Stripe', en:'Secure payment via Stripe'},
   'safe.c1.p': {de:'Die Inseratsgebühr läuft geschützt über Stripe – 2 € pro Auftrag, keine versteckten Kosten und kein Abo.', en:'The listing fee is handled securely via Stripe – €2 per job, no hidden costs and no subscription.'},
   'safe.c2.t': {de:'Schutz & Meldefunktion', en:'Protection & reporting'},
@@ -3852,30 +3870,17 @@ const I18N = {
   'safe.foot': {de:'Sichere Zahlung über Stripe · Verarbeitung nach DSGVO · E-Mail-bestätigte Konten', en:'Secure payment via Stripe · processed under the GDPR · email-confirmed accounts'},
 
   /* — App showcase — */
-  'show.pill': {de:'Plattform-Ansicht', en:'Platform preview'},
-  'show.title':{de:'So sieht Service Radar aus', en:'This is what Service Radar looks like'},
-  'show.desc': {de:'Übersichtliche Jobkarten, direkter Chat, transparente Vergütung – alles in einer Oberfläche.', en:'Clear job cards, direct chat, transparent pay – all in one interface.'},
-  'show.p1.l': {de:'Aufgaben in deiner Nähe', en:'Tasks near you'},
-  'show.p3.l': {de:'Inseratsgebühr', en:'Listing fee'},
-  'show.fee.s':{de:'Einmalig · Sofort aktiv', en:'One-time · Instantly active'},
-  'show.pay.btn':{de:'Jetzt bezahlen', en:'Pay now'},
-  'show.apps': {de:'Bewerbungen', en:'Applications'},
-  'show.earned':{de:'Verdient', en:'Earned'},
-  'show.msg.ph':{de:'Nachricht schreiben…', en:'Write a message…'},
 
   /* — CTA — */
-  'cta.c1.h':  {de:'Bereit für die erste Aufgabe?', en:'Ready for your first task?'},
+  'cta.c1.h':  {de:'Bereit für den ersten Auftrag?', en:'Ready for your first job?'},
   'cta.c1.p':  {de:'Registriere dich kostenlos und finde Aufgaben in deiner Nähe – oder stelle selbst eine ein.', en:'Register for free and find tasks near you – or post one yourself.'},
   'cta.c1.btn':{de:'Kostenlos registrieren', en:'Register for free'},
-  'cta.c2.h':  {de:'Aufgabe einstellen', en:'Post a task'},
-  'cta.c2.p':  {de:'Stelle deine Aufgabe ein und finde schnell jemanden in deiner Nähe – für nur 2 € Inseratsgebühr.', en:'Post your task and quickly find someone nearby – for just €2 listing fee.'},
-  'cta.c2.btn':{de:'Jetzt inserieren – 2 €', en:'Post now – €2'},
+  'cta.c2.btn':{de:'Auftrag einstellen – 2 €', en:'Post a job – €2'},
 
   /* — Footer — */
-  'foot.tagline':{de:'Lokale Aufgaben finden & vergeben – einfach, fair und sicher.', en:'Find & assign local tasks – simple, fair and secure.'},
+  'foot.tagline':{de:'Lokale Aufträge finden & vergeben – einfach, fair und sicher.', en:'Find & assign local jobs – simple, fair and secure.'},
   'foot.platform':{de:'Plattform', en:'Platform'},
-  'foot.jobs': {de:'Jobs entdecken', en:'Discover jobs'},
-  'foot.post': {de:'Aufgabe einstellen', en:'Post a task'},
+  'foot.post': {de:'Auftrag einstellen', en:'Post a job'},
   'foot.legal':{de:'Rechtliches', en:'Legal'},
   'foot.imprint':{de:'Impressum', en:'Legal notice'},
   'foot.privacy':{de:'Datenschutzerklärung', en:'Privacy Policy'},
@@ -3890,13 +3895,12 @@ const I18N = {
   'auth.tab.login':   {de:'Anmelden', en:'Sign in'},
   'auth.tab.register':{de:'Registrieren', en:'Register'},
   'auth.login.title': {de:'Willkommen zurück', en:'Welcome back'},
-  'auth.login.sub':   {de:'Melde dich an, um Aufgaben zu finden oder inserieren.', en:'Sign in to find or post tasks.'},
+  'auth.login.sub':   {de:'Melde dich an, um Aufträge zu finden oder einzustellen.', en:'Sign in to find or post jobs.'},
   'auth.email':       {de:'E-Mail Adresse', en:'Email address'},
   'auth.email.ph':    {de:'deine@email.de', en:'you@email.com'},
   'auth.pw':          {de:'Passwort', en:'Password'},
   'auth.login.err':   {de:'E-Mail oder Passwort falsch.', en:'Email or password incorrect.'},
   'auth.login.btn':   {de:'Anmelden', en:'Sign in'},
-  'auth.or':          {de:'oder', en:'or'},
   'auth.noacc':       {de:'Noch kein Konto?', en:'No account yet?'},
   'auth.forgot':      {de:'Passwort vergessen?', en:'Forgot your password?'},
   'auth.forgot.title':{de:'Passwort zurücksetzen', en:'Reset password'},
@@ -3918,7 +3922,7 @@ const I18N = {
   'auth.iwant':       {de:'Ich möchte…', en:'I want to…'},
   'auth.role.find':   {de:'Jobs finden', en:'Find jobs'},
   'auth.role.find.s': {de:'Als Helfer', en:'As a helper'},
-  'auth.role.post':   {de:'Job inserieren', en:'Post a job'},
+  'auth.role.post':   {de:'Auftrag einstellen', en:'Post a job'},
   'auth.role.post.s': {de:'Als Auftraggeber', en:'As a client'},
   'auth.firstname':   {de:'Vorname', en:'First name'},
   'auth.lastname':    {de:'Nachname', en:'Last name'},
@@ -3951,6 +3955,13 @@ const I18N = {
   'auth.succ.btn':    {de:'Los geht’s!', en:'Let’s go!'},
   'auth.err.checkbox':{de:'Bitte alle Pflicht-Checkboxen bestätigen.', en:'Please confirm all required checkboxes.'},
   'auth.err.tooyoung':{de:'Service Radar ist für Personen unter 16 Jahren nicht zugänglich.', en:'Service Radar is not available to people under 16.'},
+  /* Die folgenden Fehlertexte sind uebersetzt vorhanden, werden aber nicht
+     mehr aufgerufen: handleLogin() zeigt seit der Umstellung auf Supabase
+     die Rohmeldung des Servers (String(raw)) statt eines eigenen Schluessels.
+     Sie bleiben bewusst stehen - sie sind der fertige deutsche Text fuer
+     einen Pfad, der derzeit englisch antwortet. Die Zuordnung der
+     Supabase-Fehlercodes gehoert in die Auth-Phase, nicht hierher
+     (Auth ist in Phase 9/10 Sperrzone). Siehe Abschlussbericht. */
   'auth.err.reglimit':{de:'Zu viele Registrierungsversuche.', en:'Too many registration attempts.'},
   'auth.err.exists':  {de:'Diese E-Mail ist bereits registriert.', en:'This email is already registered.'},
   'auth.err.locked':  {de:'Konto temporär gesperrt. Bitte warte 15 Minuten.', en:'Account temporarily locked. Please wait 15 minutes.'},
@@ -3972,7 +3983,6 @@ const I18N = {
   'apply.succ.t':  {de:'Bewerbung gesendet!', en:'Application sent!'},
   'apply.succ.p':  {de:'Ein Chat wurde geöffnet. Der Auftraggeber wird dir gleich antworten.', en:'A chat has opened. The client will reply shortly.'},
   'apply.succ.btn':{de:'Zum Chat →', en:'Go to chat →'},
-  'apply.prefix':  {de:'Bewerbung:', en:'Application:'},
 
   /* — Post job — */
   'post.s1.lbl':{de:'Schritt 1 von 3 · Was', en:'Step 1 of 3 · Task'},
@@ -4022,9 +4032,8 @@ const I18N = {
   'post.dur':   {de:'Dauer (Std.) – optional', en:'Duration (hrs) – optional'},
   'post.date':  {de:'Wunschdatum – optional', en:'Preferred date – optional'},
   'post.s3.lbl':{de:'Schritt 3 von 3 · Wert', en:'Step 3 of 3 · Value'},
-  'post.s3.h':  {de:'Was ist die Aufgabe wert?', en:'What is the task worth?'},
+  'post.s3.h':  {de:'Was ist der Auftrag wert?', en:'What is the job worth?'},
   'post.listing':{de:'Dein Inserat', en:'Your listing'},
-  'pay.fee.lbl':{de:'Einmalige Inseratsgebühr', en:'One-time listing fee'},
   'pay.fee.desc':{de:'Dein Auftrag wird sofort nach Zahlung veröffentlicht', en:'Your job is published immediately after payment'},
   'pay.m.card': {de:'Kreditkarte / Debitkarte', en:'Credit / debit card'},
   'pay.m.card.s':{de:'Visa, Mastercard, American Express', en:'Visa, Mastercard, American Express'},
@@ -4039,13 +4048,11 @@ const I18N = {
   'pay.consent.stripe.post':{de:'zu.', en:'.'},
   'pay.btn':    {de:'Jetzt 2,00 € bezahlen', en:'Pay €2.00 now'},
   'pay.legal.pre':{de:'Mit der Zahlung akzeptierst du unsere', en:'By paying you accept our'},
-  'pay.demo.t': {de:'Sichere Zahlung über Stripe', en:'Secure payment via Stripe'},
-  'pay.demo.p': {de:'Du wirst zur gesicherten Stripe-Bezahlseite weitergeleitet.', en:'You will be redirected to Stripe’s secure checkout.'},
   'pay.proc.t': {de:'Zahlung wird verarbeitet…', en:'Processing payment…'},
   'pay.proc.p': {de:'Bitte warte einen Moment.', en:'Please wait a moment.'},
   'pay.connect':{de:'Verbinde mit Zahlungsanbieter…', en:'Connecting to payment provider…'},
   'pay.connect2':{de:'Verbinde…', en:'Connecting…'},
-  'post.ok.t':  {de:'Aufgabe inseriert!', en:'Task posted!'},
+  'post.ok.t':  {de:'Auftrag veröffentlicht!', en:'Job published!'},
   'post.ok.p':  {de:'Deine Aufgabe ist live. Helfer in deiner Nähe können sie direkt entdecken und dich per Chat kontaktieren.', en:'Your task is live. Helpers near you can discover it and contact you via chat.'},
   'post.ok.btn':{de:'Super, danke!', en:'Great, thanks!'},
 
@@ -4082,6 +4089,7 @@ const I18N = {
   'chat.nomsg':   {de:'Noch keine Nachricht', en:'No message yet'},
   /* Kopfzeile und Auftragskontext */
   'chat.back':    {de:'Zurück zu den Nachrichten', en:'Back to messages'},
+  'chat.profile.generic':{de:'Profil ansehen', en:'View profile'},
   'chat.profile': {de:'Profil von %s ansehen', en:'View %s’s profile'},
   'chat.rate':    {de:'Bewerten', en:'Rate'},
   'chat.rate.a11y':{de:'%s bewerten', en:'Rate %s'},
@@ -4119,8 +4127,6 @@ const I18N = {
 
   /* — Job list — */
   'jlist.none':{de:'Keine Aufträge in diesem Umkreis.', en:'No jobs within this radius.'},
-  'jlist.hint':{de:'Ändere den Suchradius oder wähle eine andere Kategorie.', en:'Change the search radius or pick a different category.'},
-  'jlist.new': {de:'Neu', en:'New'},
   'jlist.f.active.all':{de:'Aktiv: %r km Umkreis, alle Kategorien.', en:'Active: %r km radius, all categories.'},
   'jlist.f.active.cat':{de:'Aktiv: %r km Umkreis, Kategorie %c.', en:'Active: %r km radius, category %c.'},
   'jlist.f.wider': {de:'Umkreis erweitern', en:'Widen radius'},
@@ -4142,18 +4148,11 @@ const I18N = {
   'jd.fact.posted':{de:'Eingestellt', en:'Posted'},
   'jd.fact.cat':   {de:'Kategorie', en:'Category'},
   'map.notfound':{de:'Standort nicht gefunden.', en:'Location not found.'},
-  'map.you':   {de:'Dein Standort', en:'Your location'},
 
   /* — Profile — */
-  'prof.title':{de:'Mein Profil', en:'My profile'},
-  'prof.chats':{de:'Chats', en:'Chats'},
-  'prof.activity.yes':{de:'Aktive Plattformnutzung', en:'Active platform use'},
-  'prof.activity.no':{de:'Noch keine Aktivität', en:'No activity yet'},
   /* Ersetzt 'prof.warn.text': dort war "Verwarnung –" vorangestellt, das Wort
      steht aber bereits fett davor - der Hinweis las sich doppelt. */
   'prof.warn.detail':{de:'Bei weiteren Verstößen wird dein Konto gesperrt.', en:'Further violations will lead to account suspension.'},
-  'prof.rating':{de:'Bewertung', en:'Rating'},
-  'prof.soon': {de:'Bald verfügbar', en:'Coming soon'},
   'prof.banned':{de:'Konto gesperrt.', en:'Account suspended.'},
   'prof.banned.contact':{de:'Bitte kontaktiere uns:', en:'Please contact us:'},
   'prof.del':  {de:'Konto löschen', en:'Delete account'},
@@ -4413,12 +4412,18 @@ const I18N = {
   'sr.btn':    {de:'Verstanden – weiter', en:'Understood – continue'},
 
   /* — Rating modal — */
-  'rate.title':{de:'★ Bewertung abgeben', en:'★ Leave a rating'},
+  /* Namen der fuenf Sternknoepfe im Bewertungsdialog. */
+  'rate.star.1':{de:'1 von 5 Sternen', en:'1 out of 5 stars'},
+  'rate.star.2':{de:'2 von 5 Sternen', en:'2 out of 5 stars'},
+  'rate.star.3':{de:'3 von 5 Sternen', en:'3 out of 5 stars'},
+  'rate.star.4':{de:'4 von 5 Sternen', en:'4 out of 5 stars'},
+  'rate.star.5':{de:'5 von 5 Sternen', en:'5 out of 5 stars'},
+  'rate.title':{de:'Bewertung abgeben', en:'Leave a rating'},
   'rate.sub':  {de:'Wie war deine Erfahrung?', en:'How was your experience?'},
   'rate.sub.with':{de:'Wie war deine Erfahrung mit', en:'How was your experience with'},
   'rate.comment':{de:'Kommentar (optional)', en:'Comment (optional)'},
   'rate.comment.ph':{de:'Deine Erfahrung in wenigen Worten…', en:'Your experience in a few words…'},
-  'rate.btn':  {de:'★ Bewertung speichern', en:'★ Save rating'},
+  'rate.btn':  {de:'Bewertung speichern', en:'Save rating'},
   'rate.l1':   {de:'Sehr schlecht', en:'Very poor'},
   'rate.l2':   {de:'Schlecht', en:'Poor'},
   'rate.l3':   {de:'Gut', en:'Good'},
@@ -4438,17 +4443,6 @@ const I18N = {
   'role.auftr': {de:'Auftraggeber', en:'Client'},
 
   /* — Post review labels — */
-  'rev.cat':   {de:'Kategorie', en:'Category'},
-  'rev.title': {de:'Titel', en:'Title'},
-  'rev.loc':   {de:'Ort', en:'Location'},
-  'rev.pay':   {de:'Vergütung', en:'Pay'},
-  'rev.date':  {de:'Datum', en:'Date'},
-  'rev.fair.t':{de:'Faire Bezahlung', en:'Fair pay'},
-  'rev.fair.p':{de:'Dein Angebot liegt im empfohlenen Bereich', en:'Your offer is within the recommended range'},
-  'rev.tip':   {de:'Tipp', en:'Tip'},
-  'rev.tip.p': {de:'Empfohlener Richtwert', en:'Recommended rate'},
-  'rev.flexdate':{de:'Flexibles Datum', en:'Flexible date'},
-  'rev.soon':  {de:'Bald verfügbar', en:'Soon available'},
 };
 
 /* ── Core i18n functions ───────────────────────────── */
@@ -5043,6 +5037,9 @@ function setRating(n) {
   document.getElementById('rating-label').textContent = labels[n] || '';
   document.querySelectorAll('#rating-stars-row .star').forEach((s, i) => {
     s.classList.toggle('on', i < n);
+    // Seit die Sterne Knoepfe sind, muss der angesagte Zustand mitgehen -
+    // sonst hoert ein Screenreader-Nutzer nicht, was er gerade gesetzt hat.
+    s.setAttribute('aria-pressed', i < n ? 'true' : 'false');
   });
 }
 
@@ -5215,7 +5212,10 @@ function avatarHtml(name,url,size,clickId){
 function ratingHtml(rating,count){
   var r=Number(rating||0);
   if(!r) return '<span style="font-size:12px;color:var(--c-ink4)">'+(LANG==='de'?'Neu':'New')+'</span>';
-  return '<span style="font-size:12px;color:var(--c-star);font-weight:600;font-variant-numeric:tabular-nums">★ '+r.toFixed(1)+(count?(' <span style="color:var(--c-ink4);font-weight:400">('+count+')</span>'):'')+'</span>';
+  /* Zahl statt Sternzeichen (Phase 10) - der Kommentar oben behauptete das
+     bereits, die Funktion lieferte aber weiterhin "\u2605 4.5". Jetzt dieselbe
+     Form wie im oeffentlichen Profil und im Konto: "4,5 von 5". */
+  return '<span style="font-size:12px;color:var(--c-ink2);font-weight:600;font-variant-numeric:tabular-nums">'+srPfDec(r)+' '+esc(T('pf.ratingOf'))+(count?(' <span style="color:var(--c-ink4);font-weight:400">('+count+')</span>'):'')+'</span>';
 }
 /* Kartenmarker: ein Akzent fuer alle Kategorien. Die Kategorie unterscheidet
    sich ueber Text und Chip, nicht ueber vier konkurrierende Farben. */
@@ -7559,7 +7559,7 @@ function _acctMod(){
         : (r.user ? esc(r.user.full_name) : esc(r.target_label||r.target_id));
       var who = isJob
         ? (r.jobOwner ? (esc(r.jobOwner.full_name)+' · '+esc(r.jobOwner.email)) : '–')
-        : (r.user ? (esc(r.user.email)+' · ★ '+esc(r.user.rating||0)+' aus '+esc(r.user.review_count||0)) : '–');
+        : (r.user ? (esc(r.user.email)+' · '+esc(srPfDec(r.user.rating||0))+' '+esc(T('pf.ratingOf'))+' ('+esc(r.user.review_count||0)+')') : '–');
       var when = r.created_at ? new Date(r.created_at).toLocaleString(de?'de-DE':'en-GB') : '';
       var many = (r.totalForTarget||1) >= 3;
 
@@ -7838,11 +7838,11 @@ function pushStatusHtml(){
     return '<div class="warn-box" style="margin-top:16px"> '+(LANG==='de'?'Benachrichtigungen wurden im Browser blockiert. Bitte in den Browser-Einstellungen erlauben.':'Notifications are blocked in your browser. Please allow them in your browser settings.')+'</div>';
   if(APP.pushSubscribed)
     return '<div class="succ-box" style="margin-top:16px"> '+(LANG==='de'?'Benachrichtigungen aktiv':'Notifications active')+'</div>'+
-      '<button class="btn btn-outline btn-sm" style="margin-top:8px" onclick="disablePushNotifications()"> '+(LANG==='de'?'Benachrichtigungen deaktivieren':'Disable notifications')+'</button>';
+      '<button type="button" class="btn btn-outline btn-sm" style="margin-top:8px" onclick="disablePushNotifications()"> '+(LANG==='de'?'Benachrichtigungen deaktivieren':'Disable notifications')+'</button>';
   return '<div style="margin-top:16px;background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r2);padding:14px">'+
     '<div style="font-weight:600;margin-bottom:4px"> '+(LANG==='de'?'Benachrichtigungen aktivieren':'Enable notifications')+'</div>'+
     '<div style="font-size:12.5px;color:var(--c-ink3);margin-bottom:10px">'+(LANG==='de'?'Erhalte sofort Hinweise zu neuen Nachrichten, Bewerbungen und Bewertungen.':'Get instant alerts for new messages, applications and reviews.')+'</div>'+
-    '<button class="btn btn-dark btn-sm" onclick="enablePushNotifications()"> '+(LANG==='de'?'Aktivieren':'Enable')+'</button></div>';
+    '<button type="button" class="btn btn-dark btn-sm" onclick="enablePushNotifications()"> '+(LANG==='de'?'Aktivieren':'Enable')+'</button></div>';
 }
 // Best-effort Push an einen Nutzer.
 // Titel und Text kommen bewusst NICHT mehr von hier, sondern aus festen Vorlagen
@@ -8077,14 +8077,14 @@ function openJobDetail(id){
  </div>
  </div>
  <div class="info-box">${T('jd.fair')}: ${fairTip} \u20AC/h</div>
-    ${(APP.user && job.poster === APP.user.id) ? '' : '<button class="btn btn-dark btn-full btn-lg" onclick="openApply(\''+esc(String(job.id))+'\')" style="font-size:15px">'+T('jd.intbtn')+'</button>'}
+    ${(APP.user && job.poster === APP.user.id) ? '' : '<button type="button" class="btn btn-dark btn-full btn-lg" onclick="openApply(\''+esc(String(job.id))+'\')" style="font-size:15px">'+T('jd.intbtn')+'</button>'}
  <div style="margin-top:10px;text-align:center">${srSaveBtn(job.id,'detail')}</div>
     ${APP.user && job.poster === APP.user.id ? '<div class="succ-box" style="margin-top:0;margin-bottom:12px">'+T('jd.own')+'</div>' : ''}
  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
  <div style="background:var(--c-bg1);border:1px solid var(--c-bds);border-radius:var(--r1);padding:10px 14px;flex:1;font-size:11.5px;color:var(--c-ink4);line-height:1.6;margin-right:8px">
         ${T('jd.broker')} <a href="#impressum" onclick="closeModal('modal-job');showLegal('agb-box')" style="color:var(--c-blue)">${T('auth.agb.link')} →</a>
  </div>
- <button class="report-btn" onclick="openReport('job','${esc(String(job.id))}','${esc(jobTitle(job).slice(0,40))}')">${T('jd.report')}</button>
+ <button type="button" class="report-btn" onclick="openReport('job','${esc(String(job.id))}','${esc(jobTitle(job).slice(0,40))}')">${T('jd.report')}</button>
  </div>`;
   openModal('modal-job');
 }
@@ -9053,7 +9053,7 @@ function renderJobCards(){
       list.removeAttribute('role');
       list.innerHTML = `<div class="jl-empty"><p class="jl-empty-h">${T('jlist.empty.h')}</p>`+
         `<p class="jl-empty-p">${T('jlist.empty.p')}</p>`+
-        `<div class="jl-empty-acts"><button class="btn btn-dark btn-sm" onclick="openPostJob()">${T('hero.cta2')}</button></div></div>`;
+        `<div class="jl-empty-acts"><button type="button" class="btn btn-dark btn-sm" onclick="openPostJob()">${T('hero.cta2')}</button></div></div>`;
       return;
     }
     // Erklaeren, WAS gerade filtert - mit den echten Werten der Bedienelemente,
@@ -9065,8 +9065,8 @@ function renderJobCards(){
     // Der Knopf erscheint nur, wenn es ueberhaupt noch Luft nach oben gibt.
     const maxR = parseInt(document.getElementById('rSlider')?.max || 20, 10);
     const acts = [];
-    if(r < maxR) acts.push(`<button class="btn btn-outline btn-sm" onclick="srWidenRadius()">${T('jlist.f.wider')}</button>`);
-    if(!allCats) acts.push(`<button class="btn btn-outline btn-sm" onclick="setFilter('all')">${T('jlist.f.allcat')}</button>`);
+    if(r < maxR) acts.push(`<button type="button" class="btn btn-outline btn-sm" onclick="srWidenRadius()">${T('jlist.f.wider')}</button>`);
+    if(!allCats) acts.push(`<button type="button" class="btn btn-outline btn-sm" onclick="setFilter('all')">${T('jlist.f.allcat')}</button>`);
     list.removeAttribute('role');
     list.innerHTML = `<div class="jl-empty"><p class="jl-empty-h">${T('jlist.none')}</p>`+
       `<p class="jl-empty-p">${info}</p>`+
@@ -9365,5 +9365,15 @@ window.addEventListener('load', () => {
 </script>
 <script src="https://cdn.jsdelivr.net/npm/lucide@1.41.0/dist/umd/lucide.min.js"></script>
 <script>try{ if(window.lucide) lucide.createIcons(); }catch(e){}</script>
+
+<!-- MOBILE BOTTOM NAV (per CSS nur auf Smartphones <=640px sichtbar;
+     Desktop/Tablet: display:none). Bewusst hier unten, siehe Hinweis oben. -->
+<nav class="mobile-bottomnav" aria-label="Mobile Navigation">
+ <button type="button" class="mbn-item" onclick="mobileHome()"><span class="mbn-ic"><i data-lucide="house" width="22" height="22"></i></span><span data-i18n="mnav.home">Start</span></button>
+ <button type="button" class="mbn-item" onclick="mobileMap()"><span class="mbn-ic"><i data-lucide="map" width="22" height="22"></i></span><span data-i18n="mnav.map">Karte</span></button>
+ <button type="button" class="mbn-item mbn-add" onclick="mobileAdd()" aria-label="Auftrag erstellen"><span class="mbn-ic"><i data-lucide="plus" width="24" height="24"></i></span><span data-i18n="mnav.add">Auftrag</span></button>
+ <button type="button" class="mbn-item" onclick="mobileChats()"><span class="mbn-ic"><i data-lucide="message-circle" width="22" height="22"></i></span><span class="mbn-badge" id="mnav-chat-badge"></span><span data-i18n="mnav.msg">Chats</span></button>
+ <button type="button" class="mbn-item" onclick="mobileProfile()"><span class="mbn-ic"><i data-lucide="user" width="22" height="22"></i></span><span data-i18n="mnav.profile">Profil</span></button>
+</nav>
 </body>
 </html>
